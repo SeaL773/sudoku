@@ -527,6 +527,7 @@
     notesMode = !notesMode;
     notesBtn.classList.toggle('active', notesMode);
     notesBtn.setAttribute('aria-pressed', notesMode);
+    if (cheatMode && notesMode) autoFillNotes();
   }
 
   function startNewGame(difficulty, seed) {
@@ -841,7 +842,7 @@
       if (match) {
         cheatMode = !cheatMode;
         konamiBuffer = [];
-        var msg = cheatMode ? 'Cheat mode ON — Notes auto-fill enabled (select cell in Notes mode, press Space)' : 'Cheat mode OFF';
+        var msg = cheatMode ? 'Cheat mode ON' : 'Cheat mode OFF';
         var el = document.getElementById('status-bar');
         if (el) { el.textContent = msg; el.className = 'status-bar' + (cheatMode ? ' success' : ''); }
       }
@@ -851,7 +852,7 @@
   function handleKeydown(e) {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
     checkKonami(e.key);
-    if (e.key === ' ' && cheatMode) { e.preventDefault(); autoFillNotes(); return; }
+
     switch (e.key) {
       case 'ArrowUp': e.preventDefault(); navigateCell(0, -1); break;
       case 'ArrowDown': e.preventDefault(); navigateCell(0, 1); break;
