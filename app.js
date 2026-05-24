@@ -26,7 +26,7 @@
   var notesBtn, hintBtn, undoBtn, eraseBtn;
   var winMistakesEl, winHintsEl, mistakeOverlay;
   var infoLabelEl, infoBadgeEl, infoMistakesEl, infoTimerEl, infoSecondaryEl;
-  var newGameBtn, customFooterActions, statusBar;
+  var newGameBtn, footerPlayBtns, customFooterActions, statusBar;
   var cells = [];
   var numBtns = [];
   var diffBtns = [];
@@ -52,12 +52,17 @@
     infoTimerEl = document.getElementById('info-timer');
     infoSecondaryEl = document.getElementById('info-secondary-row');
     newGameBtn = document.getElementById('btn-new-game');
+    footerPlayBtns = document.getElementById('footer-play-btns');
     customFooterActions = document.getElementById('custom-footer-actions');
     statusBar = document.getElementById('status-bar');
 
     buildBoard();
     bindEvents();
-    startNewGame('medium');
+    buildNumpadCounts();
+
+    if (!restoreGameState()) {
+      startNewGame('medium');
+    }
   }
 
   function buildBoard() {
@@ -113,6 +118,8 @@
     newGameBtn.addEventListener('click', function () {
       startNewGame(currentDifficulty);
     });
+
+    document.getElementById('btn-restart').addEventListener('click', restartPuzzle);
 
     document.getElementById('btn-play-again').addEventListener('click', function () {
       hideWinOverlay();
@@ -201,6 +208,132 @@
     else inputNumber(digit);
   }
 
+  function buildNumpadCounts() {
+    for (var i = 0; i < numBtns.length; i++) {
+      var span = document.createElement('span');
+      span.className = 'num-remaining';
+      numBtns[i].appendChild(span);
+    }
+  }
+
+  function updateNumpadCounts() {
+    if (currentMode === 'custom') return;
+    var counts = {};
+    for (var d = 1; d <= 9; d++) counts[d] = 0;
+    for (var i = 0; i < 81; i++) { var v = userGrid[i].value; if (v > 0) counts[v]++; }
+    for (var d = 1; d <= 9; d++) {
+      var rem = 9 - counts[d];
+      var span = numBtns[d - 1].querySelector('.num-remaining');
+      if (span) span.textContent = rem > 0 ? rem : '';
+    }
+  }
+
+  function restartPuzzle() {
+    if (!currentPuzzle) return;
+    for (var i = 0; i < 81; i++) {
+      if (!userGrid[i].isGiven) {
+        userGrid[i].value = 0;
+        userGrid[i].notes = [];
+        userGrid[i].isError = false;
+      }
+    }
+    selectedCell = -1;
+    undoStack = [];
+    mistakeCount = 0;
+    hintCount = 0;
+    notesMode = false;
+    notesBtn.classList.remove('active');
+    gameWon = false;
+    resetTimer();
+    updateMistakesDisplay();
+    hideWinOverlay();
+    checkConflicts();
+    render();
+    clearSavedState();
+  }
+
+  function saveGameState() {
+    if (currentMode === 'custom') return;
+    try {
+      var state = {
+        mode: currentMode,
+        difficulty: currentDifficulty,
+        puzzle: currentPuzzle,
+        solution: currentSolution,
+        seed: currentSeed,
+        userGrid: userGrid,
+        timerSeconds: timerSeconds,
+        mistakeCount: mistakeCount,
+        hintCount: hintCount,
+        notesMode: notesMode,
+        selectedCell: selectedCell,
+        gameWon: gameWon
+      };
+      localStorage.setItem('sudoku-game-state', JSON.stringify(state));
+    } catch (e) {}
+  }
+
+  function restoreGameState() {
+    try {
+      var raw = localStorage.getItem('sudoku-game-state');
+      if (!raw) return false;
+      var state = JSON.parse(raw);
+      if (!state || !state.puzzle || !state.solution || !state.userGrid) return false;
+
+      if (state.mode === 'daily') {
+        var todaySeed = getDailySeed();
+        if (state.seed !== todaySeed && state.seed.indexOf(todaySeed) === -1) return false;
+      }
+
+      currentMode = state.mode || 'play';
+      currentDifficulty = state.difficulty || 'medium';
+      currentPuzzle = state.puzzle;
+      currentSolution = state.solution;
+      currentSeed = state.seed || '';
+      userGrid = state.userGrid;
+      timerSeconds = state.timerSeconds || 0;
+      mistakeCount = state.mistakeCount || 0;
+      hintCount = state.hintCount || 0;
+      notesMode = state.notesMode || false;
+      selectedCell = state.selectedCell !== undefined ? state.selectedCell : -1;
+      gameWon = state.gameWon || false;
+      undoStack = [];
+      timerStarted = false;
+
+      seedInput.value = currentSeed;
+
+      for (var i = 0; i < modeTabs.length; i++) {
+        modeTabs[i].classList.toggle('active', modeTabs[i].getAttribute('data-mode') === currentMode);
+      }
+
+      notesBtn.classList.toggle('hidden', currentMode === 'custom');
+      hintBtn.classList.toggle('hidden', currentMode === 'custom');
+      notesBtn.classList.toggle('active', notesMode);
+
+      for (var i = 0; i < diffBtns.length; i++) {
+        diffBtns[i].disabled = (currentMode !== 'play');
+        diffBtns[i].style.opacity = (currentMode !== 'play') ? '0.4' : '';
+        diffBtns[i].style.pointerEvents = (currentMode !== 'play') ? 'none' : '';
+      }
+
+      updateDifficultyButtons();
+      updatePanelLayout();
+      updateTimerDisplay();
+      updateMistakesDisplay();
+      checkConflicts();
+      render();
+
+      if (currentMode === 'daily' && !gameWon) startCountdown();
+      if (!gameWon && currentMode !== 'custom') startTimerIfNeeded();
+
+      return true;
+    } catch (e) { return false; }
+  }
+
+  function clearSavedState() {
+    try { localStorage.removeItem('sudoku-game-state'); } catch (e) {}
+  }
+
   // ---- Mode switching ----
 
   function switchMode(mode) {
@@ -249,15 +382,15 @@
     infoBadgeEl.style.fontSize = '';
 
     if (mode === 'play') {
-      newGameBtn.classList.remove('hidden');
+      footerPlayBtns.classList.remove('hidden');
       customFooterActions.classList.add('hidden');
       statusBar.classList.add('hidden');
     } else if (mode === 'daily') {
-      newGameBtn.classList.add('hidden');
+      footerPlayBtns.classList.add('hidden');
       customFooterActions.classList.add('hidden');
       statusBar.classList.add('hidden');
     } else {
-      newGameBtn.classList.add('hidden');
+      footerPlayBtns.classList.add('hidden');
       customFooterActions.classList.remove('hidden');
       statusBar.classList.remove('hidden');
     }
@@ -364,6 +497,7 @@
     notesBtn.classList.remove('active');
     updatePanelLayout();
     render();
+    clearSavedState();
     startCountdown();
   }
 
@@ -456,8 +590,10 @@
 
     checkConflicts();
     render();
+    animateDigitPop(index);
     checkUnitComplete(index);
     checkWin();
+    saveGameState();
   }
 
   function toggleNote(index, digit) {
@@ -469,6 +605,7 @@
     else { notes.push(digit); notes.sort(function (a, b) { return a - b; }); }
     undoStack.push({ changes: changes });
     render();
+    saveGameState();
   }
 
   function erase() {
@@ -483,6 +620,7 @@
     undoStack.push({ changes: changes });
     checkConflicts();
     render();
+    saveGameState();
   }
 
   function undo() {
@@ -492,6 +630,7 @@
     for (var i = 0; i < entry.changes.length; i++) userGrid[entry.changes[i].index] = entry.changes[i].prev;
     checkConflicts();
     render();
+    saveGameState();
   }
 
   function hint() {
@@ -521,10 +660,12 @@
     undoStack.push({ changes: changes });
     checkConflicts();
     render();
+    animateDigitPop(target);
     cells[target].classList.add('hint-flash');
     setTimeout(function () { cells[target].classList.remove('hint-flash'); }, 600);
     checkUnitComplete(target);
     checkWin();
+    saveGameState();
   }
 
   function toggleNotesMode() {
@@ -553,6 +694,7 @@
     notesBtn.classList.remove('active');
     updatePanelLayout();
     render();
+    clearSavedState();
   }
 
   function loadPuzzleIntoGrid(puzzle) {
@@ -630,6 +772,7 @@
     selectedCell = -1;
     setStatus('', '');
     render();
+    clearSavedState();
   }
 
   function solveCustom() {
@@ -778,6 +921,15 @@
 
   function resetTimer() { stopTimer(); timerSeconds = 0; timerStarted = false; updateTimerDisplay(); }
 
+  function animateDigitPop(index) {
+    var vs = cells[index].querySelector('.cell-value');
+    if (!vs) return;
+    vs.classList.remove('just-entered');
+    void vs.offsetWidth;
+    vs.classList.add('just-entered');
+    setTimeout(function () { vs.classList.remove('just-entered'); }, 160);
+  }
+
   // ---- Render ----
 
   function render() {
@@ -806,6 +958,7 @@
     }
     updateHighlights();
     updateNumpadCompletion();
+    updateNumpadCounts();
   }
 
   function updateNumpadCompletion() {
