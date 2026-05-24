@@ -8,6 +8,7 @@
 
   var PEERS = [];
   var UNITS = [];
+  var CELL_UNITS = [];
 
   (function () {
     for (var i = 0; i < 81; i++) {
@@ -35,6 +36,14 @@
             box.push((br + dr) * 9 + (bc + dc));
         UNITS.push(box);
       }
+    // Precompute which 3 units each cell belongs to
+    for (var i = 0; i < 81; i++) {
+      var cu = [];
+      for (var u = 0; u < 27; u++) {
+        if (UNITS[u].indexOf(i) !== -1) cu.push(u);
+      }
+      CELL_UNITS.push(cu);
+    }
   })();
 
   function popcount(x) {
@@ -74,15 +83,16 @@
 
   // ── Solver ──────────────────────────────────────────────────────
 
-  function initState(puzzleStr) {
+  function initBoard(puzzleStr) {
     var board = new Int8Array(81);
     var cands = new Int32Array(81);
     for (var i = 0; i < 81; i++) board[i] = puzzleStr.charCodeAt(i) - 48;
     for (var i = 0; i < 81; i++) {
       if (board[i]) continue;
       var mask = 0x1ff;
-      for (var k = 0; k < PEERS[i].length; k++) {
-        var pv = board[PEERS[i][k]];
+      var peers = PEERS[i];
+      for (var k = 0; k < peers.length; k++) {
+        var pv = board[peers[k]];
         if (pv) mask &= ~(1 << (pv - 1));
       }
       cands[i] = mask;
@@ -91,31 +101,38 @@
   }
 
   function propagate(board, cands) {
-    var changed = true;
-    while (changed) {
-      changed = false;
+    var queue = [];
+    for (var i = 0; i < 81; i++) {
+      if (board[i] === 0 && cands[i] !== 0 && (cands[i] & (cands[i] - 1)) === 0)
+        queue.push(i);
+    }
 
-      for (var i = 0; i < 81; i++) {
-        if (board[i]) continue;
-        var c = cands[i];
+    for (;;) {
+      // Drain naked singles
+      while (queue.length > 0) {
+        var idx = queue.pop();
+        if (board[idx] !== 0) continue;
+        var c = cands[idx];
         if (c === 0) return false;
-        if ((c & (c - 1)) === 0) {
-          var val = bitlen(c);
-          board[i] = val;
-          cands[i] = 0;
-          var bit = 1 << (val - 1);
-          for (var k = 0; k < PEERS[i].length; k++) {
-            var j = PEERS[i][k];
-            if (cands[j] & bit) {
-              cands[j] &= ~bit;
-              if (cands[j] === 0 && board[j] === 0) return false;
-            }
+        if ((c & (c - 1)) !== 0) continue;
+        var val = bitlen(c);
+        board[idx] = val;
+        cands[idx] = 0;
+        var bit = 1 << (val - 1);
+        var peers = PEERS[idx];
+        for (var k = 0; k < peers.length; k++) {
+          var j = peers[k];
+          if (cands[j] & bit) {
+            cands[j] &= ~bit;
+            if (cands[j] === 0 && board[j] === 0) return false;
+            if (board[j] === 0 && (cands[j] & (cands[j] - 1)) === 0) queue.push(j);
           }
-          changed = true;
         }
       }
 
-      for (var u = 0; u < UNITS.length; u++) {
+      // Hidden singles — feed back into queue
+      var found = false;
+      for (var u = 0; u < 27; u++) {
         var unit = UNITS[u];
         for (var d = 1; d <= 9; d++) {
           var bit = 1 << (d - 1);
@@ -127,16 +144,21 @@
           }
           if (placed) continue;
           if (count === 0) return false;
-          if (count === 1 && cands[last] !== bit) { cands[last] = bit; changed = true; }
+          if (count === 1 && cands[last] !== bit) {
+            cands[last] = bit;
+            queue.push(last);
+            found = true;
+          }
         }
       }
+      if (!found) break;
     }
     return true;
   }
 
   function solveSudoku(puzzle) {
     if (!puzzle || puzzle.length !== 81) return null;
-    var st = initState(puzzle);
+    var st = initBoard(puzzle);
 
     function search(board, cands) {
       if (!propagate(board, cands)) return null;
@@ -155,8 +177,9 @@
         var sb = new Int8Array(board), sc = new Int32Array(cands);
         board[best] = val; cands[best] = 0;
         var ok = true;
-        for (var k = 0; k < PEERS[best].length; k++) {
-          var j = PEERS[best][k];
+        var peers = PEERS[best];
+        for (var k = 0; k < peers.length; k++) {
+          var j = peers[k];
           cands[j] &= ~bit;
           if (cands[j] === 0 && board[j] === 0) { ok = false; break; }
         }
@@ -172,7 +195,7 @@
   // ── Solution counter (for uniqueness check during generation) ──
 
   function countSolutions(puzzle, limit) {
-    var st = initState(puzzle);
+    var st = initBoard(puzzle);
     var found = 0;
 
     function search(board, cands) {
