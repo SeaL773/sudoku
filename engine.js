@@ -239,14 +239,29 @@
     expert: [24, 27], evil: [21, 23], extreme: [17, 20]
   };
 
+  // seed format: "difficulty:number" (e.g. "evil:483927") or plain number/string
+  function parseSeed(seed) {
+    if (seed == null) return { difficulty: null, raw: null };
+    var str = String(seed);
+    var colonIdx = str.indexOf(':');
+    if (colonIdx > 0) {
+      var diff = str.substring(0, colonIdx);
+      var num = str.substring(colonIdx + 1);
+      if (DIFFICULTY_GIVENS[diff]) return { difficulty: diff, raw: num };
+    }
+    return { difficulty: null, raw: str };
+  }
+
   function generatePuzzle(difficulty, seed) {
+    var parsed = parseSeed(seed);
+    if (parsed.difficulty) difficulty = parsed.difficulty;
     difficulty = difficulty || 'medium';
     var range = DIFFICULTY_GIVENS[difficulty] || DIFFICULTY_GIVENS.medium;
 
     var usedSeed;
     var rng;
-    if (seed != null) {
-      usedSeed = typeof seed === 'string' || typeof seed === 'number' ? hashSeed(seed) : 0;
+    if (parsed.raw != null) {
+      usedSeed = hashSeed(parsed.raw);
       rng = mulberry32(usedSeed);
     } else {
       usedSeed = (Math.random() * 2147483647) | 0;
@@ -278,7 +293,7 @@
       puzzle: Array.from(puzzle).join(''),
       solution: Array.from(solution).join(''),
       givens: givens,
-      seed: usedSeed
+      seed: difficulty + ':' + usedSeed
     };
   }
 

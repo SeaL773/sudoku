@@ -434,8 +434,9 @@
   }
 
   function startNewGame(difficulty, seed) {
-    currentDifficulty = difficulty;
     var result = (seed !== undefined && seed !== '') ? generatePuzzle(difficulty, seed) : generatePuzzle(difficulty);
+    var actualDiff = result.seed ? result.seed.split(':')[0] : difficulty;
+    currentDifficulty = actualDiff || difficulty;
     currentPuzzle = result.puzzle;
     currentSolution = result.solution;
     currentSeed = result.seed !== undefined ? String(result.seed) : '';
