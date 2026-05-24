@@ -1,7 +1,6 @@
 (function () {
   'use strict';
 
-  // Play mode state
   var currentPuzzle = '';
   var currentSolution = '';
   var currentSeed = '';
@@ -14,30 +13,47 @@
   var timerStarted = false;
   var currentDifficulty = 'medium';
   var gameWon = false;
-
-  // Mode: 'play' or 'custom'
   var currentMode = 'play';
+  var countdownInterval = null;
 
-  // DOM refs
-  var boardEl, timerEl, notesBtn, winOverlay, winTimeEl, seedInput;
-  var playControls, customControls, statusBar, importInput;
+  var boardEl, timerEl, dailyTimerEl, winOverlay, winTimeEl, seedInput;
+  var settingsBtn, settingsPopover;
+  var notesBtn, hintBtn, undoBtn, eraseBtn;
+  var dailyDateEl, dailyDiffBadge, dailyCountdownEl;
+  var statusBar, importInput;
   var cells = [];
   var numBtns = [];
-  var customNumBtns = [];
   var diffBtns = [];
   var modeTabs = [];
+
+  var panelHeaders = {};
+  var panelFooters = {};
 
   function init() {
     boardEl = document.getElementById('board');
     timerEl = document.getElementById('timer');
-    notesBtn = document.getElementById('btn-notes');
+    dailyTimerEl = document.getElementById('daily-timer');
     winOverlay = document.getElementById('win-overlay');
     winTimeEl = document.getElementById('win-time');
     seedInput = document.getElementById('seed-input');
-    playControls = document.getElementById('play-controls');
-    customControls = document.getElementById('custom-controls');
+    settingsBtn = document.getElementById('settings-btn');
+    settingsPopover = document.getElementById('settings-popover');
+    notesBtn = document.getElementById('btn-notes');
+    hintBtn = document.getElementById('btn-hint');
+    undoBtn = document.getElementById('btn-undo');
+    eraseBtn = document.getElementById('btn-erase');
+    dailyDateEl = document.getElementById('daily-date');
+    dailyDiffBadge = document.getElementById('daily-diff-badge');
+    dailyCountdownEl = document.getElementById('daily-countdown');
     statusBar = document.getElementById('status-bar');
     importInput = document.getElementById('import-input');
+
+    panelHeaders.play = document.getElementById('panel-header-play');
+    panelHeaders.daily = document.getElementById('panel-header-daily');
+    panelHeaders.custom = document.getElementById('panel-header-custom');
+    panelFooters.play = document.getElementById('panel-footer-play');
+    panelFooters.daily = document.getElementById('panel-footer-daily');
+    panelFooters.custom = document.getElementById('panel-footer-custom');
 
     buildBoard();
     bindEvents();
@@ -76,35 +92,19 @@
   }
 
   function bindEvents() {
-    // Play mode numpad
     var numpad = document.getElementById('numpad');
     var numButtons = numpad.querySelectorAll('.num-btn');
     for (var i = 0; i < numButtons.length; i++) {
       numBtns.push(numButtons[i]);
       numButtons[i].addEventListener('click', (function (btn) {
-        return function () {
-          inputNumber(parseInt(btn.getAttribute('data-num')));
-        };
+        return function () { handleNumpadClick(parseInt(btn.getAttribute('data-num'))); };
       })(numButtons[i]));
     }
 
-    // Custom mode numpad
-    var cNumpad = document.getElementById('custom-numpad');
-    var cNumButtons = cNumpad.querySelectorAll('.num-btn');
-    for (var i = 0; i < cNumButtons.length; i++) {
-      customNumBtns.push(cNumButtons[i]);
-      cNumButtons[i].addEventListener('click', (function (btn) {
-        return function () {
-          customInputNumber(parseInt(btn.getAttribute('data-num')));
-        };
-      })(cNumButtons[i]));
-    }
-
-    // Play action buttons
-    document.getElementById('btn-undo').addEventListener('click', undo);
-    document.getElementById('btn-erase').addEventListener('click', erase);
+    undoBtn.addEventListener('click', undo);
+    eraseBtn.addEventListener('click', erase);
     notesBtn.addEventListener('click', toggleNotesMode);
-    document.getElementById('btn-hint').addEventListener('click', hint);
+    hintBtn.addEventListener('click', hint);
 
     document.getElementById('btn-new-game').addEventListener('click', function () {
       startNewGame(currentDifficulty);
@@ -112,27 +112,34 @@
 
     document.getElementById('btn-play-again').addEventListener('click', function () {
       hideWinOverlay();
-      startNewGame(currentDifficulty);
+      if (currentMode === 'daily') startDailyGame();
+      else startNewGame(currentDifficulty);
     });
 
-    // Difficulty buttons
     var diffButtons = document.querySelectorAll('.diff-btn');
     for (var i = 0; i < diffButtons.length; i++) {
       diffBtns.push(diffButtons[i]);
       diffButtons[i].addEventListener('click', (function (btn) {
-        return function () {
-          startNewGame(btn.getAttribute('data-difficulty'));
-        };
+        return function () { startNewGame(btn.getAttribute('data-difficulty')); };
       })(diffButtons[i]));
     }
 
-    // Seed
-    document.getElementById('seed-go').addEventListener('click', applySeed);
+    settingsBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      settingsPopover.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!settingsPopover.contains(e.target) && e.target !== settingsBtn) {
+        settingsPopover.classList.add('hidden');
+      }
+    });
+
+    document.getElementById('seed-apply').addEventListener('click', applySeed);
     seedInput.addEventListener('keydown', function (e) {
       if (e.key === 'Enter') applySeed();
     });
 
-    // Custom mode buttons
     document.getElementById('btn-solve').addEventListener('click', solveCustom);
     document.getElementById('btn-clear').addEventListener('click', clearCustom);
     document.getElementById('btn-load').addEventListener('click', loadImport);
@@ -140,45 +147,125 @@
       if (e.key === 'Enter') loadImport();
     });
 
-    // Mode tabs
     var tabs = document.querySelectorAll('.mode-tab');
     for (var i = 0; i < tabs.length; i++) {
       modeTabs.push(tabs[i]);
       tabs[i].addEventListener('click', (function (tab) {
-        return function () {
-          switchMode(tab.getAttribute('data-mode'));
-        };
+        return function () { switchMode(tab.getAttribute('data-mode')); };
       })(tabs[i]));
     }
 
-    // Keyboard
     document.addEventListener('keydown', handleKeydown);
+  }
+
+  function handleNumpadClick(digit) {
+    if (currentMode === 'custom') {
+      customInputNumber(digit);
+    } else {
+      inputNumber(digit);
+    }
   }
 
   // ---- Mode switching ----
 
   function switchMode(mode) {
     currentMode = mode;
+    settingsPopover.classList.add('hidden');
 
     for (var i = 0; i < modeTabs.length; i++) {
-      if (modeTabs[i].getAttribute('data-mode') === mode) {
-        modeTabs[i].classList.add('active');
-      } else {
-        modeTabs[i].classList.remove('active');
-      }
+      modeTabs[i].classList.toggle('active', modeTabs[i].getAttribute('data-mode') === mode);
     }
 
+    var modes = ['play', 'daily', 'custom'];
+    for (var i = 0; i < modes.length; i++) {
+      panelHeaders[modes[i]].classList.toggle('hidden', modes[i] !== mode);
+      panelFooters[modes[i]].classList.toggle('hidden', modes[i] !== mode);
+    }
+
+    settingsBtn.classList.toggle('hidden', mode !== 'play');
+    notesBtn.classList.toggle('hidden', mode === 'custom');
+    hintBtn.classList.toggle('hidden', mode === 'custom');
+
+    stopCountdown();
+
     if (mode === 'play') {
-      playControls.classList.remove('hidden');
-      customControls.classList.add('hidden');
       startNewGame(currentDifficulty);
+    } else if (mode === 'daily') {
+      startDailyGame();
     } else {
-      playControls.classList.add('hidden');
-      customControls.classList.remove('hidden');
       stopTimer();
       hideWinOverlay();
+      notesMode = false;
+      notesBtn.classList.remove('active');
       clearCustom();
     }
+  }
+
+  // ---- Daily mode ----
+
+  function dailyDifficultyFromDate(dateStr) {
+    var h = 0;
+    for (var i = 0; i < dateStr.length; i++) h = ((h << 5) - h) + dateStr.charCodeAt(i) | 0;
+    var diffs = ['medium', 'hard', 'expert', 'evil'];
+    return diffs[((h % diffs.length) + diffs.length) % diffs.length];
+  }
+
+  function getDailySeed() {
+    var now = new Date();
+    return 'daily-' + now.getUTCFullYear() + '-' + (now.getUTCMonth() + 1) + '-' + now.getUTCDate();
+  }
+
+  function formatDateNice() {
+    var months = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December'];
+    var now = new Date();
+    return months[now.getUTCMonth()] + ' ' + now.getUTCDate() + ', ' + now.getUTCFullYear();
+  }
+
+  function startDailyGame() {
+    var seed = getDailySeed();
+    var difficulty = dailyDifficultyFromDate(seed);
+
+    dailyDateEl.textContent = formatDateNice();
+    dailyDiffBadge.textContent = difficulty;
+    currentDifficulty = difficulty;
+
+    var result = generatePuzzle(difficulty, seed);
+    currentPuzzle = result.puzzle;
+    currentSolution = result.solution;
+    currentSeed = String(result.seed !== undefined ? result.seed : seed);
+
+    loadPuzzleIntoGrid(currentPuzzle);
+    resetTimer();
+    hideWinOverlay();
+    notesMode = false;
+    notesBtn.classList.remove('active');
+    render();
+    startCountdown();
+  }
+
+  function startCountdown() {
+    stopCountdown();
+    updateCountdown();
+    countdownInterval = setInterval(updateCountdown, 1000);
+  }
+
+  function stopCountdown() {
+    if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+  }
+
+  function updateCountdown() {
+    var now = new Date();
+    var tomorrow = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
+    var diff = tomorrow.getTime() - now.getTime();
+
+    if (diff <= 0) { stopCountdown(); startDailyGame(); return; }
+
+    var h = Math.floor(diff / 3600000);
+    var m = Math.floor((diff % 3600000) / 60000);
+    var s = Math.floor((diff % 60000) / 1000);
+    dailyCountdownEl.textContent = 'Next in ' +
+      (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
   }
 
   // ---- Play mode ----
@@ -192,7 +279,6 @@
     for (var i = 0; i < 81; i++) {
       cells[i].classList.remove('selected', 'peer-highlight', 'same-number');
     }
-
     for (var d = 0; d < 9; d++) {
       numBtns[d].classList.remove('active-digit');
     }
@@ -213,14 +299,13 @@
           cells[i].classList.add('same-number');
         }
       }
-      if (currentMode === 'play') {
+      if (currentMode !== 'custom') {
         numBtns[selectedValue - 1].classList.add('active-digit');
       }
     }
   }
 
   function inputNumber(digit) {
-    if (currentMode !== 'play') return;
     if (selectedCell < 0 || gameWon) return;
     if (userGrid[selectedCell].isGiven) return;
 
@@ -260,28 +345,22 @@
     if (userGrid[index].value > 0) return;
 
     var changes = [{ index: index, prev: copyCell(userGrid[index]) }];
-
     var notes = userGrid[index].notes;
     var noteIdx = notes.indexOf(digit);
-    if (noteIdx >= 0) {
-      notes.splice(noteIdx, 1);
-    } else {
-      notes.push(digit);
-      notes.sort(function (a, b) { return a - b; });
-    }
+    if (noteIdx >= 0) { notes.splice(noteIdx, 1); }
+    else { notes.push(digit); notes.sort(function (a, b) { return a - b; }); }
 
     undoStack.push({ changes: changes });
     render();
   }
 
   function erase() {
-    if (currentMode !== 'play') return;
+    if (currentMode === 'custom') { customErase(); return; }
     if (selectedCell < 0 || gameWon) return;
     if (userGrid[selectedCell].isGiven) return;
     if (userGrid[selectedCell].value === 0 && userGrid[selectedCell].notes.length === 0) return;
 
     var changes = [{ index: selectedCell, prev: copyCell(userGrid[selectedCell]) }];
-
     userGrid[selectedCell].value = 0;
     userGrid[selectedCell].notes = [];
 
@@ -291,27 +370,22 @@
   }
 
   function undo() {
-    if (currentMode !== 'play') return;
+    if (currentMode === 'custom') return;
     if (undoStack.length === 0 || gameWon) return;
 
     var entry = undoStack.pop();
     for (var i = 0; i < entry.changes.length; i++) {
-      var change = entry.changes[i];
-      userGrid[change.index] = change.prev;
+      userGrid[entry.changes[i].index] = entry.changes[i].prev;
     }
-
     checkConflicts();
     render();
   }
 
   function hint() {
-    if (currentMode !== 'play') return;
-    if (gameWon) return;
+    if (currentMode === 'custom' || gameWon) return;
 
     var target = selectedCell;
-
-    if (target < 0 ||
-        userGrid[target].isGiven ||
+    if (target < 0 || userGrid[target].isGiven ||
         userGrid[target].value === parseInt(currentSolution[target])) {
       var emptyCells = [];
       for (var i = 0; i < 81; i++) {
@@ -325,7 +399,6 @@
     }
 
     startTimerIfNeeded();
-
     var correctDigit = parseInt(currentSolution[target]);
     var changes = [{ index: target, prev: copyCell(userGrid[target]) }];
 
@@ -345,43 +418,38 @@
     undoStack.push({ changes: changes });
     checkConflicts();
     render();
-    flashCell(target);
+    cells[target].classList.add('hint-flash');
+    setTimeout(function () { cells[target].classList.remove('hint-flash'); }, 600);
     checkWin();
   }
 
-  function flashCell(index) {
-    cells[index].classList.add('hint-flash');
-    setTimeout(function () {
-      cells[index].classList.remove('hint-flash');
-    }, 600);
-  }
-
   function toggleNotesMode() {
+    if (currentMode === 'custom') return;
     notesMode = !notesMode;
-    if (notesMode) {
-      notesBtn.classList.add('active');
-    } else {
-      notesBtn.classList.remove('active');
-    }
+    notesBtn.classList.toggle('active', notesMode);
   }
 
   function startNewGame(difficulty, seed) {
     currentDifficulty = difficulty;
-    var result;
-    if (seed !== undefined && seed !== '') {
-      result = generatePuzzle(difficulty, seed);
-    } else {
-      result = generatePuzzle(difficulty);
-    }
+    var result = (seed !== undefined && seed !== '') ? generatePuzzle(difficulty, seed) : generatePuzzle(difficulty);
     currentPuzzle = result.puzzle;
     currentSolution = result.solution;
     currentSeed = result.seed !== undefined ? String(result.seed) : '';
-
     seedInput.value = currentSeed;
 
+    loadPuzzleIntoGrid(currentPuzzle);
+    resetTimer();
+    updateDifficultyButtons();
+    hideWinOverlay();
+    notesMode = false;
+    notesBtn.classList.remove('active');
+    render();
+  }
+
+  function loadPuzzleIntoGrid(puzzle) {
     userGrid = [];
     for (var i = 0; i < 81; i++) {
-      var ch = currentPuzzle[i];
+      var ch = puzzle[i];
       userGrid.push({
         value: ch !== '0' ? parseInt(ch) : 0,
         isGiven: ch !== '0',
@@ -389,47 +457,39 @@
         isError: false
       });
     }
-
     selectedCell = -1;
-    notesMode = false;
     undoStack = [];
     gameWon = false;
-
-    resetTimer();
-    updateDifficultyButtons();
-    hideWinOverlay();
-
-    if (notesBtn) notesBtn.classList.remove('active');
-
-    render();
   }
 
   function applySeed() {
     var seed = seedInput.value.trim();
     if (seed) {
       startNewGame(currentDifficulty, seed);
+      settingsPopover.classList.add('hidden');
     }
   }
 
   function updateDifficultyButtons() {
     for (var i = 0; i < diffBtns.length; i++) {
-      var diff = diffBtns[i].getAttribute('data-difficulty');
-      if (diff === currentDifficulty) {
-        diffBtns[i].classList.add('active');
-      } else {
-        diffBtns[i].classList.remove('active');
-      }
+      diffBtns[i].classList.toggle('active', diffBtns[i].getAttribute('data-difficulty') === currentDifficulty);
     }
   }
 
   // ---- Custom mode ----
 
   function customInputNumber(digit) {
-    if (currentMode !== 'custom') return;
-    if (selectedCell < 0) return;
-
+    if (currentMode !== 'custom' || selectedCell < 0) return;
     userGrid[selectedCell].value = digit;
     userGrid[selectedCell].isGiven = true;
+    checkConflicts();
+    render();
+  }
+
+  function customErase() {
+    if (selectedCell < 0) return;
+    userGrid[selectedCell].value = 0;
+    userGrid[selectedCell].isGiven = false;
     checkConflicts();
     render();
   }
@@ -437,12 +497,7 @@
   function clearCustom() {
     userGrid = [];
     for (var i = 0; i < 81; i++) {
-      userGrid.push({
-        value: 0,
-        isGiven: false,
-        notes: [],
-        isError: false
-      });
+      userGrid.push({ value: 0, isGiven: false, notes: [], isError: false });
     }
     selectedCell = -1;
     setStatus('', '');
@@ -451,18 +506,10 @@
 
   function solveCustom() {
     var puzzle = getGridString();
-
-    if (puzzle === '000000000000000000000000000000000000000000000000000000000000000000000000000000000') {
-      setStatus('Grid is empty', 'error');
-      return;
-    }
+    if (/^0+$/.test(puzzle)) { setStatus('Grid is empty', 'error'); return; }
 
     var solution = solveSudoku(puzzle);
-
-    if (!solution) {
-      setStatus('No solution exists', 'error');
-      return;
-    }
+    if (!solution) { setStatus('No solution exists', 'error'); return; }
 
     for (var i = 0; i < 81; i++) {
       if (userGrid[i].value === 0) {
@@ -470,7 +517,6 @@
         userGrid[i].isGiven = false;
       }
     }
-
     checkConflicts();
     render();
     setStatus('Solved!', 'success');
@@ -479,23 +525,13 @@
   function loadImport() {
     var raw = importInput.value.trim();
     var cleaned = raw.replace(/[^0-9.]/g, '').replace(/\./g, '0');
-
-    if (cleaned.length !== 81) {
-      setStatus('Input must be exactly 81 characters', 'error');
-      return;
-    }
+    if (cleaned.length !== 81) { setStatus('Input must be exactly 81 characters', 'error'); return; }
 
     userGrid = [];
     for (var i = 0; i < 81; i++) {
       var ch = cleaned[i];
-      userGrid.push({
-        value: ch !== '0' ? parseInt(ch) : 0,
-        isGiven: ch !== '0',
-        notes: [],
-        isError: false
-      });
+      userGrid.push({ value: ch !== '0' ? parseInt(ch) : 0, isGiven: ch !== '0', notes: [], isError: false });
     }
-
     selectedCell = -1;
     checkConflicts();
     render();
@@ -505,9 +541,7 @@
 
   function getGridString() {
     var s = '';
-    for (var i = 0; i < 81; i++) {
-      s += userGrid[i].value > 0 ? String(userGrid[i].value) : '0';
-    }
+    for (var i = 0; i < 81; i++) s += userGrid[i].value > 0 ? String(userGrid[i].value) : '0';
     return s;
   }
 
@@ -519,84 +553,55 @@
   // ---- Shared utilities ----
 
   function copyCell(cell) {
-    return {
-      value: cell.value,
-      isGiven: cell.isGiven,
-      notes: cell.notes.slice(),
-      isError: cell.isError
-    };
+    return { value: cell.value, isGiven: cell.isGiven, notes: cell.notes.slice(), isError: cell.isError };
   }
 
   function getPeers(index) {
-    var row = Math.floor(index / 9);
-    var col = index % 9;
-    var boxRow = Math.floor(row / 3) * 3;
-    var boxCol = Math.floor(col / 3) * 3;
-    var peers = [];
-    var seen = {};
-
+    var row = Math.floor(index / 9), col = index % 9;
+    var boxRow = Math.floor(row / 3) * 3, boxCol = Math.floor(col / 3) * 3;
+    var peers = [], seen = {};
     for (var i = 0; i < 9; i++) {
-      var ri = row * 9 + i;
-      var ci = i * 9 + col;
+      var ri = row * 9 + i, ci = i * 9 + col;
       if (ri !== index && !seen[ri]) { peers.push(ri); seen[ri] = true; }
       if (ci !== index && !seen[ci]) { peers.push(ci); seen[ci] = true; }
     }
-    for (var r = boxRow; r < boxRow + 3; r++) {
+    for (var r = boxRow; r < boxRow + 3; r++)
       for (var c = boxCol; c < boxCol + 3; c++) {
         var bi = r * 9 + c;
         if (bi !== index && !seen[bi]) { peers.push(bi); seen[bi] = true; }
       }
-    }
     return peers;
   }
 
   function getUnit(u) {
     var arr = [];
-    if (u < 9) {
-      for (var c = 0; c < 9; c++) arr.push(u * 9 + c);
-    } else if (u < 18) {
-      var col = u - 9;
-      for (var r = 0; r < 9; r++) arr.push(r * 9 + col);
-    } else {
-      var box = u - 18;
-      var br = Math.floor(box / 3) * 3;
-      var bc = (box % 3) * 3;
-      for (var dr = 0; dr < 3; dr++)
-        for (var dc = 0; dc < 3; dc++)
-          arr.push((br + dr) * 9 + (bc + dc));
+    if (u < 9) { for (var c = 0; c < 9; c++) arr.push(u * 9 + c); }
+    else if (u < 18) { var col = u - 9; for (var r = 0; r < 9; r++) arr.push(r * 9 + col); }
+    else {
+      var box = u - 18, br = Math.floor(box / 3) * 3, bc = (box % 3) * 3;
+      for (var dr = 0; dr < 3; dr++) for (var dc = 0; dc < 3; dc++) arr.push((br + dr) * 9 + (bc + dc));
     }
     return arr;
   }
 
   function checkConflicts() {
-    for (var i = 0; i < 81; i++) {
-      userGrid[i].isError = false;
-    }
-
+    for (var i = 0; i < 81; i++) userGrid[i].isError = false;
     for (var u = 0; u < 27; u++) {
-      var unit = getUnit(u);
-      var seen = {};
+      var unit = getUnit(u), seen = {};
       for (var k = 0; k < 9; k++) {
-        var idx = unit[k];
-        var val = userGrid[idx].value;
+        var idx = unit[k], val = userGrid[idx].value;
         if (val === 0) continue;
-        if (seen[val] !== undefined) {
-          userGrid[idx].isError = true;
-          userGrid[seen[val]].isError = true;
-        } else {
-          seen[val] = idx;
-        }
+        if (seen[val] !== undefined) { userGrid[idx].isError = true; userGrid[seen[val]].isError = true; }
+        else { seen[val] = idx; }
       }
     }
   }
 
   function checkWin() {
-    if (currentMode !== 'play') return;
+    if (currentMode === 'custom') return;
     for (var i = 0; i < 81; i++) {
-      if (userGrid[i].value === 0) return;
-      if (userGrid[i].value !== parseInt(currentSolution[i])) return;
+      if (userGrid[i].value === 0 || userGrid[i].value !== parseInt(currentSolution[i])) return;
     }
-
     gameWon = true;
     stopTimer();
     showWinOverlay();
@@ -605,20 +610,12 @@
   // ---- Timer ----
 
   function startTimerIfNeeded() {
-    if (timerStarted || gameWon || currentMode !== 'play') return;
+    if (timerStarted || gameWon || currentMode === 'custom') return;
     timerStarted = true;
-    timerInterval = setInterval(function () {
-      timerSeconds++;
-      updateTimerDisplay();
-    }, 1000);
+    timerInterval = setInterval(function () { timerSeconds++; updateTimerDisplay(); }, 1000);
   }
 
-  function stopTimer() {
-    if (timerInterval) {
-      clearInterval(timerInterval);
-      timerInterval = null;
-    }
-  }
+  function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
 
   function resetTimer() {
     stopTimer();
@@ -628,17 +625,17 @@
   }
 
   function updateTimerDisplay() {
-    var m = Math.floor(timerSeconds / 60);
-    var s = timerSeconds % 60;
-    timerEl.textContent = (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+    var m = Math.floor(timerSeconds / 60), s = timerSeconds % 60;
+    var text = (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+    timerEl.textContent = text;
+    dailyTimerEl.textContent = text;
   }
 
   // ---- Render ----
 
   function render() {
     for (var i = 0; i < 81; i++) {
-      var cell = cells[i];
-      var data = userGrid[i];
+      var cell = cells[i], data = userGrid[i];
       var valueSpan = cell.querySelector('.cell-value');
       var notesDiv = cell.querySelector('.cell-notes');
 
@@ -661,8 +658,7 @@
         valueSpan.style.display = 'none';
         notesDiv.style.display = '';
         for (var n = 1; n <= 9; n++) {
-          var noteSpan = notesDiv.querySelector('[data-note="' + n + '"]');
-          noteSpan.textContent = data.notes.indexOf(n) >= 0 ? n : '';
+          notesDiv.querySelector('[data-note="' + n + '"]').textContent = data.notes.indexOf(n) >= 0 ? n : '';
         }
       } else {
         valueSpan.textContent = '';
@@ -670,43 +666,27 @@
         notesDiv.style.display = 'none';
       }
     }
-
     updateHighlights();
-    if (currentMode === 'play') {
-      updateNumpadCompletion();
-    }
+    updateNumpadCompletion();
   }
 
   function updateNumpadCompletion() {
+    if (currentMode === 'custom') return;
     var counts = {};
     for (var d = 1; d <= 9; d++) counts[d] = 0;
-
-    for (var i = 0; i < 81; i++) {
-      var val = userGrid[i].value;
-      if (val > 0) counts[val]++;
-    }
-
-    for (var d = 1; d <= 9; d++) {
-      if (counts[d] >= 9) {
-        numBtns[d - 1].classList.add('completed');
-      } else {
-        numBtns[d - 1].classList.remove('completed');
-      }
-    }
+    for (var i = 0; i < 81; i++) { var v = userGrid[i].value; if (v > 0) counts[v]++; }
+    for (var d = 1; d <= 9; d++) numBtns[d - 1].classList.toggle('completed', counts[d] >= 9);
   }
 
   // ---- Win overlay ----
 
   function showWinOverlay() {
-    var m = Math.floor(timerSeconds / 60);
-    var s = timerSeconds % 60;
+    var m = Math.floor(timerSeconds / 60), s = timerSeconds % 60;
     winTimeEl.textContent = (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
     winOverlay.classList.add('visible');
   }
 
-  function hideWinOverlay() {
-    winOverlay.classList.remove('visible');
-  }
+  function hideWinOverlay() { winOverlay.classList.remove('visible'); }
 
   // ---- Keyboard ----
 
@@ -714,94 +694,31 @@
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
     switch (e.key) {
-      case 'ArrowUp':
-        e.preventDefault();
-        navigateCell(0, -1);
-        break;
-      case 'ArrowDown':
-        e.preventDefault();
-        navigateCell(0, 1);
-        break;
-      case 'ArrowLeft':
-        e.preventDefault();
-        navigateCell(-1, 0);
-        break;
-      case 'ArrowRight':
-        e.preventDefault();
-        navigateCell(1, 0);
-        break;
-      case 'Backspace':
-      case 'Delete':
-        e.preventDefault();
-        if (currentMode === 'play') {
-          erase();
-        } else {
-          customErase();
-        }
-        break;
-      case 'n':
-      case 'N':
-        if (!e.ctrlKey && !e.metaKey && currentMode === 'play') {
-          e.preventDefault();
-          toggleNotesMode();
-        }
-        break;
+      case 'ArrowUp': e.preventDefault(); navigateCell(0, -1); break;
+      case 'ArrowDown': e.preventDefault(); navigateCell(0, 1); break;
+      case 'ArrowLeft': e.preventDefault(); navigateCell(-1, 0); break;
+      case 'ArrowRight': e.preventDefault(); navigateCell(1, 0); break;
+      case 'Backspace': case 'Delete': e.preventDefault(); erase(); break;
+      case 'n': case 'N':
+        if (!e.ctrlKey && !e.metaKey) { e.preventDefault(); toggleNotesMode(); } break;
       case 'z':
-        if (currentMode === 'play') {
-          e.preventDefault();
-          undo();
-        }
-        break;
+        e.preventDefault(); undo(); break;
       case 'Z':
-        if ((e.ctrlKey || e.metaKey) && currentMode === 'play') {
-          e.preventDefault();
-          undo();
-        }
-        break;
-      case 'h':
-      case 'H':
-        if (!e.ctrlKey && !e.metaKey && currentMode === 'play') {
-          e.preventDefault();
-          hint();
-        }
-        break;
+        if (e.ctrlKey || e.metaKey) { e.preventDefault(); undo(); } break;
+      case 'h': case 'H':
+        if (!e.ctrlKey && !e.metaKey) { e.preventDefault(); hint(); } break;
       default:
-        if (/^[1-9]$/.test(e.key)) {
-          e.preventDefault();
-          if (currentMode === 'play') {
-            inputNumber(parseInt(e.key));
-          } else {
-            customInputNumber(parseInt(e.key));
-          }
-        }
+        if (/^[1-9]$/.test(e.key)) { e.preventDefault(); handleNumpadClick(parseInt(e.key)); }
         break;
     }
-  }
-
-  function customErase() {
-    if (selectedCell < 0) return;
-    userGrid[selectedCell].value = 0;
-    userGrid[selectedCell].isGiven = false;
-    checkConflicts();
-    render();
   }
 
   function navigateCell(dx, dy) {
-    if (selectedCell < 0) {
-      selectCell(0);
-      return;
-    }
-
-    var row = Math.floor(selectedCell / 9);
-    var col = selectedCell % 9;
-    var newRow = row + dy;
-    var newCol = col + dx;
-
-    if (newRow < 0) newRow = 8;
-    if (newRow > 8) newRow = 0;
-    if (newCol < 0) newCol = 8;
-    if (newCol > 8) newCol = 0;
-
+    if (selectedCell < 0) { selectCell(0); return; }
+    var row = Math.floor(selectedCell / 9), col = selectedCell % 9;
+    var newRow = row + dy, newCol = col + dx;
+    if (newRow < 0) newRow = 8; if (newRow > 8) newRow = 0;
+    if (newCol < 0) newCol = 8; if (newCol > 8) newCol = 0;
     selectCell(newRow * 9 + newCol);
   }
 
