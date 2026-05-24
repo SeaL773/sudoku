@@ -1,7 +1,7 @@
 // engine.js — Sudoku engine: solver + puzzle generator
 // Global API:
 //   solveSudoku(puzzle: string) → string | null
-//   generatePuzzle(difficulty: string) → { puzzle: string, solution: string }
+//   generatePuzzle(difficulty: string, seed?: number|string) → { puzzle, solution, givens, seed }
 
 (function () {
   'use strict';
@@ -44,9 +44,28 @@
   }
   var bitlen = function (x) { return 32 - Math.clz32(x); };
 
-  function shuffle(arr) {
+  // Mulberry32 — fast 32-bit seeded PRNG
+  function mulberry32(seed) {
+    seed = seed | 0;
+    return function () {
+      seed = seed + 0x6D2B79F5 | 0;
+      var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  function hashSeed(v) {
+    if (typeof v === 'number') return v | 0;
+    var h = 0;
+    for (var i = 0; i < v.length; i++) h = ((h << 5) - h) + v.charCodeAt(i) | 0;
+    return h;
+  }
+
+  function shuffle(arr, rng) {
+    var rand = rng || Math.random;
     for (var i = arr.length - 1; i > 0; i--) {
-      var j = (Math.random() * (i + 1)) | 0;
+      var j = (rand() * (i + 1)) | 0;
       var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
     }
     return arr;
@@ -188,7 +207,7 @@
 
   // ── Puzzle generator ───────────────────────────────────────────
 
-  function generateComplete() {
+  function generateComplete(rng) {
     var board = new Int8Array(81);
 
     function valid(idx, val) {
@@ -199,7 +218,7 @@
 
     function fill(idx) {
       if (idx === 81) return true;
-      var digits = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      var digits = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9], rng);
       for (var d = 0; d < 9; d++) {
         if (valid(idx, digits[d])) {
           board[idx] = digits[d];
@@ -219,14 +238,25 @@
     expert: [24, 27], evil: [21, 23], extreme: [17, 20]
   };
 
-  function generatePuzzle(difficulty) {
+  function generatePuzzle(difficulty, seed) {
     difficulty = difficulty || 'medium';
     var range = DIFFICULTY_GIVENS[difficulty] || DIFFICULTY_GIVENS.medium;
-    var targetGivens = range[0] + ((Math.random() * (range[1] - range[0] + 1)) | 0);
 
-    var solution = generateComplete();
+    var usedSeed;
+    var rng;
+    if (seed != null) {
+      usedSeed = typeof seed === 'string' || typeof seed === 'number' ? hashSeed(seed) : 0;
+      rng = mulberry32(usedSeed);
+    } else {
+      usedSeed = (Math.random() * 2147483647) | 0;
+      rng = mulberry32(usedSeed);
+    }
+
+    var targetGivens = range[0] + ((rng() * (range[1] - range[0] + 1)) | 0);
+
+    var solution = generateComplete(rng);
     var puzzle = new Int8Array(solution);
-    var indices = shuffle(Array.from({ length: 81 }, function (_, i) { return i; }));
+    var indices = shuffle(Array.from({ length: 81 }, function (_, i) { return i; }), rng);
 
     var givens = 81;
     for (var n = 0; n < indices.length && givens > targetGivens; n++) {
@@ -246,7 +276,8 @@
     return {
       puzzle: Array.from(puzzle).join(''),
       solution: Array.from(solution).join(''),
-      givens: givens
+      givens: givens,
+      seed: usedSeed
     };
   }
 

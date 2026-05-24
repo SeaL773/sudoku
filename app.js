@@ -1,8 +1,10 @@
 (function () {
   'use strict';
 
+  // Play mode state
   var currentPuzzle = '';
   var currentSolution = '';
+  var currentSeed = '';
   var userGrid = [];
   var selectedCell = -1;
   var notesMode = false;
@@ -13,10 +15,17 @@
   var currentDifficulty = 'medium';
   var gameWon = false;
 
-  var boardEl, timerEl, notesBtn, winOverlay, winTimeEl;
+  // Mode: 'play' or 'custom'
+  var currentMode = 'play';
+
+  // DOM refs
+  var boardEl, timerEl, notesBtn, winOverlay, winTimeEl, seedInput;
+  var playControls, customControls, statusBar, importInput;
   var cells = [];
   var numBtns = [];
+  var customNumBtns = [];
   var diffBtns = [];
+  var modeTabs = [];
 
   function init() {
     boardEl = document.getElementById('board');
@@ -24,6 +33,11 @@
     notesBtn = document.getElementById('btn-notes');
     winOverlay = document.getElementById('win-overlay');
     winTimeEl = document.getElementById('win-time');
+    seedInput = document.getElementById('seed-input');
+    playControls = document.getElementById('play-controls');
+    customControls = document.getElementById('custom-controls');
+    statusBar = document.getElementById('status-bar');
+    importInput = document.getElementById('import-input');
 
     buildBoard();
     bindEvents();
@@ -62,6 +76,7 @@
   }
 
   function bindEvents() {
+    // Play mode numpad
     var numpad = document.getElementById('numpad');
     var numButtons = numpad.querySelectorAll('.num-btn');
     for (var i = 0; i < numButtons.length; i++) {
@@ -73,6 +88,19 @@
       })(numButtons[i]));
     }
 
+    // Custom mode numpad
+    var cNumpad = document.getElementById('custom-numpad');
+    var cNumButtons = cNumpad.querySelectorAll('.num-btn');
+    for (var i = 0; i < cNumButtons.length; i++) {
+      customNumBtns.push(cNumButtons[i]);
+      cNumButtons[i].addEventListener('click', (function (btn) {
+        return function () {
+          customInputNumber(parseInt(btn.getAttribute('data-num')));
+        };
+      })(cNumButtons[i]));
+    }
+
+    // Play action buttons
     document.getElementById('btn-undo').addEventListener('click', undo);
     document.getElementById('btn-erase').addEventListener('click', erase);
     notesBtn.addEventListener('click', toggleNotesMode);
@@ -87,6 +115,7 @@
       startNewGame(currentDifficulty);
     });
 
+    // Difficulty buttons
     var diffButtons = document.querySelectorAll('.diff-btn');
     for (var i = 0; i < diffButtons.length; i++) {
       diffBtns.push(diffButtons[i]);
@@ -97,8 +126,62 @@
       })(diffButtons[i]));
     }
 
+    // Seed
+    document.getElementById('seed-go').addEventListener('click', applySeed);
+    seedInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') applySeed();
+    });
+
+    // Custom mode buttons
+    document.getElementById('btn-solve').addEventListener('click', solveCustom);
+    document.getElementById('btn-clear').addEventListener('click', clearCustom);
+    document.getElementById('btn-load').addEventListener('click', loadImport);
+    importInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') loadImport();
+    });
+
+    // Mode tabs
+    var tabs = document.querySelectorAll('.mode-tab');
+    for (var i = 0; i < tabs.length; i++) {
+      modeTabs.push(tabs[i]);
+      tabs[i].addEventListener('click', (function (tab) {
+        return function () {
+          switchMode(tab.getAttribute('data-mode'));
+        };
+      })(tabs[i]));
+    }
+
+    // Keyboard
     document.addEventListener('keydown', handleKeydown);
   }
+
+  // ---- Mode switching ----
+
+  function switchMode(mode) {
+    currentMode = mode;
+
+    for (var i = 0; i < modeTabs.length; i++) {
+      if (modeTabs[i].getAttribute('data-mode') === mode) {
+        modeTabs[i].classList.add('active');
+      } else {
+        modeTabs[i].classList.remove('active');
+      }
+    }
+
+    if (mode === 'play') {
+      playControls.classList.remove('hidden');
+      customControls.classList.add('hidden');
+      startNewGame(currentDifficulty);
+    } else {
+      playControls.classList.add('hidden');
+      customControls.classList.remove('hidden');
+      stopTimer();
+      hideWinOverlay();
+      clearCustom();
+    }
+  }
+
+  // ---- Play mode ----
 
   function selectCell(index) {
     selectedCell = index;
@@ -130,11 +213,14 @@
           cells[i].classList.add('same-number');
         }
       }
-      numBtns[selectedValue - 1].classList.add('active-digit');
+      if (currentMode === 'play') {
+        numBtns[selectedValue - 1].classList.add('active-digit');
+      }
     }
   }
 
   function inputNumber(digit) {
+    if (currentMode !== 'play') return;
     if (selectedCell < 0 || gameWon) return;
     if (userGrid[selectedCell].isGiven) return;
 
@@ -189,6 +275,7 @@
   }
 
   function erase() {
+    if (currentMode !== 'play') return;
     if (selectedCell < 0 || gameWon) return;
     if (userGrid[selectedCell].isGiven) return;
     if (userGrid[selectedCell].value === 0 && userGrid[selectedCell].notes.length === 0) return;
@@ -204,6 +291,7 @@
   }
 
   function undo() {
+    if (currentMode !== 'play') return;
     if (undoStack.length === 0 || gameWon) return;
 
     var entry = undoStack.pop();
@@ -217,6 +305,7 @@
   }
 
   function hint() {
+    if (currentMode !== 'play') return;
     if (gameWon) return;
 
     var target = selectedCell;
@@ -266,6 +355,168 @@
       cells[index].classList.remove('hint-flash');
     }, 600);
   }
+
+  function toggleNotesMode() {
+    notesMode = !notesMode;
+    if (notesMode) {
+      notesBtn.classList.add('active');
+    } else {
+      notesBtn.classList.remove('active');
+    }
+  }
+
+  function startNewGame(difficulty, seed) {
+    currentDifficulty = difficulty;
+    var result;
+    if (seed !== undefined && seed !== '') {
+      result = generatePuzzle(difficulty, seed);
+    } else {
+      result = generatePuzzle(difficulty);
+    }
+    currentPuzzle = result.puzzle;
+    currentSolution = result.solution;
+    currentSeed = result.seed !== undefined ? String(result.seed) : '';
+
+    seedInput.value = currentSeed;
+
+    userGrid = [];
+    for (var i = 0; i < 81; i++) {
+      var ch = currentPuzzle[i];
+      userGrid.push({
+        value: ch !== '0' ? parseInt(ch) : 0,
+        isGiven: ch !== '0',
+        notes: [],
+        isError: false
+      });
+    }
+
+    selectedCell = -1;
+    notesMode = false;
+    undoStack = [];
+    gameWon = false;
+
+    resetTimer();
+    updateDifficultyButtons();
+    hideWinOverlay();
+
+    if (notesBtn) notesBtn.classList.remove('active');
+
+    render();
+  }
+
+  function applySeed() {
+    var seed = seedInput.value.trim();
+    if (seed) {
+      startNewGame(currentDifficulty, seed);
+    }
+  }
+
+  function updateDifficultyButtons() {
+    for (var i = 0; i < diffBtns.length; i++) {
+      var diff = diffBtns[i].getAttribute('data-difficulty');
+      if (diff === currentDifficulty) {
+        diffBtns[i].classList.add('active');
+      } else {
+        diffBtns[i].classList.remove('active');
+      }
+    }
+  }
+
+  // ---- Custom mode ----
+
+  function customInputNumber(digit) {
+    if (currentMode !== 'custom') return;
+    if (selectedCell < 0) return;
+
+    userGrid[selectedCell].value = digit;
+    userGrid[selectedCell].isGiven = true;
+    checkConflicts();
+    render();
+  }
+
+  function clearCustom() {
+    userGrid = [];
+    for (var i = 0; i < 81; i++) {
+      userGrid.push({
+        value: 0,
+        isGiven: false,
+        notes: [],
+        isError: false
+      });
+    }
+    selectedCell = -1;
+    setStatus('', '');
+    render();
+  }
+
+  function solveCustom() {
+    var puzzle = getGridString();
+
+    if (puzzle === '000000000000000000000000000000000000000000000000000000000000000000000000000000000') {
+      setStatus('Grid is empty', 'error');
+      return;
+    }
+
+    var solution = solveSudoku(puzzle);
+
+    if (!solution) {
+      setStatus('No solution exists', 'error');
+      return;
+    }
+
+    for (var i = 0; i < 81; i++) {
+      if (userGrid[i].value === 0) {
+        userGrid[i].value = parseInt(solution[i]);
+        userGrid[i].isGiven = false;
+      }
+    }
+
+    checkConflicts();
+    render();
+    setStatus('Solved!', 'success');
+  }
+
+  function loadImport() {
+    var raw = importInput.value.trim();
+    var cleaned = raw.replace(/[^0-9.]/g, '').replace(/\./g, '0');
+
+    if (cleaned.length !== 81) {
+      setStatus('Input must be exactly 81 characters', 'error');
+      return;
+    }
+
+    userGrid = [];
+    for (var i = 0; i < 81; i++) {
+      var ch = cleaned[i];
+      userGrid.push({
+        value: ch !== '0' ? parseInt(ch) : 0,
+        isGiven: ch !== '0',
+        notes: [],
+        isError: false
+      });
+    }
+
+    selectedCell = -1;
+    checkConflicts();
+    render();
+    setStatus('Puzzle loaded', 'success');
+    importInput.value = '';
+  }
+
+  function getGridString() {
+    var s = '';
+    for (var i = 0; i < 81; i++) {
+      s += userGrid[i].value > 0 ? String(userGrid[i].value) : '0';
+    }
+    return s;
+  }
+
+  function setStatus(msg, type) {
+    statusBar.textContent = msg;
+    statusBar.className = 'status-bar' + (type ? ' ' + type : '');
+  }
+
+  // ---- Shared utilities ----
 
   function copyCell(cell) {
     return {
@@ -340,6 +591,7 @@
   }
 
   function checkWin() {
+    if (currentMode !== 'play') return;
     for (var i = 0; i < 81; i++) {
       if (userGrid[i].value === 0) return;
       if (userGrid[i].value !== parseInt(currentSolution[i])) return;
@@ -350,8 +602,10 @@
     showWinOverlay();
   }
 
+  // ---- Timer ----
+
   function startTimerIfNeeded() {
-    if (timerStarted || gameWon) return;
+    if (timerStarted || gameWon || currentMode !== 'play') return;
     timerStarted = true;
     timerInterval = setInterval(function () {
       timerSeconds++;
@@ -379,6 +633,8 @@
     timerEl.textContent = (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
   }
 
+  // ---- Render ----
+
   function render() {
     for (var i = 0; i < 81; i++) {
       var cell = cells[i];
@@ -388,8 +644,9 @@
 
       cell.classList.remove('given', 'user-value', 'error', 'has-notes');
 
-      if (data.isGiven) {
+      if (data.isGiven && data.value > 0) {
         cell.classList.add('given');
+        if (data.isError) cell.classList.add('error');
         valueSpan.textContent = data.value;
         valueSpan.style.display = '';
         notesDiv.style.display = 'none';
@@ -415,7 +672,9 @@
     }
 
     updateHighlights();
-    updateNumpadCompletion();
+    if (currentMode === 'play') {
+      updateNumpadCompletion();
+    }
   }
 
   function updateNumpadCompletion() {
@@ -436,56 +695,7 @@
     }
   }
 
-  function toggleNotesMode() {
-    notesMode = !notesMode;
-    if (notesMode) {
-      notesBtn.classList.add('active');
-    } else {
-      notesBtn.classList.remove('active');
-    }
-  }
-
-  function updateDifficultyButtons() {
-    for (var i = 0; i < diffBtns.length; i++) {
-      var diff = diffBtns[i].getAttribute('data-difficulty');
-      if (diff === currentDifficulty) {
-        diffBtns[i].classList.add('active');
-      } else {
-        diffBtns[i].classList.remove('active');
-      }
-    }
-  }
-
-  function startNewGame(difficulty) {
-    currentDifficulty = difficulty;
-    var result = generatePuzzle(difficulty);
-    currentPuzzle = result.puzzle;
-    currentSolution = result.solution;
-
-    userGrid = [];
-    for (var i = 0; i < 81; i++) {
-      var ch = currentPuzzle[i];
-      userGrid.push({
-        value: ch !== '0' ? parseInt(ch) : 0,
-        isGiven: ch !== '0',
-        notes: [],
-        isError: false
-      });
-    }
-
-    selectedCell = -1;
-    notesMode = false;
-    undoStack = [];
-    gameWon = false;
-
-    resetTimer();
-    updateDifficultyButtons();
-    hideWinOverlay();
-
-    if (notesBtn) notesBtn.classList.remove('active');
-
-    render();
-  }
+  // ---- Win overlay ----
 
   function showWinOverlay() {
     var m = Math.floor(timerSeconds / 60);
@@ -497,6 +707,8 @@
   function hideWinOverlay() {
     winOverlay.classList.remove('visible');
   }
+
+  // ---- Keyboard ----
 
   function handleKeydown(e) {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
@@ -521,28 +733,34 @@
       case 'Backspace':
       case 'Delete':
         e.preventDefault();
-        erase();
+        if (currentMode === 'play') {
+          erase();
+        } else {
+          customErase();
+        }
         break;
       case 'n':
       case 'N':
-        if (!e.ctrlKey && !e.metaKey) {
+        if (!e.ctrlKey && !e.metaKey && currentMode === 'play') {
           e.preventDefault();
           toggleNotesMode();
         }
         break;
       case 'z':
-        e.preventDefault();
-        undo();
+        if (currentMode === 'play') {
+          e.preventDefault();
+          undo();
+        }
         break;
       case 'Z':
-        if (e.ctrlKey || e.metaKey) {
+        if ((e.ctrlKey || e.metaKey) && currentMode === 'play') {
           e.preventDefault();
           undo();
         }
         break;
       case 'h':
       case 'H':
-        if (!e.ctrlKey && !e.metaKey) {
+        if (!e.ctrlKey && !e.metaKey && currentMode === 'play') {
           e.preventDefault();
           hint();
         }
@@ -550,10 +768,22 @@
       default:
         if (/^[1-9]$/.test(e.key)) {
           e.preventDefault();
-          inputNumber(parseInt(e.key));
+          if (currentMode === 'play') {
+            inputNumber(parseInt(e.key));
+          } else {
+            customInputNumber(parseInt(e.key));
+          }
         }
         break;
     }
+  }
+
+  function customErase() {
+    if (selectedCell < 0) return;
+    userGrid[selectedCell].value = 0;
+    userGrid[selectedCell].isGiven = false;
+    checkConflicts();
+    render();
   }
 
   function navigateCell(dx, dy) {
