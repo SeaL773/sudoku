@@ -100,7 +100,23 @@
     return { board: board, cands: cands };
   }
 
-  function propagate(board, cands) {
+  // Trail entry: packed as (index << 18) | (oldBoard << 9) | oldCands
+  // oldBoard is 4 bits (0-9), oldCands is 9 bits — fits in 31 bits
+  function trailPush(trail, idx, boardVal, candsVal) {
+    trail.push((idx << 18) | (boardVal << 9) | candsVal);
+  }
+
+  function trailRestore(trail, board, cands, mark) {
+    for (var t = trail.length - 1; t >= mark; t--) {
+      var entry = trail[t];
+      var idx = entry >>> 18;
+      board[idx] = (entry >>> 9) & 0x1ff;
+      cands[idx] = entry & 0x1ff;
+    }
+    trail.length = mark;
+  }
+
+  function propagate(board, cands, trail) {
     var queue = [];
     for (var i = 0; i < 81; i++) {
       if (board[i] === 0 && cands[i] !== 0 && (cands[i] & (cands[i] - 1)) === 0)
@@ -108,7 +124,6 @@
     }
 
     for (;;) {
-      // Drain naked singles
       while (queue.length > 0) {
         var idx = queue.pop();
         if (board[idx] !== 0) continue;
@@ -116,6 +131,7 @@
         if (c === 0) return false;
         if ((c & (c - 1)) !== 0) continue;
         var val = bitlen(c);
+        trailPush(trail, idx, board[idx], cands[idx]);
         board[idx] = val;
         cands[idx] = 0;
         var bit = 1 << (val - 1);
@@ -123,6 +139,7 @@
         for (var k = 0; k < peers.length; k++) {
           var j = peers[k];
           if (cands[j] & bit) {
+            trailPush(trail, j, board[j], cands[j]);
             cands[j] &= ~bit;
             if (cands[j] === 0 && board[j] === 0) return false;
             if (board[j] === 0 && (cands[j] & (cands[j] - 1)) === 0) queue.push(j);
@@ -130,7 +147,6 @@
         }
       }
 
-      // Hidden singles — feed back into queue
       var found = false;
       for (var u = 0; u < 27; u++) {
         var unit = UNITS[u];
@@ -145,6 +161,7 @@
           if (placed) continue;
           if (count === 0) return false;
           if (count === 1 && cands[last] !== bit) {
+            trailPush(trail, last, board[last], cands[last]);
             cands[last] = bit;
             queue.push(last);
             found = true;
@@ -159,9 +176,14 @@
   function solveSudoku(puzzle) {
     if (!puzzle || puzzle.length !== 81) return null;
     var st = initBoard(puzzle);
+    var trail = [];
 
     function search(board, cands) {
-      if (!propagate(board, cands)) return null;
+      var mark = trail.length;
+      if (!propagate(board, cands, trail)) {
+        trailRestore(trail, board, cands, mark);
+        return null;
+      }
       var best = -1, bestCnt = 10;
       for (var i = 0; i < 81; i++) {
         if (board[i]) continue;
@@ -174,18 +196,23 @@
       while (c) {
         var bit = c & -c; c &= c - 1;
         var val = bitlen(bit);
-        var sb = new Int8Array(board), sc = new Int32Array(cands);
+        var mark2 = trail.length;
+        trailPush(trail, best, board[best], cands[best]);
         board[best] = val; cands[best] = 0;
         var ok = true;
         var peers = PEERS[best];
         for (var k = 0; k < peers.length; k++) {
           var j = peers[k];
-          cands[j] &= ~bit;
-          if (cands[j] === 0 && board[j] === 0) { ok = false; break; }
+          if (cands[j] & bit) {
+            trailPush(trail, j, board[j], cands[j]);
+            cands[j] &= ~bit;
+            if (cands[j] === 0 && board[j] === 0) { ok = false; break; }
+          }
         }
         if (ok) { var res = search(board, cands); if (res) return res; }
-        board.set(sb); cands.set(sc);
+        trailRestore(trail, board, cands, mark2);
       }
+      trailRestore(trail, board, cands, mark);
       return null;
     }
 
@@ -197,32 +224,43 @@
   function countSolutions(puzzle, limit) {
     var st = initBoard(puzzle);
     var found = 0;
+    var trail = [];
 
     function search(board, cands) {
-      if (!propagate(board, cands)) return;
+      var mark = trail.length;
+      if (!propagate(board, cands, trail)) {
+        trailRestore(trail, board, cands, mark);
+        return;
+      }
       var best = -1, bestCnt = 10;
       for (var i = 0; i < 81; i++) {
         if (board[i]) continue;
         var cnt = popcount(cands[i]);
         if (cnt < bestCnt) { bestCnt = cnt; best = i; if (cnt === 2) break; }
       }
-      if (best === -1) { found++; return; }
+      if (best === -1) { found++; trailRestore(trail, board, cands, mark); return; }
 
       var c = cands[best];
       while (c && found < limit) {
         var bit = c & -c; c &= c - 1;
         var val = bitlen(bit);
-        var sb = new Int8Array(board), sc = new Int32Array(cands);
+        var mark2 = trail.length;
+        trailPush(trail, best, board[best], cands[best]);
         board[best] = val; cands[best] = 0;
         var ok = true;
-        for (var k = 0; k < PEERS[best].length; k++) {
-          var j = PEERS[best][k];
-          cands[j] &= ~bit;
-          if (cands[j] === 0 && board[j] === 0) { ok = false; break; }
+        var peers = PEERS[best];
+        for (var k = 0; k < peers.length; k++) {
+          var j = peers[k];
+          if (cands[j] & bit) {
+            trailPush(trail, j, board[j], cands[j]);
+            cands[j] &= ~bit;
+            if (cands[j] === 0 && board[j] === 0) { ok = false; break; }
+          }
         }
         if (ok) search(board, cands);
-        board.set(sb); cands.set(sc);
+        trailRestore(trail, board, cands, mark2);
       }
+      trailRestore(trail, board, cands, mark);
     }
 
     search(st.board, st.cands);
