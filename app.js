@@ -427,7 +427,12 @@
       infoTimerEl.style.display = '';
       updateMistakesDisplay();
       infoSecondaryEl.style.visibility = 'visible';
-      infoSecondaryEl.textContent = 'Next in --:--:--';
+      var ds = getDailyStatus();
+      if (ds.completedToday) {
+        infoSecondaryEl.textContent = 'Completed ' + formatTime(ds.time) + (ds.streak > 1 ? '  Streak: ' + ds.streak : '');
+      } else {
+        infoSecondaryEl.textContent = 'Next in --:--:--';
+      }
     } else {
       infoLabelEl.textContent = 'Custom Puzzle';
       infoLabelEl.style.display = '';
@@ -906,7 +911,44 @@
       if (userGrid[i].value === 0 || userGrid[i].value !== parseInt(currentSolution[i])) return;
     }
     gameWon = true; stopTimer();
+    if (currentMode === 'daily') recordDailyCompletion();
     animateWinCelebration(function () { showWinOverlay(); });
+  }
+
+  function getDailyDateKey() {
+    var now = new Date();
+    return now.getUTCFullYear() + '-' + (now.getUTCMonth() + 1) + '-' + now.getUTCDate();
+  }
+
+  function recordDailyCompletion() {
+    try {
+      var today = getDailyDateKey();
+      var data = JSON.parse(localStorage.getItem('sudoku-daily') || '{}');
+      if (data.completedDate === today) return;
+      var yesterday = getPrevDateKey();
+      var streak = (data.completedDate === yesterday) ? (data.streak || 1) + 1 : 1;
+      localStorage.setItem('sudoku-daily', JSON.stringify({
+        completedDate: today, time: timerSeconds, streak: streak
+      }));
+    } catch (e) {}
+  }
+
+  function getPrevDateKey() {
+    var d = new Date();
+    d.setUTCDate(d.getUTCDate() - 1);
+    return d.getUTCFullYear() + '-' + (d.getUTCMonth() + 1) + '-' + d.getUTCDate();
+  }
+
+  function getDailyStatus() {
+    try {
+      var data = JSON.parse(localStorage.getItem('sudoku-daily') || '{}');
+      var today = getDailyDateKey();
+      return {
+        completedToday: data.completedDate === today,
+        time: data.time || 0,
+        streak: data.streak || 0
+      };
+    } catch (e) { return { completedToday: false, time: 0, streak: 0 }; }
   }
 
   // ---- Timer ----
