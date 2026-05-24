@@ -58,9 +58,13 @@
   }
 
   function buildBoard() {
+    boardEl.setAttribute('role', 'grid');
+    boardEl.setAttribute('aria-label', 'Sudoku board');
     for (var i = 0; i < 81; i++) {
       var cell = document.createElement('div');
       cell.className = 'cell';
+      cell.setAttribute('role', 'gridcell');
+      cell.setAttribute('tabindex', '-1');
       cell.setAttribute('data-index', i);
       cell.setAttribute('data-row', Math.floor(i / 9));
       cell.setAttribute('data-col', i % 9);
@@ -499,6 +503,7 @@
     if (currentMode === 'custom') return;
     notesMode = !notesMode;
     notesBtn.classList.toggle('active', notesMode);
+    notesBtn.setAttribute('aria-pressed', notesMode);
   }
 
   function startNewGame(difficulty, seed) {
