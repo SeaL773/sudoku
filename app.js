@@ -820,6 +820,15 @@
   function hideWinOverlay() { winOverlay.classList.remove('visible'); }
   function showMistakeOverlay() { mistakeOverlay.classList.remove('hidden'); }
 
+  function showToast(msg) {
+    var el = document.createElement('div');
+    el.className = 'toast';
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(function () { el.classList.add('visible'); }, 10);
+    setTimeout(function () { el.classList.remove('visible'); setTimeout(function () { el.remove(); }, 300); }, 2000);
+  }
+
   // ---- Keyboard ----
 
   function getCandidates(index) {
@@ -863,9 +872,7 @@
         konamiBuffer = [];
         updateMistakesDisplay();
         infoTimerEl.style.cursor = cheatMode ? 'pointer' : 'default';
-        var msg = cheatMode ? 'Cheat mode ON' : 'Cheat mode OFF';
-        var el = document.getElementById('status-bar');
-        if (el) { el.textContent = msg; el.className = 'status-bar' + (cheatMode ? ' success' : ''); }
+        showToast(cheatMode ? 'Cheat mode ON' : 'Cheat mode OFF');
       }
     }
   }

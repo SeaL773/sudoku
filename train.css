@@ -1,5 +1,11 @@
 @import url('style.css');
 
+:root {
+  --sidebar-w: 210px;
+  --bg-cell-highlight: #fff9c4;
+  --bg-cell-answer: #c8e6c9;
+}
+
 body {
   display: block;
   padding: 0;
@@ -10,7 +16,7 @@ body {
 
 /* ── Page header ── */
 .page-header {
-  background: #ffffff;
+  background: var(--bg-cell);
   border-bottom: 1px solid var(--border-thin);
   padding: 0 32px;
   height: 56px;
@@ -61,7 +67,7 @@ body {
   top: 72px;
 }
 .sidebar-inner {
-  background: #ffffff;
+  background: var(--bg-cell);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-thin);
   padding: 16px 0;
@@ -105,7 +111,7 @@ body {
   overflow-x: auto;
   gap: 8px;
   padding: 12px 16px;
-  background: #ffffff;
+  background: var(--bg-cell);
   border-bottom: 1px solid var(--border-thin);
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
@@ -170,7 +176,7 @@ body {
 
 /* ── Lesson card ── */
 .lesson {
-  background: #ffffff;
+  background: var(--bg-cell);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-thin);
   border-left: 3px solid var(--accent);
@@ -179,7 +185,7 @@ body {
   scroll-margin-top: 80px;
 }
 .lesson:nth-child(even) {
-  background: #f8fafc;
+  background: var(--bg-cell-peer);
 }
 .lesson-header {
   margin-bottom: 20px;
