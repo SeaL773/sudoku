@@ -1,0 +1,584 @@
+(function () {
+  'use strict';
+
+  var currentPuzzle = '';
+  var currentSolution = '';
+  var userGrid = [];
+  var selectedCell = -1;
+  var notesMode = false;
+  var undoStack = [];
+  var timerSeconds = 0;
+  var timerInterval = null;
+  var timerStarted = false;
+  var currentDifficulty = 'medium';
+  var gameWon = false;
+
+  var boardEl, timerEl, notesBtn, winOverlay, winTimeEl;
+  var cells = [];
+  var numBtns = [];
+  var diffBtns = [];
+
+  function init() {
+    boardEl = document.getElementById('board');
+    timerEl = document.getElementById('timer');
+    notesBtn = document.getElementById('btn-notes');
+    winOverlay = document.getElementById('win-overlay');
+    winTimeEl = document.getElementById('win-time');
+
+    buildBoard();
+    bindEvents();
+    startNewGame('medium');
+  }
+
+  function buildBoard() {
+    for (var i = 0; i < 81; i++) {
+      var cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.setAttribute('data-index', i);
+      cell.setAttribute('data-row', Math.floor(i / 9));
+      cell.setAttribute('data-col', i % 9);
+
+      var valueSpan = document.createElement('span');
+      valueSpan.className = 'cell-value';
+      cell.appendChild(valueSpan);
+
+      var notesDiv = document.createElement('div');
+      notesDiv.className = 'cell-notes';
+      for (var n = 1; n <= 9; n++) {
+        var noteSpan = document.createElement('span');
+        noteSpan.setAttribute('data-note', n);
+        notesDiv.appendChild(noteSpan);
+      }
+      cell.appendChild(notesDiv);
+      notesDiv.style.display = 'none';
+
+      cell.addEventListener('click', (function (idx) {
+        return function () { selectCell(idx); };
+      })(i));
+
+      cells.push(cell);
+      boardEl.appendChild(cell);
+    }
+  }
+
+  function bindEvents() {
+    var numpad = document.getElementById('numpad');
+    var numButtons = numpad.querySelectorAll('.num-btn');
+    for (var i = 0; i < numButtons.length; i++) {
+      numBtns.push(numButtons[i]);
+      numButtons[i].addEventListener('click', (function (btn) {
+        return function () {
+          inputNumber(parseInt(btn.getAttribute('data-num')));
+        };
+      })(numButtons[i]));
+    }
+
+    document.getElementById('btn-undo').addEventListener('click', undo);
+    document.getElementById('btn-erase').addEventListener('click', erase);
+    notesBtn.addEventListener('click', toggleNotesMode);
+    document.getElementById('btn-hint').addEventListener('click', hint);
+
+    document.getElementById('btn-new-game').addEventListener('click', function () {
+      startNewGame(currentDifficulty);
+    });
+
+    document.getElementById('btn-play-again').addEventListener('click', function () {
+      hideWinOverlay();
+      startNewGame(currentDifficulty);
+    });
+
+    var diffButtons = document.querySelectorAll('.diff-btn');
+    for (var i = 0; i < diffButtons.length; i++) {
+      diffBtns.push(diffButtons[i]);
+      diffButtons[i].addEventListener('click', (function (btn) {
+        return function () {
+          startNewGame(btn.getAttribute('data-difficulty'));
+        };
+      })(diffButtons[i]));
+    }
+
+    document.addEventListener('keydown', handleKeydown);
+  }
+
+  function selectCell(index) {
+    selectedCell = index;
+    updateHighlights();
+  }
+
+  function updateHighlights() {
+    for (var i = 0; i < 81; i++) {
+      cells[i].classList.remove('selected', 'peer-highlight', 'same-number');
+    }
+
+    for (var d = 0; d < 9; d++) {
+      numBtns[d].classList.remove('active-digit');
+    }
+
+    if (selectedCell < 0) return;
+
+    cells[selectedCell].classList.add('selected');
+
+    var peers = getPeers(selectedCell);
+    for (var i = 0; i < peers.length; i++) {
+      cells[peers[i]].classList.add('peer-highlight');
+    }
+
+    var selectedValue = userGrid[selectedCell].value;
+    if (selectedValue > 0) {
+      for (var i = 0; i < 81; i++) {
+        if (i !== selectedCell && userGrid[i].value === selectedValue) {
+          cells[i].classList.add('same-number');
+        }
+      }
+      numBtns[selectedValue - 1].classList.add('active-digit');
+    }
+  }
+
+  function inputNumber(digit) {
+    if (selectedCell < 0 || gameWon) return;
+    if (userGrid[selectedCell].isGiven) return;
+
+    startTimerIfNeeded();
+
+    if (notesMode) {
+      toggleNote(selectedCell, digit);
+    } else {
+      setDigit(selectedCell, digit);
+    }
+  }
+
+  function setDigit(index, digit) {
+    var changes = [];
+    changes.push({ index: index, prev: copyCell(userGrid[index]) });
+
+    userGrid[index].value = digit;
+    userGrid[index].notes = [];
+
+    var peers = getPeers(index);
+    for (var i = 0; i < peers.length; i++) {
+      var p = peers[i];
+      var noteIdx = userGrid[p].notes.indexOf(digit);
+      if (noteIdx >= 0) {
+        changes.push({ index: p, prev: copyCell(userGrid[p]) });
+        userGrid[p].notes.splice(noteIdx, 1);
+      }
+    }
+
+    undoStack.push({ changes: changes });
+    checkConflicts();
+    render();
+    checkWin();
+  }
+
+  function toggleNote(index, digit) {
+    if (userGrid[index].value > 0) return;
+
+    var changes = [{ index: index, prev: copyCell(userGrid[index]) }];
+
+    var notes = userGrid[index].notes;
+    var noteIdx = notes.indexOf(digit);
+    if (noteIdx >= 0) {
+      notes.splice(noteIdx, 1);
+    } else {
+      notes.push(digit);
+      notes.sort(function (a, b) { return a - b; });
+    }
+
+    undoStack.push({ changes: changes });
+    render();
+  }
+
+  function erase() {
+    if (selectedCell < 0 || gameWon) return;
+    if (userGrid[selectedCell].isGiven) return;
+    if (userGrid[selectedCell].value === 0 && userGrid[selectedCell].notes.length === 0) return;
+
+    var changes = [{ index: selectedCell, prev: copyCell(userGrid[selectedCell]) }];
+
+    userGrid[selectedCell].value = 0;
+    userGrid[selectedCell].notes = [];
+
+    undoStack.push({ changes: changes });
+    checkConflicts();
+    render();
+  }
+
+  function undo() {
+    if (undoStack.length === 0 || gameWon) return;
+
+    var entry = undoStack.pop();
+    for (var i = 0; i < entry.changes.length; i++) {
+      var change = entry.changes[i];
+      userGrid[change.index] = change.prev;
+    }
+
+    checkConflicts();
+    render();
+  }
+
+  function hint() {
+    if (gameWon) return;
+
+    var target = selectedCell;
+
+    if (target < 0 ||
+        userGrid[target].isGiven ||
+        userGrid[target].value === parseInt(currentSolution[target])) {
+      var emptyCells = [];
+      for (var i = 0; i < 81; i++) {
+        if (!userGrid[i].isGiven && userGrid[i].value !== parseInt(currentSolution[i])) {
+          emptyCells.push(i);
+        }
+      }
+      if (emptyCells.length === 0) return;
+      target = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+      selectCell(target);
+    }
+
+    startTimerIfNeeded();
+
+    var correctDigit = parseInt(currentSolution[target]);
+    var changes = [{ index: target, prev: copyCell(userGrid[target]) }];
+
+    userGrid[target].value = correctDigit;
+    userGrid[target].notes = [];
+
+    var peers = getPeers(target);
+    for (var i = 0; i < peers.length; i++) {
+      var p = peers[i];
+      var noteIdx = userGrid[p].notes.indexOf(correctDigit);
+      if (noteIdx >= 0) {
+        changes.push({ index: p, prev: copyCell(userGrid[p]) });
+        userGrid[p].notes.splice(noteIdx, 1);
+      }
+    }
+
+    undoStack.push({ changes: changes });
+    checkConflicts();
+    render();
+    flashCell(target);
+    checkWin();
+  }
+
+  function flashCell(index) {
+    cells[index].classList.add('hint-flash');
+    setTimeout(function () {
+      cells[index].classList.remove('hint-flash');
+    }, 600);
+  }
+
+  function copyCell(cell) {
+    return {
+      value: cell.value,
+      isGiven: cell.isGiven,
+      notes: cell.notes.slice(),
+      isError: cell.isError
+    };
+  }
+
+  function getPeers(index) {
+    var row = Math.floor(index / 9);
+    var col = index % 9;
+    var boxRow = Math.floor(row / 3) * 3;
+    var boxCol = Math.floor(col / 3) * 3;
+    var peers = [];
+    var seen = {};
+
+    for (var i = 0; i < 9; i++) {
+      var ri = row * 9 + i;
+      var ci = i * 9 + col;
+      if (ri !== index && !seen[ri]) { peers.push(ri); seen[ri] = true; }
+      if (ci !== index && !seen[ci]) { peers.push(ci); seen[ci] = true; }
+    }
+    for (var r = boxRow; r < boxRow + 3; r++) {
+      for (var c = boxCol; c < boxCol + 3; c++) {
+        var bi = r * 9 + c;
+        if (bi !== index && !seen[bi]) { peers.push(bi); seen[bi] = true; }
+      }
+    }
+    return peers;
+  }
+
+  function getUnit(u) {
+    var arr = [];
+    if (u < 9) {
+      for (var c = 0; c < 9; c++) arr.push(u * 9 + c);
+    } else if (u < 18) {
+      var col = u - 9;
+      for (var r = 0; r < 9; r++) arr.push(r * 9 + col);
+    } else {
+      var box = u - 18;
+      var br = Math.floor(box / 3) * 3;
+      var bc = (box % 3) * 3;
+      for (var dr = 0; dr < 3; dr++)
+        for (var dc = 0; dc < 3; dc++)
+          arr.push((br + dr) * 9 + (bc + dc));
+    }
+    return arr;
+  }
+
+  function checkConflicts() {
+    for (var i = 0; i < 81; i++) {
+      userGrid[i].isError = false;
+    }
+
+    for (var u = 0; u < 27; u++) {
+      var unit = getUnit(u);
+      var seen = {};
+      for (var k = 0; k < 9; k++) {
+        var idx = unit[k];
+        var val = userGrid[idx].value;
+        if (val === 0) continue;
+        if (seen[val] !== undefined) {
+          userGrid[idx].isError = true;
+          userGrid[seen[val]].isError = true;
+        } else {
+          seen[val] = idx;
+        }
+      }
+    }
+  }
+
+  function checkWin() {
+    for (var i = 0; i < 81; i++) {
+      if (userGrid[i].value === 0) return;
+      if (userGrid[i].value !== parseInt(currentSolution[i])) return;
+    }
+
+    gameWon = true;
+    stopTimer();
+    showWinOverlay();
+  }
+
+  function startTimerIfNeeded() {
+    if (timerStarted || gameWon) return;
+    timerStarted = true;
+    timerInterval = setInterval(function () {
+      timerSeconds++;
+      updateTimerDisplay();
+    }, 1000);
+  }
+
+  function stopTimer() {
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+  }
+
+  function resetTimer() {
+    stopTimer();
+    timerSeconds = 0;
+    timerStarted = false;
+    updateTimerDisplay();
+  }
+
+  function updateTimerDisplay() {
+    var m = Math.floor(timerSeconds / 60);
+    var s = timerSeconds % 60;
+    timerEl.textContent = (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+  }
+
+  function render() {
+    for (var i = 0; i < 81; i++) {
+      var cell = cells[i];
+      var data = userGrid[i];
+      var valueSpan = cell.querySelector('.cell-value');
+      var notesDiv = cell.querySelector('.cell-notes');
+
+      cell.classList.remove('given', 'user-value', 'error', 'has-notes');
+
+      if (data.isGiven) {
+        cell.classList.add('given');
+        valueSpan.textContent = data.value;
+        valueSpan.style.display = '';
+        notesDiv.style.display = 'none';
+      } else if (data.value > 0) {
+        cell.classList.add('user-value');
+        if (data.isError) cell.classList.add('error');
+        valueSpan.textContent = data.value;
+        valueSpan.style.display = '';
+        notesDiv.style.display = 'none';
+      } else if (data.notes.length > 0) {
+        cell.classList.add('has-notes');
+        valueSpan.style.display = 'none';
+        notesDiv.style.display = '';
+        for (var n = 1; n <= 9; n++) {
+          var noteSpan = notesDiv.querySelector('[data-note="' + n + '"]');
+          noteSpan.textContent = data.notes.indexOf(n) >= 0 ? n : '';
+        }
+      } else {
+        valueSpan.textContent = '';
+        valueSpan.style.display = '';
+        notesDiv.style.display = 'none';
+      }
+    }
+
+    updateHighlights();
+    updateNumpadCompletion();
+  }
+
+  function updateNumpadCompletion() {
+    var counts = {};
+    for (var d = 1; d <= 9; d++) counts[d] = 0;
+
+    for (var i = 0; i < 81; i++) {
+      var val = userGrid[i].value;
+      if (val > 0) counts[val]++;
+    }
+
+    for (var d = 1; d <= 9; d++) {
+      if (counts[d] >= 9) {
+        numBtns[d - 1].classList.add('completed');
+      } else {
+        numBtns[d - 1].classList.remove('completed');
+      }
+    }
+  }
+
+  function toggleNotesMode() {
+    notesMode = !notesMode;
+    if (notesMode) {
+      notesBtn.classList.add('active');
+    } else {
+      notesBtn.classList.remove('active');
+    }
+  }
+
+  function updateDifficultyButtons() {
+    for (var i = 0; i < diffBtns.length; i++) {
+      var diff = diffBtns[i].getAttribute('data-difficulty');
+      if (diff === currentDifficulty) {
+        diffBtns[i].classList.add('active');
+      } else {
+        diffBtns[i].classList.remove('active');
+      }
+    }
+  }
+
+  function startNewGame(difficulty) {
+    currentDifficulty = difficulty;
+    var result = generatePuzzle(difficulty);
+    currentPuzzle = result.puzzle;
+    currentSolution = result.solution;
+
+    userGrid = [];
+    for (var i = 0; i < 81; i++) {
+      var ch = currentPuzzle[i];
+      userGrid.push({
+        value: ch !== '0' ? parseInt(ch) : 0,
+        isGiven: ch !== '0',
+        notes: [],
+        isError: false
+      });
+    }
+
+    selectedCell = -1;
+    notesMode = false;
+    undoStack = [];
+    gameWon = false;
+
+    resetTimer();
+    updateDifficultyButtons();
+    hideWinOverlay();
+
+    if (notesBtn) notesBtn.classList.remove('active');
+
+    render();
+  }
+
+  function showWinOverlay() {
+    var m = Math.floor(timerSeconds / 60);
+    var s = timerSeconds % 60;
+    winTimeEl.textContent = (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+    winOverlay.classList.add('visible');
+  }
+
+  function hideWinOverlay() {
+    winOverlay.classList.remove('visible');
+  }
+
+  function handleKeydown(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    switch (e.key) {
+      case 'ArrowUp':
+        e.preventDefault();
+        navigateCell(0, -1);
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        navigateCell(0, 1);
+        break;
+      case 'ArrowLeft':
+        e.preventDefault();
+        navigateCell(-1, 0);
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        navigateCell(1, 0);
+        break;
+      case 'Backspace':
+      case 'Delete':
+        e.preventDefault();
+        erase();
+        break;
+      case 'n':
+      case 'N':
+        if (!e.ctrlKey && !e.metaKey) {
+          e.preventDefault();
+          toggleNotesMode();
+        }
+        break;
+      case 'z':
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          undo();
+        } else {
+          e.preventDefault();
+          undo();
+        }
+        break;
+      case 'Z':
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          undo();
+        }
+        break;
+      case 'h':
+      case 'H':
+        if (!e.ctrlKey && !e.metaKey) {
+          e.preventDefault();
+          hint();
+        }
+        break;
+      default:
+        if (/^[1-9]$/.test(e.key)) {
+          e.preventDefault();
+          inputNumber(parseInt(e.key));
+        }
+        break;
+    }
+  }
+
+  function navigateCell(dx, dy) {
+    if (selectedCell < 0) {
+      selectCell(0);
+      return;
+    }
+
+    var row = Math.floor(selectedCell / 9);
+    var col = selectedCell % 9;
+    var newRow = row + dy;
+    var newCol = col + dx;
+
+    if (newRow < 0) newRow = 8;
+    if (newRow > 8) newRow = 0;
+    if (newCol < 0) newCol = 8;
+    if (newCol > 8) newCol = 0;
+
+    selectCell(newRow * 9 + newCol);
+  }
+
+  init();
+})();
