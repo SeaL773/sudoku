@@ -24,6 +24,7 @@
   var dailyDateEl, dailyDiffBadge, dailyCountdownEl;
   var diffLabelEl, mistakesEl, dailyMistakesEl;
   var winMistakesEl, winHintsEl;
+  var mistakeOverlay;
   var statusBar, importInput;
   var cells = [];
   var numBtns = [];
@@ -54,6 +55,7 @@
     dailyMistakesEl = document.getElementById('daily-mistakes-display');
     winMistakesEl = document.getElementById('win-mistakes');
     winHintsEl = document.getElementById('win-hints');
+    mistakeOverlay = document.getElementById('mistake-overlay');
     statusBar = document.getElementById('status-bar');
     importInput = document.getElementById('import-input');
 
@@ -126,6 +128,15 @@
     });
 
     document.getElementById('btn-win-close').addEventListener('click', hideWinOverlay);
+
+    document.getElementById('btn-mistake-new').addEventListener('click', function () {
+      mistakeOverlay.classList.add('hidden');
+      if (currentMode === 'daily') startDailyGame();
+      else startNewGame(currentDifficulty);
+    });
+    document.getElementById('btn-mistake-continue').addEventListener('click', function () {
+      mistakeOverlay.classList.add('hidden');
+    });
 
     var diffButtons = document.querySelectorAll('.diff-btn');
     for (var i = 0; i < diffButtons.length; i++) {
@@ -341,6 +352,7 @@
       if (digit !== correct) {
         mistakeCount++;
         updateMistakesDisplay();
+        if (mistakeCount === 3) showMistakeOverlay();
       }
     }
 
@@ -657,6 +669,7 @@
   }
 
   function hideWinOverlay() { winOverlay.classList.remove('visible'); }
+  function showMistakeOverlay() { mistakeOverlay.classList.remove('hidden'); }
 
   // ---- Keyboard ----
 

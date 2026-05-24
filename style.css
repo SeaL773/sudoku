@@ -34,7 +34,7 @@
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html { font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+html { font-size: 18px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
 body {
   font-family: var(--font-main);
@@ -119,7 +119,7 @@ body {
 
 .board {
   display: grid; grid-template-columns: repeat(9, 1fr); grid-template-rows: repeat(9, 1fr);
-  width: 450px; height: 450px; border: 2px solid var(--border-thick);
+  width: 540px; height: 540px; border: 2px solid var(--border-thick);
   border-radius: 4px; overflow: hidden; box-shadow: var(--shadow-md); background: var(--border-thin);
 }
 
@@ -245,6 +245,20 @@ body {
 .win-stats { display: flex; gap: 24px; justify-content: center; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px; }
 .win-buttons { display: flex; gap: 12px; align-items: center; }
 
+.mistake-overlay {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.45);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100; opacity: 1; transition: opacity 300ms ease;
+}
+.mistake-overlay.hidden { opacity: 0; pointer-events: none; }
+.mistake-content {
+  background: #ffffff; border-radius: var(--radius-lg); padding: 36px 44px;
+  text-align: center; box-shadow: var(--shadow-lg); transform: scale(1);
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.mistake-content h2 { font-size: 1.4rem; font-weight: 700; color: var(--text-error); }
+.mistake-content p { font-size: 0.9rem; color: var(--text-secondary); margin: 0; }
+
 @keyframes hintFlash {
   0% { box-shadow: inset 0 0 0 50px rgba(50, 90, 175, 0.35); }
   100% { box-shadow: inset 0 0 0 50px rgba(50, 90, 175, 0); }
@@ -252,12 +266,12 @@ body {
 .cell.hint-flash { animation: hintFlash 600ms ease-out; }
 
 @media (max-width: 1024px) {
-  .board { width: 380px; height: 380px; }
+  .board { width: 450px; height: 450px; }
   .cell-value { font-size: 1.2rem; }
   .cell-notes span { font-size: 0.5rem; }
   .game-layout { gap: 24px; }
-  .numpad { max-width: 240px; gap: 8px; }
-  .num-btn { min-height: 60px; font-size: 1.5rem; }
+  .numpad { max-width: 280px; gap: 8px; }
+  .num-btn { min-height: 64px; font-size: 1.5rem; }
 }
 
 @media (max-width: 768px) {
@@ -266,7 +280,7 @@ body {
   .board { width: min(450px, calc(100vw - 32px)); height: auto; aspect-ratio: 1; }
   .cell-value { font-size: clamp(0.95rem, 4vw, 1.4rem); }
   .cell-notes span { font-size: clamp(0.4rem, 1.2vw, 0.55rem); }
-  .controls-panel { width: 100%; max-width: 450px; padding: 0; }
+  .controls-panel { width: 100%; max-width: 540px; padding: 0; }
   .timer { font-size: 1.1rem; }
   .numpad { max-width: 264px; gap: 8px; }
   .num-btn { min-height: 56px; font-size: clamp(1.3rem, 4vw, 1.6rem); }
