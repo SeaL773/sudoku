@@ -536,6 +536,24 @@
     .practice-status.ok { color: #2e7d32; }
     .practice-status.err { color: var(--text-error); }
 
+    .new-puzzle-btn {
+      padding: 8px 0;
+      width: 180px;
+      border: 1px solid var(--border-thin);
+      background: var(--bg-button);
+      color: var(--accent);
+      font-family: var(--font-main);
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all 120ms ease;
+    }
+    .new-puzzle-btn:hover { background: var(--accent-light); border-color: var(--accent); }
+    @media (max-width: 480px) {
+      .new-puzzle-btn { width: 160px; }
+    }
+
     /* ── Responsive ── */
     @media (max-width: 768px) {
       .sidebar { display: none; }
@@ -653,6 +671,22 @@
           <div class="mini-board" id="board-l1"></div>
         </div>
       </div>
+
+      <div class="practice-section">
+        <div class="practice-label">Practice</div>
+        <div class="practice-title">Try It Yourself</div>
+        <p class="practice-desc">A nearly-complete puzzle — just a few cells left. Fill them in using the three rules: no repeats in any row, column, or box.</p>
+        <div class="practice-layout">
+          <div class="practice-board" id="practice-1"></div>
+          <div class="practice-controls">
+            <div class="practice-numpad" id="numpad-1"></div>
+            <button class="erase-btn" data-practice="1">Erase</button>
+            <button class="check-btn" data-practice="1">Check</button>
+            <button class="new-puzzle-btn" data-practice="1">New Puzzle</button>
+            <div class="practice-status" id="status-1"></div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Lesson 2 -->
@@ -689,6 +723,7 @@
             <div class="practice-numpad" id="numpad-2"></div>
             <button class="erase-btn" data-practice="2">Erase</button>
             <button class="check-btn" data-practice="2">Check</button>
+            <button class="new-puzzle-btn" data-practice="2">New Puzzle</button>
             <div class="practice-status" id="status-2"></div>
           </div>
         </div>
@@ -725,6 +760,22 @@
           <button class="show-answer-btn" data-board="board-l3">Show Answer</button>
         </div>
       </div>
+
+      <div class="practice-section">
+        <div class="practice-label">Practice</div>
+        <div class="practice-title">Scan and Place</div>
+        <p class="practice-desc">About 10 cells are empty. Each can be found by scanning — look at where each digit already appears in crossing rows and columns to narrow it down to one cell.</p>
+        <div class="practice-layout">
+          <div class="practice-board" id="practice-3"></div>
+          <div class="practice-controls">
+            <div class="practice-numpad" id="numpad-3"></div>
+            <button class="erase-btn" data-practice="3">Erase</button>
+            <button class="check-btn" data-practice="3">Check</button>
+            <button class="new-puzzle-btn" data-practice="3">New Puzzle</button>
+            <div class="practice-status" id="status-3"></div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Level 2 -->
@@ -755,6 +806,22 @@
         <div class="example-wrap">
           <p class="example-caption">The blue cell has candidates 2, 5, and 7. The digits 1, 3, 4, 6, 8, 9 are already present in its row, column, or box. None of those can go here.</p>
           <div class="mini-board" id="board-l4"></div>
+        </div>
+      </div>
+
+      <div class="practice-section">
+        <div class="practice-label">Practice</div>
+        <div class="practice-title">Fill in the Candidates</div>
+        <p class="practice-desc">About 15 cells are empty. For each one, figure out which digits are still possible given its row, column, and box — then fill in the one that must go there.</p>
+        <div class="practice-layout">
+          <div class="practice-board" id="practice-4"></div>
+          <div class="practice-controls">
+            <div class="practice-numpad" id="numpad-4"></div>
+            <button class="erase-btn" data-practice="4">Erase</button>
+            <button class="check-btn" data-practice="4">Check</button>
+            <button class="new-puzzle-btn" data-practice="4">New Puzzle</button>
+            <div class="practice-status" id="status-4"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -795,6 +862,7 @@
             <div class="practice-numpad" id="numpad-5"></div>
             <button class="erase-btn" data-practice="5">Erase</button>
             <button class="check-btn" data-practice="5">Check</button>
+            <button class="new-puzzle-btn" data-practice="5">New Puzzle</button>
             <div class="practice-status" id="status-5"></div>
           </div>
         </div>
@@ -844,6 +912,7 @@
             <div class="practice-numpad" id="numpad-6"></div>
             <button class="erase-btn" data-practice="6">Erase</button>
             <button class="check-btn" data-practice="6">Check</button>
+            <button class="new-puzzle-btn" data-practice="6">New Puzzle</button>
             <div class="practice-status" id="status-6"></div>
           </div>
         </div>
@@ -880,6 +949,22 @@
           <div class="mini-board" id="board-l7"></div>
         </div>
       </div>
+
+      <div class="practice-section">
+        <div class="practice-label">Practice</div>
+        <div class="practice-title">Spot the Naked Pairs</div>
+        <p class="practice-desc">A medium puzzle where naked pairs unlock progress. Find two cells in the same unit with identical two-candidate notes, then eliminate those digits from the rest of the unit.</p>
+        <div class="practice-layout">
+          <div class="practice-board" id="practice-7"></div>
+          <div class="practice-controls">
+            <div class="practice-numpad" id="numpad-7"></div>
+            <button class="erase-btn" data-practice="7">Erase</button>
+            <button class="check-btn" data-practice="7">Check</button>
+            <button class="new-puzzle-btn" data-practice="7">New Puzzle</button>
+            <div class="practice-status" id="status-7"></div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Lesson 8 -->
@@ -907,6 +992,21 @@
         </div>
       </div>
 
+      <div class="practice-section">
+        <div class="practice-label">Practice</div>
+        <div class="practice-title">Find the Pointing Pairs</div>
+        <p class="practice-desc">A medium puzzle where pointing pairs are needed. Look for a digit in a box that only appears in one row or column within that box, then eliminate it from the rest of that row or column.</p>
+        <div class="practice-layout">
+          <div class="practice-board" id="practice-8"></div>
+          <div class="practice-controls">
+            <div class="practice-numpad" id="numpad-8"></div>
+            <button class="erase-btn" data-practice="8">Erase</button>
+            <button class="check-btn" data-practice="8">Check</button>
+            <button class="new-puzzle-btn" data-practice="8">New Puzzle</button>
+            <div class="practice-status" id="status-8"></div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Lesson 9 -->
@@ -935,6 +1035,22 @@
         <div class="example-wrap">
           <p class="example-caption">Three blue cells in row 6 hold only candidates from {1, 3, 7}. The yellow cell previously had 1 and 7 in its notes — both can now be removed, leaving it a naked single.</p>
           <div class="mini-board" id="board-l9"></div>
+        </div>
+      </div>
+
+      <div class="practice-section">
+        <div class="practice-label">Practice</div>
+        <div class="practice-title">Find the Naked Triples</div>
+        <p class="practice-desc">A hard puzzle where naked triples are key. Look for three cells in a unit whose combined candidates total exactly three digits, then eliminate those digits from all other cells in the unit.</p>
+        <div class="practice-layout">
+          <div class="practice-board" id="practice-9"></div>
+          <div class="practice-controls">
+            <div class="practice-numpad" id="numpad-9"></div>
+            <button class="erase-btn" data-practice="9">Erase</button>
+            <button class="check-btn" data-practice="9">Check</button>
+            <button class="new-puzzle-btn" data-practice="9">New Puzzle</button>
+            <div class="practice-status" id="status-9"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -967,6 +1083,22 @@
           <div class="mini-board" id="board-l10"></div>
         </div>
       </div>
+
+      <div class="practice-section">
+        <div class="practice-label">Practice</div>
+        <div class="practice-title">Find the Hidden Pairs</div>
+        <p class="practice-desc">A hard puzzle where hidden pairs unlock progress. For each unit, check if two digits only appear as candidates in exactly two cells — then remove all other candidates from those cells.</p>
+        <div class="practice-layout">
+          <div class="practice-board" id="practice-10"></div>
+          <div class="practice-controls">
+            <div class="practice-numpad" id="numpad-10"></div>
+            <button class="erase-btn" data-practice="10">Erase</button>
+            <button class="check-btn" data-practice="10">Check</button>
+            <button class="new-puzzle-btn" data-practice="10">New Puzzle</button>
+            <div class="practice-status" id="status-10"></div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Lesson 11 -->
@@ -997,6 +1129,22 @@
           <div class="mini-board" id="board-l11"></div>
         </div>
       </div>
+
+      <div class="practice-section">
+        <div class="practice-label">Practice</div>
+        <div class="practice-title">Find the Hidden Triples</div>
+        <p class="practice-desc">A hard puzzle requiring hidden triples. Find three digits that only appear in three cells within a unit, then strip all other candidates from those three cells.</p>
+        <div class="practice-layout">
+          <div class="practice-board" id="practice-11"></div>
+          <div class="practice-controls">
+            <div class="practice-numpad" id="numpad-11"></div>
+            <button class="erase-btn" data-practice="11">Erase</button>
+            <button class="check-btn" data-practice="11">Check</button>
+            <button class="new-puzzle-btn" data-practice="11">New Puzzle</button>
+            <div class="practice-status" id="status-11"></div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Lesson 12 -->
@@ -1019,6 +1167,22 @@
         <div class="example-wrap">
           <p class="example-caption">In the center-right box, digit 7 can only go in three cells (blue), all in column 5. So 7 can be removed from the yellow cells in column 5 outside the box.</p>
           <div class="mini-board" id="board-l12"></div>
+        </div>
+      </div>
+
+      <div class="practice-section">
+        <div class="practice-label">Practice</div>
+        <div class="practice-title">Find the Pointing Triples</div>
+        <p class="practice-desc">A hard puzzle where pointing triples are needed. Look for a digit in a box that only appears in three cells, all in the same row or column, then eliminate it from the rest of that row or column.</p>
+        <div class="practice-layout">
+          <div class="practice-board" id="practice-12"></div>
+          <div class="practice-controls">
+            <div class="practice-numpad" id="numpad-12"></div>
+            <button class="erase-btn" data-practice="12">Erase</button>
+            <button class="check-btn" data-practice="12">Check</button>
+            <button class="new-puzzle-btn" data-practice="12">New Puzzle</button>
+            <div class="practice-status" id="status-12"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -1060,6 +1224,22 @@
           <div class="mini-board" id="board-l13"></div>
         </div>
       </div>
+
+      <div class="practice-section">
+        <div class="practice-label">Practice</div>
+        <div class="practice-title">Spot the X-Wing</div>
+        <p class="practice-desc">An expert puzzle where an X-Wing is required. Find a candidate that appears in exactly two cells in each of two rows, aligned in the same two columns, then eliminate it from those columns.</p>
+        <div class="practice-layout">
+          <div class="practice-board" id="practice-13"></div>
+          <div class="practice-controls">
+            <div class="practice-numpad" id="numpad-13"></div>
+            <button class="erase-btn" data-practice="13">Erase</button>
+            <button class="check-btn" data-practice="13">Check</button>
+            <button class="new-puzzle-btn" data-practice="13">New Puzzle</button>
+            <div class="practice-status" id="status-13"></div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Lesson 14 -->
@@ -1089,6 +1269,22 @@
         <div class="example-wrap">
           <p class="example-caption">The blue pivot cell has candidates [3, 7]. Wing 1 (green) shares its row and has [3, 5]. Wing 2 (green) shares its column and has [7, 5]. The yellow cell sees both wings — candidate 5 can be eliminated from it.</p>
           <div class="mini-board" id="board-l14"></div>
+        </div>
+      </div>
+
+      <div class="practice-section">
+        <div class="practice-label">Practice</div>
+        <div class="practice-title">Find the Y-Wing</div>
+        <p class="practice-desc">An expert puzzle where a Y-Wing is needed. Find a pivot cell with two candidates, connected to two wing cells that share one candidate each — then eliminate the shared candidate from cells that see both wings.</p>
+        <div class="practice-layout">
+          <div class="practice-board" id="practice-14"></div>
+          <div class="practice-controls">
+            <div class="practice-numpad" id="numpad-14"></div>
+            <button class="erase-btn" data-practice="14">Erase</button>
+            <button class="check-btn" data-practice="14">Check</button>
+            <button class="new-puzzle-btn" data-practice="14">New Puzzle</button>
+            <div class="practice-status" id="status-14"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -1127,6 +1323,22 @@
 
       <div class="callout" style="margin-top: 20px;">
         <strong>Where to go from here:</strong> You've covered the full standard technique set. Beyond Swordfish, puzzles may require Jellyfish, Skyscraper, Two-String Kite, or forcing chains. These are rare in published puzzles but appear in "extreme" difficulty levels. The best way to learn them is to keep playing and look up each technique as you encounter it.
+      </div>
+
+      <div class="practice-section">
+        <div class="practice-label">Practice</div>
+        <div class="practice-title">Find the Swordfish</div>
+        <p class="practice-desc">An extreme puzzle where a Swordfish pattern is required. Find a candidate that appears in 2-3 cells in each of three rows, all within the same three columns, then eliminate it from those columns.</p>
+        <div class="practice-layout">
+          <div class="practice-board" id="practice-15"></div>
+          <div class="practice-controls">
+            <div class="practice-numpad" id="numpad-15"></div>
+            <button class="erase-btn" data-practice="15">Erase</button>
+            <button class="check-btn" data-practice="15">Check</button>
+            <button class="new-puzzle-btn" data-practice="15">New Puzzle</button>
+            <div class="practice-status" id="status-15"></div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1428,55 +1640,132 @@
     buildMiniBoard('board-l8', peerPuzzle.join(''), highlights);
   })();
 
-  // ── Practice boards ───────────────────────────────────────────
+  // ── Practice system ───────────────────────────────────────────
+
+  var BASE = '974236158638591742125487936316754289742918563589362417867125394253649871491873625';
+
+  var POOL7 = [
+    { p: '200080300060070084030500209000105408000000000402706000301007040720040060004010003', s: null },
+    { p: '000000000904607000076804100309701080008000300050308702007502610000403208000000000', s: null },
+    { p: '000700800006000031040002000024070000010030080000060290000800070860000500002006000', s: null },
+    { p: '020000000036040000100203000000300107070000090301006000000609001000070860000000050', s: null }
+  ];
+  var POOL8 = [
+    { p: '300200000000107000706030500070009080900020004010800050009060701000701000000004006', s: null },
+    { p: '100000709000600001006003400020100060005000200030007010002800500700005000308000007', s: null },
+    { p: '000900002050123400030000160500000090000000000070000006062000070009543020400002000', s: null },
+    { p: '000000010400009002020010000000630520000000000071054000000080070900700008060000000', s: null }
+  ];
+  var POOL9 = [
+    { p: '000030086000020040090078520370000000040000060000000071017460090060090000980010000', s: null },
+    { p: '600302000040100726000006003380000500010000040004000012200500000156004080000201004', s: null },
+    { p: '000001030231090000065003100678924513000000000000000000510300920000010845020800000', s: null },
+    { p: '800000000003600000070090200060005300400803001005020060000419005000080079000000000', s: null }
+  ];
+  var POOL10 = [
+    { p: '000000000000003085001020000000507000004000100090000000500000073002010000000040009', s: null },
+    { p: '300000000970010000600583000200000900500621003008000001000195007000060049000000005', s: null },
+    { p: '000200401800400000005100800400050000000304000000010009001008700000007004504001000', s: null },
+    { p: '020000000036040000100203000000300107070000090301006000000609001000070860000000050', s: null }
+  ];
 
   var PRACTICES = {
-    // Lesson 2: very easy, last free cell only (50+ givens)
-    '2': {
-      puzzle: '974236158638591742125487936316754289742918563589362417867125394253649871491873625',
-      // Remove a few cells to create "last free cell" situations
-      // We'll blank out 6 cells, each in a unit with 8 others filled
-      blanks: [0, 10, 20, 60, 70, 80]
-    },
-    // Lesson 5: medium, requires naked singles
-    '5': {
-      puzzle: '974236158638591742125487936316754289742918563589362417867125394253649871491873625',
-      blanks: [0, 2, 10, 12, 20, 22, 60, 62, 70, 72, 80, 78, 40, 30, 50]
-    },
-    // Lesson 6: harder, requires hidden singles
-    '6': {
-      puzzle: '974236158638591742125487936316754289742918563589362417867125394253649871491873625',
-      blanks: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 40, 30, 50, 31, 41]
-    }
+    '1':  { type: 'blanks', base: BASE, blankSets: [[0,10,20],[60,70,80],[4,40,76],[8,36,72]] },
+    '2':  { type: 'blanks', base: BASE, blankSets: [[0,10,20,60,70,80],[4,13,22,31,40,49],[8,17,26,35,44,53],[0,40,80,9,45,72]] },
+    '3':  { type: 'blanks', base: BASE, blankSets: [
+      [0,10,20,30,40,50,60,70,80],
+      [4,13,22,31,49,58,67,76,8],
+      [2,11,20,29,38,47,56,65,74],
+      [6,15,24,33,42,51,60,69,78]
+    ]},
+    '4':  { type: 'blanks', base: BASE, blankSets: [
+      [0,2,4,6,8,10,12,14,16,18,20,22,24,26],
+      [60,62,64,66,68,70,72,74,76,78,80,30,40,50],
+      [1,3,5,7,9,11,13,15,17,19,21,23,25,27],
+      [54,56,58,61,63,65,67,69,71,73,75,77,79,31]
+    ]},
+    '5':  { type: 'blanks', base: BASE, blankSets: [
+      [0,2,10,12,20,22,60,62,70,72,80,78,40,30,50],
+      [1,3,11,13,21,23,61,63,71,73,79,77,41,31,51],
+      [4,6,14,16,24,26,64,66,74,76,80,78,42,32,52],
+      [0,8,9,17,18,26,54,62,63,71,72,80,36,44,40]
+    ]},
+    '6':  { type: 'blanks', base: BASE, blankSets: [
+      [0,2,4,6,8,10,12,14,16,18,20,22,24,26,60,62,64,66,68,70,72,74,76,78,80,40,30,50,31,41],
+      [1,3,5,7,9,11,13,15,17,19,21,23,25,27,61,63,65,67,69,71,73,75,77,79,39,29,49,32,42],
+      [0,4,8,9,13,17,18,22,26,54,58,62,63,67,71,72,76,80,27,35,36,44,45,53,40,30,50,31,41,32]
+    ]},
+    '7':  { type: 'pool', pool: POOL7, idx: 0 },
+    '8':  { type: 'pool', pool: POOL8, idx: 0 },
+    '9':  { type: 'pool', pool: POOL9, idx: 0 },
+    '10': { type: 'pool', pool: POOL10, idx: 0 },
+    '11': { type: 'generated', difficulty: 'hard',   seeds: ['train-11-0','train-11-1','train-11-2','train-11-3'], idx: 0 },
+    '12': { type: 'generated', difficulty: 'hard',   seeds: ['train-12-0','train-12-1','train-12-2','train-12-3'], idx: 0 },
+    '13': { type: 'generated', difficulty: 'expert', seeds: ['train-13-0','train-13-1','train-13-2','train-13-3'], idx: 0 },
+    '14': { type: 'generated', difficulty: 'expert', seeds: ['train-14-0','train-14-1','train-14-2','train-14-3'], idx: 0 },
+    '15': { type: 'generated', difficulty: 'evil',   seeds: ['train-15-0','train-15-1','train-15-2','train-15-3'], idx: 0 }
   };
 
   var practiceState = {};
 
-  function buildPracticeBoard(lessonId) {
-    var cfg = PRACTICES[lessonId];
-    if (!cfg) return;
-
-    var solution = cfg.puzzle;
-    var blanksSet = new Set(cfg.blanks);
-    var puzzleArr = solution.split('');
-    blanksSet.forEach(function (i) { puzzleArr[i] = '0'; });
-    var puzzleStr = puzzleArr.join('');
-
-    practiceState[lessonId] = {
-      solution: solution,
-      puzzle: puzzleStr,
-      userVals: {},
-      selected: -1
-    };
-
-    renderPracticeBoard(lessonId);
-    buildPracticeNumpad(lessonId);
+  function resolvePoolSolution(entry) {
+    if (!entry.s) entry.s = solveSudoku(entry.p) || entry.p;
+    return entry;
   }
 
-  function renderPracticeBoard(lessonId) {
-    var state = practiceState[lessonId];
-    var container = document.getElementById('practice-' + lessonId);
-    if (!container) return;
+  function loadPractice(id) {
+    var cfg = PRACTICES[id];
+    if (!cfg) return;
+    var puzzle, solution, blanks;
+
+    if (cfg.type === 'blanks') {
+      var setIdx = cfg._setIdx || 0;
+      blanks = cfg.blankSets[setIdx % cfg.blankSets.length];
+      solution = cfg.base;
+      var arr = solution.split('');
+      blanks.forEach(function (i) { arr[i] = '0'; });
+      puzzle = arr.join('');
+      practiceState[id] = { solution: solution, puzzle: puzzle, blanks: blanks, userVals: {}, selected: -1 };
+
+    } else if (cfg.type === 'pool') {
+      var entry = resolvePoolSolution(cfg.pool[cfg.idx % cfg.pool.length]);
+      puzzle = entry.p;
+      solution = entry.s;
+      blanks = [];
+      for (var i = 0; i < 81; i++) { if (puzzle[i] === '0') blanks.push(i); }
+      practiceState[id] = { solution: solution, puzzle: puzzle, blanks: blanks, userVals: {}, selected: -1 };
+
+    } else {
+      var seed = cfg.seeds[cfg.idx % cfg.seeds.length];
+      var gen = generatePuzzle(cfg.difficulty, seed);
+      puzzle = gen.puzzle;
+      solution = gen.solution;
+      blanks = [];
+      for (var i = 0; i < 81; i++) { if (puzzle[i] === '0') blanks.push(i); }
+      practiceState[id] = { solution: solution, puzzle: puzzle, blanks: blanks, userVals: {}, selected: -1 };
+    }
+
+    renderPracticeBoard(id);
+    buildPracticeNumpad(id);
+    var statusEl = document.getElementById('status-' + id);
+    if (statusEl) { statusEl.textContent = ''; statusEl.className = 'practice-status'; }
+  }
+
+  function newPuzzle(id) {
+    var cfg = PRACTICES[id];
+    if (!cfg) return;
+    if (cfg.type === 'blanks') {
+      cfg._setIdx = ((cfg._setIdx || 0) + 1) % cfg.blankSets.length;
+    } else {
+      cfg.idx = (cfg.idx + 1) % (cfg.pool ? cfg.pool.length : cfg.seeds.length);
+    }
+    loadPractice(id);
+  }
+
+  function renderPracticeBoard(id) {
+    var state = practiceState[id];
+    var container = document.getElementById('practice-' + id);
+    if (!container || !state) return;
     container.innerHTML = '';
 
     for (var i = 0; i < 81; i++) {
@@ -1502,74 +1791,67 @@
 
       if (state.selected === i && !isGiven) cell.classList.add('selected');
 
-      cell.addEventListener('click', function () {
-        var idx = parseInt(this.dataset.idx);
-        var st = practiceState[lessonId];
-        if (st.puzzle[idx] !== '0') return;
-        st.selected = idx;
-        renderPracticeBoard(lessonId);
-        document.getElementById('status-' + lessonId).textContent = '';
-        document.getElementById('status-' + lessonId).className = 'practice-status';
-      }.bind(cell));
+      cell.addEventListener('click', (function (idx, lessonId) {
+        return function () {
+          var st = practiceState[lessonId];
+          if (!st || st.puzzle[idx] !== '0') return;
+          st.selected = idx;
+          renderPracticeBoard(lessonId);
+          var statusEl = document.getElementById('status-' + lessonId);
+          if (statusEl) { statusEl.textContent = ''; statusEl.className = 'practice-status'; }
+        };
+      })(i, id));
 
       container.appendChild(cell);
     }
   }
 
-  function buildPracticeNumpad(lessonId) {
-    var container = document.getElementById('numpad-' + lessonId);
+  function buildPracticeNumpad(id) {
+    var container = document.getElementById('numpad-' + id);
     if (!container) return;
     container.innerHTML = '';
     for (var n = 1; n <= 9; n++) {
       var btn = document.createElement('button');
       btn.className = 'p-num-btn';
       btn.textContent = n;
-      btn.dataset.num = n;
-      btn.addEventListener('click', (function (num) {
+      btn.addEventListener('click', (function (num, lessonId) {
         return function () {
           var st = practiceState[lessonId];
-          if (st.selected === -1) return;
+          if (!st || st.selected === -1) return;
           if (st.puzzle[st.selected] !== '0') return;
           st.userVals[st.selected] = String(num);
           renderPracticeBoard(lessonId);
-          document.getElementById('status-' + lessonId).textContent = '';
-          document.getElementById('status-' + lessonId).className = 'practice-status';
+          var statusEl = document.getElementById('status-' + lessonId);
+          if (statusEl) { statusEl.textContent = ''; statusEl.className = 'practice-status'; }
         };
-      })(n));
+      })(n, id));
       container.appendChild(btn);
     }
   }
 
-  // Erase buttons
-  document.querySelectorAll('.erase-btn').forEach(function (btn) {
-    var lessonId = btn.dataset.practice;
-    btn.addEventListener('click', function () {
-      var st = practiceState[lessonId];
+  document.addEventListener('click', function (e) {
+    var eraseBtn = e.target.closest('.erase-btn');
+    if (eraseBtn) {
+      var id = eraseBtn.dataset.practice;
+      var st = practiceState[id];
       if (!st || st.selected === -1) return;
       delete st.userVals[st.selected];
-      renderPracticeBoard(lessonId);
-    });
-  });
+      renderPracticeBoard(id);
+      return;
+    }
 
-  // Check buttons
-  document.querySelectorAll('.check-btn').forEach(function (btn) {
-    var lessonId = btn.dataset.practice;
-    btn.addEventListener('click', function () {
-      var st = practiceState[lessonId];
+    var checkBtn = e.target.closest('.check-btn');
+    if (checkBtn) {
+      var id = checkBtn.dataset.practice;
+      var st = practiceState[id];
       if (!st) return;
-      var statusEl = document.getElementById('status-' + lessonId);
-      var cfg = PRACTICES[lessonId];
-      var blanksSet = new Set(cfg.blanks);
-
-      var allFilled = true;
-      var allCorrect = true;
-
-      blanksSet.forEach(function (i) {
+      var statusEl = document.getElementById('status-' + id);
+      var allFilled = true, allCorrect = true;
+      st.blanks.forEach(function (i) {
         var uv = st.userVals[i];
         if (!uv) { allFilled = false; return; }
         if (uv !== st.solution[i]) allCorrect = false;
       });
-
       if (!allFilled) {
         statusEl.textContent = 'Fill in all empty cells first.';
         statusEl.className = 'practice-status err';
@@ -1578,43 +1860,44 @@
       if (allCorrect) {
         statusEl.textContent = 'Correct! Well done.';
         statusEl.className = 'practice-status ok';
-        // Flash correct cells green
-        var container = document.getElementById('practice-' + lessonId);
-        container.querySelectorAll('.user-val').forEach(function (c) {
-          c.classList.add('correct-flash');
-        });
+        var container = document.getElementById('practice-' + id);
+        container.querySelectorAll('.user-val').forEach(function (c) { c.classList.add('correct-flash'); });
       } else {
         statusEl.textContent = 'Some cells are wrong. Check the highlighted ones.';
         statusEl.className = 'practice-status err';
-        renderPracticeBoard(lessonId);
+        renderPracticeBoard(id);
       }
-    });
+      return;
+    }
+
+    var newBtn = e.target.closest('.new-puzzle-btn');
+    if (newBtn) {
+      newPuzzle(newBtn.dataset.practice);
+    }
   });
 
-  // Keyboard input for practice boards
   document.addEventListener('keydown', function (e) {
     var key = e.key;
-    // Find which practice board has a selected cell
-    ['2', '5', '6'].forEach(function (lessonId) {
-      var st = practiceState[lessonId];
+    var ALL_IDS = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15'];
+    ALL_IDS.forEach(function (id) {
+      var st = practiceState[id];
       if (!st || st.selected === -1) return;
       if (key >= '1' && key <= '9') {
         if (st.puzzle[st.selected] !== '0') return;
         st.userVals[st.selected] = key;
-        renderPracticeBoard(lessonId);
-        document.getElementById('status-' + lessonId).textContent = '';
-        document.getElementById('status-' + lessonId).className = 'practice-status';
+        renderPracticeBoard(id);
+        var statusEl = document.getElementById('status-' + id);
+        if (statusEl) { statusEl.textContent = ''; statusEl.className = 'practice-status'; }
       } else if (key === 'Backspace' || key === 'Delete' || key === '0') {
         delete st.userVals[st.selected];
-        renderPracticeBoard(lessonId);
+        renderPracticeBoard(id);
       }
     });
   });
 
-  // Build all practice boards
-  buildPracticeBoard('2');
-  buildPracticeBoard('5');
-  buildPracticeBoard('6');
+  ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15'].forEach(function (id) {
+    loadPractice(id);
+  });
 
   // ── Lesson 9 board — naked triple [1,3,7] in row 6 ───────────────
   (function () {
