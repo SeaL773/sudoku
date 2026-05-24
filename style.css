@@ -351,33 +351,47 @@ body {
 }
 
 @media (max-width: 768px) {
-  body { padding: 16px; justify-content: flex-start; }
-  .game-layout { flex-direction: column; align-items: center; gap: 16px; }
-  .board { width: min(450px, calc(100vw - 32px)); height: auto; aspect-ratio: 1; }
+  body { padding: 12px 8px; justify-content: flex-start; }
+  .app { gap: 8px; }
+  .game-layout { flex-direction: column; align-items: center; gap: 8px; }
+  .board { width: min(450px, calc(100vw - 16px)); height: auto; aspect-ratio: 1; }
   .cell-value { font-size: clamp(0.95rem, 4vw, 1.4rem); }
   .cell-notes span { font-size: clamp(0.4rem, 1.2vw, 0.55rem); }
-  .controls-panel { width: 100%; max-width: 540px; padding: 0; }
-  .panel-header { height: auto; min-height: 0; }
-  .info-timer { font-size: 1rem; }
-  .numpad { max-width: 264px; gap: 8px; }
-  .num-btn { min-height: 56px; font-size: clamp(1.3rem, 4vw, 1.6rem); }
+  .controls-panel { width: 100%; max-width: 450px; padding: 0; gap: 6px; }
+  .panel-header { height: auto; min-height: 0; gap: 2px; }
+  .info-row { height: 28px; min-height: 28px; }
+  .info-timer { font-size: 0.95rem; }
+  .numpad {
+    grid-template-columns: repeat(9, 1fr);
+    max-width: 100%; gap: 4px;
+  }
+  .num-btn {
+    aspect-ratio: auto; min-height: 44px;
+    font-size: clamp(1rem, 4vw, 1.3rem);
+    border-radius: var(--radius-sm);
+  }
   .actions { gap: 0; }
-  .action-btn { max-width: none; }
+  .action-btn { max-width: none; padding: 8px 4px; font-size: 0.65rem; }
+  .action-btn svg { width: 20px; height: 20px; }
+  .new-game-btn { padding: 10px 28px; font-size: 0.88rem; }
+  .panel-footer { min-height: 40px; }
+  .header { gap: 6px; }
+  .site-footer { margin-top: 12px; padding: 8px 0; }
 }
 
 @media (max-width: 480px) {
-  body { padding: 10px; }
-  .app { gap: 10px; }
-  .header-top h1 { font-size: 1.3rem; }
-  .mode-tab { padding: 6px 14px; font-size: 0.8rem; }
-  .actions { gap: 0; }
-  .action-btn { padding: 8px 6px; font-size: 0.62rem; }
+  body { padding: 8px 6px; }
+  .app { gap: 6px; }
+  .header-top h1 { font-size: 1.2rem; }
+  .mode-tab { padding: 5px 10px; font-size: 0.75rem; min-width: 48px; }
+  .info-row { height: 24px; min-height: 24px; }
+  #info-label { font-size: 0.68rem; padding: 2px 8px; }
+  #info-mistakes { font-size: 0.7rem; }
+  .info-timer { font-size: 0.85rem; }
+  .action-btn { padding: 6px 2px; font-size: 0.58rem; }
   .action-btn svg { width: 18px; height: 18px; }
-  .numpad { max-width: 220px; gap: 6px; }
-  .num-btn { min-height: 48px; font-size: 1.3rem; border-radius: var(--radius-sm); }
-  .new-game-btn { padding: 10px 28px; font-size: 0.88rem; }
-  .info-timer { font-size: 0.9rem; }
-  .settings-popover { width: 240px; padding: 12px; }
-  #info-label { font-size: 0.72rem; padding: 2px 10px; }
-  #info-mistakes { font-size: 0.75rem; }
+  .numpad { gap: 3px; }
+  .num-btn { min-height: 38px; font-size: 1.1rem; }
+  .new-game-btn { padding: 8px 24px; font-size: 0.82rem; }
+  .settings-popover { width: 220px; padding: 10px; }
 }
