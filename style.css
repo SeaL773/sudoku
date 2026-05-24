@@ -31,6 +31,7 @@
   --transition-md: 200ms ease;
   --panel-pad: 16px;
   --section-gap: 16px;
+  --row-h: 36px;
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -111,62 +112,68 @@ body {
   color: var(--text-secondary); cursor: pointer; transition: all var(--transition-fast); min-width: 64px; text-align: center;
 }
 .mode-tab.active { background: #ffffff; color: var(--text-given); font-weight: 600; box-shadow: var(--shadow-sm); }
+.mode-tab-link { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
 
-.game-layout { display: flex; flex-direction: row; align-items: center; gap: 32px; width: 100%; }
+.game-layout { display: flex; flex-direction: row; align-items: flex-start; gap: 32px; width: 100%; }
 .board-panel { flex-shrink: 0; }
 .controls-panel { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: var(--section-gap); padding: 0 var(--panel-pad); }
-.panel-header { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; width: 100%; min-height: 120px; }
-.panel-footer { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
 
-.board {
-  display: grid; grid-template-columns: repeat(9, 1fr); grid-template-rows: repeat(9, 1fr);
-  width: 540px; height: 540px; border: 2px solid var(--border-thick);
-  border-radius: 4px; overflow: hidden; box-shadow: var(--shadow-md); background: var(--border-thin);
+.panel-header {
+  display: flex; flex-direction: column; width: 100%;
+  height: calc(var(--row-h) * 3 + 16px);
+  gap: 8px;
 }
 
-.cell {
-  position: relative; display: flex; align-items: center; justify-content: center;
-  background: var(--bg-cell); border-right: 1px solid var(--border-thin); border-bottom: 1px solid var(--border-thin);
-  cursor: pointer; transition: background-color var(--transition-fast);
-  user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
-}
-.cell[data-col="2"], .cell[data-col="5"] { border-right: 2px solid var(--border-thick); }
-.cell[data-row="2"], .cell[data-row="5"] { border-bottom: 2px solid var(--border-thick); }
-.cell[data-col="8"] { border-right: none; }
-.cell[data-row="8"] { border-bottom: none; }
-
-.cell.error:not(.peer-highlight):not(.same-number):not(.selected) { background: var(--bg-cell-error); }
-.cell.peer-highlight { background: var(--bg-cell-peer); }
-.cell.same-number { background: var(--bg-cell-same-number); }
-.cell.selected { background: var(--bg-cell-selected); }
-
-.cell-value { font-size: 1.4rem; font-weight: 500; line-height: 1; pointer-events: none; }
-.cell.given .cell-value { color: var(--text-given); font-weight: 700; }
-.cell.user-value .cell-value { color: var(--text-user); font-weight: 600; }
-.cell.error .cell-value { color: var(--text-error); }
-
-.cell-notes { position: absolute; inset: 2px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); pointer-events: none; }
-.cell-notes span { display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 600; color: var(--text-notes); line-height: 1; }
-
-.play-stats, .daily-stats {
-  display: flex; align-items: center; justify-content: center; gap: 16px; width: 100%;
+.info-row {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; height: var(--row-h); min-height: var(--row-h);
+  padding: 0 4px;
 }
 
-.diff-label {
-  font-size: 0.8rem; font-weight: 600; color: var(--accent);
+#info-label {
+  font-size: 0.82rem; font-weight: 600; color: var(--accent);
   background: var(--accent-light); padding: 3px 12px; border-radius: var(--radius-full); text-transform: capitalize;
 }
 
-.mistakes-display {
+#info-badge {
+  font-size: 0.75rem; font-weight: 600; color: var(--accent);
+  background: var(--accent-light); padding: 3px 12px; border-radius: var(--radius-full); text-transform: capitalize;
+}
+
+#info-mistakes {
   font-size: 0.82rem; font-weight: 500; color: var(--text-secondary);
 }
 
-.timer { font-family: var(--font-mono); font-size: 1.5rem; color: var(--text-secondary); letter-spacing: 0.5px; text-align: center; }
+.info-timer {
+  font-family: var(--font-mono); font-size: 1.1rem; font-weight: 500;
+  color: var(--text-secondary); letter-spacing: 0.5px;
+}
 
-.daily-info { display: flex; align-items: center; gap: 10px; justify-content: center; flex-wrap: wrap; }
-.daily-date { font-size: 1rem; font-weight: 600; color: var(--text-given); }
-.daily-diff-badge { padding: 3px 12px; background: var(--accent-light); color: var(--accent); font-size: 0.75rem; font-weight: 600; border-radius: var(--radius-full); text-transform: capitalize; }
-.daily-countdown { font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-secondary); text-align: center; }
+#info-secondary-row {
+  font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-secondary);
+  justify-content: center;
+}
+
+.secondary-import {
+  display: flex; gap: 8px; width: 100%; align-items: center;
+}
+
+.secondary-import .import-input {
+  flex: 1; font-family: var(--font-mono); font-size: 0.72rem; padding: 6px 8px;
+  border: 1px solid var(--border-thin); border-radius: var(--radius-sm);
+  background: #ffffff; color: var(--text-given); outline: none; min-width: 0;
+  transition: border-color var(--transition-fast);
+}
+.secondary-import .import-input:focus { border-color: var(--accent); }
+
+.secondary-import .btn-secondary {
+  padding: 5px 12px; font-size: 0.75rem; white-space: nowrap;
+}
+
+.panel-footer {
+  display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%;
+  min-height: 48px;
+}
 
 .actions { display: flex; justify-content: center; gap: 0; width: 100%; }
 .action-btn {
@@ -212,17 +219,6 @@ body {
 }
 .btn-secondary:hover { background: var(--bg-button-hover); border-color: var(--accent); }
 
-.custom-import { width: 100%; display: flex; flex-direction: column; gap: 6px; }
-.custom-import label { font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); }
-.import-row { display: flex; gap: 8px; }
-.import-input {
-  flex: 1; font-family: var(--font-mono); font-size: 0.75rem; padding: 8px 10px;
-  border: 1px solid var(--border-thin); border-radius: var(--radius-sm);
-  background: #ffffff; color: var(--text-given); outline: none; min-width: 0;
-  transition: border-color var(--transition-fast);
-}
-.import-input:focus { border-color: var(--accent); }
-
 .custom-actions { display: flex; gap: 12px; align-items: center; }
 .status-bar { width: 100%; min-height: 20px; text-align: center; font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); }
 .status-bar.error { color: var(--text-error); }
@@ -258,12 +254,6 @@ body {
   display: flex; flex-direction: column; align-items: center; gap: 10px;
 }
 .mistake-content h2 { font-size: 1.5rem; font-weight: 700; color: var(--text-error); }
-.mode-tab-link {
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
 .mistake-content p { font-size: 0.9rem; color: var(--text-secondary); margin: 0; }
 
 @keyframes hintFlash {
@@ -288,8 +278,8 @@ body {
   .cell-value { font-size: clamp(0.95rem, 4vw, 1.4rem); }
   .cell-notes span { font-size: clamp(0.4rem, 1.2vw, 0.55rem); }
   .controls-panel { width: 100%; max-width: 540px; padding: 0; }
-  .panel-header { min-height: auto; }
-  .timer { font-size: 1.1rem; }
+  .panel-header { height: auto; min-height: 0; }
+  .info-timer { font-size: 1rem; }
   .numpad { max-width: 264px; gap: 8px; }
   .num-btn { min-height: 56px; font-size: clamp(1.3rem, 4vw, 1.6rem); }
   .actions { gap: 0; }
@@ -307,12 +297,8 @@ body {
   .numpad { max-width: 220px; gap: 6px; }
   .num-btn { min-height: 48px; font-size: 1.3rem; border-radius: var(--radius-sm); }
   .new-game-btn { padding: 10px 28px; font-size: 0.88rem; }
-  .timer { font-size: 0.95rem; }
-  .import-row { flex-direction: column; }
-  .daily-info { gap: 8px; }
-  .daily-date { font-size: 0.9rem; }
+  .info-timer { font-size: 0.9rem; }
   .settings-popover { width: 240px; padding: 12px; }
-  .play-stats { gap: 10px; }
-  .diff-label { font-size: 0.72rem; padding: 2px 10px; }
-  .mistakes-display { font-size: 0.75rem; }
+  #info-label { font-size: 0.72rem; padding: 2px 10px; }
+  #info-mistakes { font-size: 0.75rem; }
 }

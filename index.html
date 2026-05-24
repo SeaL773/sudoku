@@ -56,34 +56,16 @@
 
       <div class="controls-panel">
 
-        <div class="panel-header" id="panel-header-play">
-          <div class="play-stats">
-            <span class="diff-label" id="diff-label">Medium</span>
-            <span class="mistakes-display" id="mistakes-display">Mistakes: 0/3</span>
+        <div class="panel-header">
+          <div class="info-row" id="info-label-row">
+            <span id="info-label">Medium</span>
+            <span id="info-badge"></span>
           </div>
-          <div class="timer" id="timer">00:00</div>
-        </div>
-
-        <div class="panel-header hidden" id="panel-header-daily">
-          <div class="daily-info">
-            <span class="daily-date" id="daily-date"></span>
-            <span class="daily-diff-badge" id="daily-diff-badge"></span>
+          <div class="info-row" id="info-stats-row">
+            <span id="info-mistakes">Mistakes: 0/3</span>
+            <span class="info-timer" id="info-timer">00:00</span>
           </div>
-          <div class="daily-stats">
-            <span class="mistakes-display" id="daily-mistakes-display">Mistakes: 0/3</span>
-          </div>
-          <div class="timer" id="daily-timer">00:00</div>
-          <div class="daily-countdown" id="daily-countdown">Next in --:--:--</div>
-        </div>
-
-        <div class="panel-header hidden" id="panel-header-custom">
-          <div class="custom-import">
-            <label for="import-input">Import puzzle (81 chars, 0=empty)</label>
-            <div class="import-row">
-              <input type="text" id="import-input" class="import-input" maxlength="120" spellcheck="false" autocomplete="off" placeholder="530070000600195000098000060...">
-              <button class="btn-secondary" id="btn-load">Load</button>
-            </div>
-          </div>
+          <div class="info-row" id="info-secondary-row"></div>
         </div>
 
         <div class="actions" id="actions">
@@ -131,18 +113,13 @@
           <button class="num-btn" data-num="9">9</button>
         </div>
 
-        <div class="panel-footer" id="panel-footer-play">
+        <div class="panel-footer" id="panel-footer">
           <button class="new-game-btn" id="btn-new-game">New Game</button>
-        </div>
-
-        <div class="panel-footer hidden" id="panel-footer-daily"></div>
-
-        <div class="panel-footer hidden" id="panel-footer-custom">
-          <div class="custom-actions">
+          <div class="custom-actions hidden" id="custom-footer-actions">
             <button class="new-game-btn" id="btn-solve">Solve</button>
             <button class="btn-secondary" id="btn-clear">Clear</button>
           </div>
-          <div class="status-bar" id="status-bar"></div>
+          <div class="status-bar hidden" id="status-bar"></div>
         </div>
 
       </div>

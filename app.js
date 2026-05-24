@@ -18,26 +18,19 @@
   var mistakeCount = 0;
   var hintCount = 0;
 
-  var boardEl, timerEl, dailyTimerEl, winOverlay, winTimeEl, seedInput;
+  var boardEl, winOverlay, winTimeEl, seedInput;
   var settingsBtn, settingsPopover;
   var notesBtn, hintBtn, undoBtn, eraseBtn;
-  var dailyDateEl, dailyDiffBadge, dailyCountdownEl;
-  var diffLabelEl, mistakesEl, dailyMistakesEl;
-  var winMistakesEl, winHintsEl;
-  var mistakeOverlay;
-  var statusBar, importInput;
+  var winMistakesEl, winHintsEl, mistakeOverlay;
+  var infoLabelEl, infoBadgeEl, infoMistakesEl, infoTimerEl, infoSecondaryEl;
+  var newGameBtn, customFooterActions, statusBar;
   var cells = [];
   var numBtns = [];
   var diffBtns = [];
   var modeTabs = [];
 
-  var panelHeaders = {};
-  var panelFooters = {};
-
   function init() {
     boardEl = document.getElementById('board');
-    timerEl = document.getElementById('timer');
-    dailyTimerEl = document.getElementById('daily-timer');
     winOverlay = document.getElementById('win-overlay');
     winTimeEl = document.getElementById('win-time');
     seedInput = document.getElementById('seed-input');
@@ -47,24 +40,17 @@
     hintBtn = document.getElementById('btn-hint');
     undoBtn = document.getElementById('btn-undo');
     eraseBtn = document.getElementById('btn-erase');
-    dailyDateEl = document.getElementById('daily-date');
-    dailyDiffBadge = document.getElementById('daily-diff-badge');
-    dailyCountdownEl = document.getElementById('daily-countdown');
-    diffLabelEl = document.getElementById('diff-label');
-    mistakesEl = document.getElementById('mistakes-display');
-    dailyMistakesEl = document.getElementById('daily-mistakes-display');
     winMistakesEl = document.getElementById('win-mistakes');
     winHintsEl = document.getElementById('win-hints');
     mistakeOverlay = document.getElementById('mistake-overlay');
+    infoLabelEl = document.getElementById('info-label');
+    infoBadgeEl = document.getElementById('info-badge');
+    infoMistakesEl = document.getElementById('info-mistakes');
+    infoTimerEl = document.getElementById('info-timer');
+    infoSecondaryEl = document.getElementById('info-secondary-row');
+    newGameBtn = document.getElementById('btn-new-game');
+    customFooterActions = document.getElementById('custom-footer-actions');
     statusBar = document.getElementById('status-bar');
-    importInput = document.getElementById('import-input');
-
-    panelHeaders.play = document.getElementById('panel-header-play');
-    panelHeaders.daily = document.getElementById('panel-header-daily');
-    panelHeaders.custom = document.getElementById('panel-header-custom');
-    panelFooters.play = document.getElementById('panel-footer-play');
-    panelFooters.daily = document.getElementById('panel-footer-daily');
-    panelFooters.custom = document.getElementById('panel-footer-custom');
 
     buildBoard();
     bindEvents();
@@ -117,7 +103,7 @@
     notesBtn.addEventListener('click', toggleNotesMode);
     hintBtn.addEventListener('click', hint);
 
-    document.getElementById('btn-new-game').addEventListener('click', function () {
+    newGameBtn.addEventListener('click', function () {
       startNewGame(currentDifficulty);
     });
 
@@ -143,9 +129,9 @@
       diffBtns.push(diffButtons[i]);
       diffButtons[i].addEventListener('click', (function (btn) {
         return function () {
-          var diff = btn.getAttribute('data-difficulty');
+          if (currentMode !== 'play') return;
           settingsPopover.classList.add('hidden');
-          startNewGame(diff);
+          startNewGame(btn.getAttribute('data-difficulty'));
         };
       })(diffButtons[i]));
     }
@@ -168,10 +154,6 @@
 
     document.getElementById('btn-solve').addEventListener('click', solveCustom);
     document.getElementById('btn-clear').addEventListener('click', clearCustom);
-    document.getElementById('btn-load').addEventListener('click', loadImport);
-    importInput.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') loadImport();
-    });
 
     var tabs = document.querySelectorAll('.mode-tab');
     for (var i = 0; i < tabs.length; i++) {
@@ -199,19 +181,14 @@
       modeTabs[i].classList.toggle('active', modeTabs[i].getAttribute('data-mode') === mode);
     }
 
-    var modes = ['play', 'daily', 'custom'];
-    for (var i = 0; i < modes.length; i++) {
-      panelHeaders[modes[i]].classList.toggle('hidden', modes[i] !== mode);
-      panelFooters[modes[i]].classList.toggle('hidden', modes[i] !== mode);
-    }
-
     notesBtn.classList.toggle('hidden', mode === 'custom');
+    hintBtn.classList.toggle('hidden', mode === 'custom');
+
     for (var i = 0; i < diffBtns.length; i++) {
       diffBtns[i].disabled = (mode !== 'play');
       diffBtns[i].style.opacity = (mode !== 'play') ? '0.4' : '';
       diffBtns[i].style.pointerEvents = (mode !== 'play') ? 'none' : '';
     }
-    hintBtn.classList.toggle('hidden', mode === 'custom');
 
     stopCountdown();
 
@@ -225,6 +202,85 @@
       notesMode = false;
       notesBtn.classList.remove('active');
       clearCustom();
+    }
+
+    updatePanelLayout();
+  }
+
+  function updatePanelLayout() {
+    var mode = currentMode;
+
+    if (mode === 'play') {
+      newGameBtn.classList.remove('hidden');
+      customFooterActions.classList.add('hidden');
+      statusBar.classList.add('hidden');
+    } else if (mode === 'daily') {
+      newGameBtn.classList.add('hidden');
+      customFooterActions.classList.add('hidden');
+      statusBar.classList.add('hidden');
+    } else {
+      newGameBtn.classList.add('hidden');
+      customFooterActions.classList.remove('hidden');
+      statusBar.classList.remove('hidden');
+    }
+
+    updateInfoSlots();
+  }
+
+  function updateInfoSlots() {
+    var mode = currentMode;
+
+    if (mode === 'play') {
+      infoLabelEl.textContent = currentDifficulty;
+      infoLabelEl.style.display = '';
+      infoBadgeEl.style.display = 'none';
+      infoBadgeEl.textContent = '';
+      infoMistakesEl.textContent = 'Mistakes: ' + mistakeCount + '/3';
+      infoMistakesEl.style.display = '';
+      infoTimerEl.style.display = '';
+      infoSecondaryEl.innerHTML = '';
+      infoSecondaryEl.style.visibility = 'hidden';
+    } else if (mode === 'daily') {
+      infoLabelEl.textContent = formatDateNice();
+      infoLabelEl.style.display = '';
+      infoLabelEl.style.background = 'none';
+      infoLabelEl.style.padding = '0';
+      infoLabelEl.style.color = 'var(--text-given)';
+      infoBadgeEl.textContent = currentDifficulty;
+      infoBadgeEl.style.display = '';
+      infoMistakesEl.textContent = 'Mistakes: ' + mistakeCount + '/3';
+      infoMistakesEl.style.display = '';
+      infoTimerEl.style.display = '';
+      infoSecondaryEl.style.visibility = 'visible';
+      infoSecondaryEl.textContent = 'Next in --:--:--';
+    } else {
+      infoLabelEl.textContent = 'Custom Puzzle';
+      infoLabelEl.style.display = '';
+      infoLabelEl.style.background = 'none';
+      infoLabelEl.style.padding = '0';
+      infoLabelEl.style.color = 'var(--text-given)';
+      infoBadgeEl.style.display = 'none';
+      infoBadgeEl.textContent = '';
+      infoMistakesEl.style.display = 'none';
+      infoTimerEl.style.display = 'none';
+      infoSecondaryEl.style.visibility = 'visible';
+      infoSecondaryEl.innerHTML = '<div class="secondary-import">' +
+        '<input type="text" id="import-input" class="import-input" maxlength="120" spellcheck="false" autocomplete="off" placeholder="81 chars (0=empty)...">' +
+        '<button class="btn-secondary" id="btn-load">Load</button></div>';
+      document.getElementById('btn-load').addEventListener('click', loadImport);
+      document.getElementById('import-input').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') loadImport();
+      });
+    }
+
+    resetInfoLabelStyle(mode);
+  }
+
+  function resetInfoLabelStyle(mode) {
+    if (mode === 'play') {
+      infoLabelEl.style.background = '';
+      infoLabelEl.style.padding = '';
+      infoLabelEl.style.color = '';
     }
   }
 
@@ -252,24 +308,22 @@
   function startDailyGame() {
     var seed = getDailySeed();
     var difficulty = dailyDifficultyFromDate(seed);
-
-    dailyDateEl.textContent = formatDateNice();
-    dailyDiffBadge.textContent = difficulty;
     currentDifficulty = difficulty;
 
     var result = generatePuzzle(difficulty, seed);
     currentPuzzle = result.puzzle;
     currentSolution = result.solution;
     currentSeed = String(result.seed !== undefined ? result.seed : seed);
+    seedInput.value = currentSeed;
 
     loadPuzzleIntoGrid(currentPuzzle);
     mistakeCount = 0;
     hintCount = 0;
-    updateMistakesDisplay();
     resetTimer();
     hideWinOverlay();
     notesMode = false;
     notesBtn.classList.remove('active');
+    updatePanelLayout();
     render();
     startCountdown();
   }
@@ -292,8 +346,10 @@
     var h = Math.floor(diff / 3600000);
     var m = Math.floor((diff % 3600000) / 60000);
     var s = Math.floor((diff % 60000) / 1000);
-    dailyCountdownEl.textContent = 'Next in ' +
-      (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+    if (infoSecondaryEl && currentMode === 'daily') {
+      infoSecondaryEl.textContent = 'Next in ' +
+        (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+    }
   }
 
   // ---- Play mode ----
@@ -352,8 +408,7 @@
     undoStack.push({ changes: changes });
 
     if (currentMode !== 'custom' && currentSolution) {
-      var correct = parseInt(currentSolution[index]);
-      if (digit !== correct) {
+      if (digit !== parseInt(currentSolution[index])) {
         mistakeCount++;
         updateMistakesDisplay();
         if (mistakeCount === 3) showMistakeOverlay();
@@ -438,9 +493,8 @@
   }
 
   function startNewGame(difficulty, seed) {
+    currentDifficulty = difficulty;
     var result = (seed !== undefined && seed !== '') ? generatePuzzle(difficulty, seed) : generatePuzzle(difficulty);
-    var actualDiff = result.seed ? result.seed.split(':')[0] : difficulty;
-    currentDifficulty = actualDiff || difficulty;
     currentPuzzle = result.puzzle;
     currentSolution = result.solution;
     currentSeed = result.seed !== undefined ? String(result.seed) : '';
@@ -449,13 +503,12 @@
     loadPuzzleIntoGrid(currentPuzzle);
     mistakeCount = 0;
     hintCount = 0;
-    updateMistakesDisplay();
     resetTimer();
     updateDifficultyButtons();
-    updateDiffLabel();
     hideWinOverlay();
     notesMode = false;
     notesBtn.classList.remove('active');
+    updatePanelLayout();
     render();
   }
 
@@ -472,7 +525,10 @@
 
   function applySeed() {
     var seed = seedInput.value.trim();
-    if (seed) { startNewGame(currentDifficulty, seed); settingsPopover.classList.add('hidden'); }
+    if (seed && currentMode === 'play') {
+      startNewGame(currentDifficulty, seed);
+      settingsPopover.classList.add('hidden');
+    }
   }
 
   function updateDifficultyButtons() {
@@ -481,14 +537,14 @@
     }
   }
 
-  function updateDiffLabel() {
-    if (diffLabelEl) diffLabelEl.textContent = currentDifficulty;
+  function updateMistakesDisplay() {
+    if (infoMistakesEl) infoMistakesEl.textContent = 'Mistakes: ' + mistakeCount + '/3';
   }
 
-  function updateMistakesDisplay() {
-    var text = 'Mistakes: ' + mistakeCount + '/3';
-    if (mistakesEl) mistakesEl.textContent = text;
-    if (dailyMistakesEl) dailyMistakesEl.textContent = text;
+  function updateTimerDisplay() {
+    var m = Math.floor(timerSeconds / 60), s = timerSeconds % 60;
+    var text = (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+    if (infoTimerEl) infoTimerEl.textContent = text;
   }
 
   // ---- Custom mode ----
@@ -529,7 +585,9 @@
   }
 
   function loadImport() {
-    var raw = importInput.value.trim();
+    var input = document.getElementById('import-input');
+    if (!input) return;
+    var raw = input.value.trim();
     var cleaned = raw.replace(/[^0-9.]/g, '').replace(/\./g, '0');
     if (cleaned.length !== 81) { setStatus('Input must be exactly 81 characters', 'error'); return; }
     userGrid = [];
@@ -537,7 +595,7 @@
       var ch = cleaned[i];
       userGrid.push({ value: ch !== '0' ? parseInt(ch) : 0, isGiven: ch !== '0', notes: [], isError: false });
     }
-    selectedCell = -1; checkConflicts(); render(); setStatus('Puzzle loaded', 'success'); importInput.value = '';
+    selectedCell = -1; checkConflicts(); render(); setStatus('Puzzle loaded', 'success'); input.value = '';
   }
 
   function getGridString() {
@@ -547,6 +605,7 @@
   }
 
   function setStatus(msg, type) {
+    if (!statusBar) return;
     statusBar.textContent = msg;
     statusBar.className = 'status-bar' + (type ? ' ' + type : '');
   }
@@ -617,13 +676,6 @@
   function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
 
   function resetTimer() { stopTimer(); timerSeconds = 0; timerStarted = false; updateTimerDisplay(); }
-
-  function updateTimerDisplay() {
-    var m = Math.floor(timerSeconds / 60), s = timerSeconds % 60;
-    var text = (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
-    timerEl.textContent = text;
-    dailyTimerEl.textContent = text;
-  }
 
   // ---- Render ----
 
