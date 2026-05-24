@@ -395,6 +395,29 @@ body {
 }
 .cell.hint-flash { animation: hintFlash 600ms ease-out; }
 
+@keyframes unitPop {
+  0% { transform: scale(1); background-color: var(--bg-cell); }
+  40% { transform: scale(1.08); background-color: rgba(102, 187, 106, 0.25); }
+  100% { transform: scale(1); }
+}
+.cell.unit-complete {
+  animation: unitPop 600ms ease-out;
+  z-index: 3;
+  position: relative;
+}
+
+@keyframes winWave {
+  0% { transform: scale(1); background-color: var(--bg-cell); }
+  30% { transform: scale(1.06); background-color: rgba(50, 90, 175, 0.2); }
+  60% { transform: scale(1); background-color: rgba(102, 187, 106, 0.15); }
+  100% { transform: scale(1); }
+}
+.cell.win-cell {
+  animation: winWave 500ms ease-out;
+  z-index: 3;
+  position: relative;
+}
+
 .toast {
   position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px);
   background: var(--text-given); color: var(--bg-page); font-family: var(--font-main);

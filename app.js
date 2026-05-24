@@ -456,6 +456,7 @@
 
     checkConflicts();
     render();
+    checkUnitComplete(index);
     checkWin();
   }
 
@@ -722,12 +723,46 @@
     }
   }
 
+  function checkUnitComplete(triggerIdx) {
+    if (currentMode === 'custom' || gameWon) return;
+    var row = Math.floor(triggerIdx / 9), col = triggerIdx % 9;
+    var boxRow = Math.floor(row / 3) * 3, boxCol = Math.floor(col / 3) * 3;
+
+    var unitsToCheck = [
+      row,
+      9 + col,
+      18 + Math.floor(row / 3) * 3 + Math.floor(col / 3)
+    ];
+
+    for (var u = 0; u < unitsToCheck.length; u++) {
+      var unit = getUnit(unitsToCheck[u]);
+      var complete = true;
+      for (var k = 0; k < 9; k++) {
+        var v = userGrid[unit[k]].value;
+        if (v === 0 || userGrid[unit[k]].isError) { complete = false; break; }
+      }
+      if (complete) animateUnitComplete(unit);
+    }
+  }
+
+  function animateUnitComplete(unit) {
+    for (var i = 0; i < unit.length; i++) {
+      (function (idx, delay) {
+        setTimeout(function () {
+          cells[idx].classList.add('unit-complete');
+          setTimeout(function () { cells[idx].classList.remove('unit-complete'); }, 600);
+        }, delay);
+      })(unit[i], i * 40);
+    }
+  }
+
   function checkWin() {
     if (currentMode === 'custom') return;
     for (var i = 0; i < 81; i++) {
       if (userGrid[i].value === 0 || userGrid[i].value !== parseInt(currentSolution[i])) return;
     }
-    gameWon = true; stopTimer(); showWinOverlay();
+    gameWon = true; stopTimer();
+    animateWinCelebration(function () { showWinOverlay(); });
   }
 
   // ---- Timer ----
@@ -815,6 +850,20 @@
     }
 
     winOverlay.classList.add('visible');
+  }
+
+  function animateWinCelebration(callback) {
+    for (var i = 0; i < 81; i++) {
+      (function (idx) {
+        var row = Math.floor(idx / 9), col = idx % 9;
+        var delay = (row + col) * 35;
+        setTimeout(function () {
+          cells[idx].classList.add('win-cell');
+          setTimeout(function () { cells[idx].classList.remove('win-cell'); }, 500);
+        }, delay);
+      })(i);
+    }
+    setTimeout(callback, 81 * 35 + 300);
   }
 
   function hideWinOverlay() { winOverlay.classList.remove('visible'); }
