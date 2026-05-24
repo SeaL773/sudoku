@@ -664,6 +664,14 @@
         else { seen[val] = idx; }
       }
     }
+    if (currentMode !== 'custom' && currentSolution) {
+      for (var i = 0; i < 81; i++) {
+        if (!userGrid[i].isGiven && userGrid[i].value > 0 &&
+            userGrid[i].value !== parseInt(currentSolution[i])) {
+          userGrid[i].isError = true;
+        }
+      }
+    }
   }
 
   function checkWin() {
