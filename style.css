@@ -290,28 +290,28 @@ body {
 }
 
 .difficulty-selector {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 4px;
   background: var(--bg-diff-track);
   border-radius: var(--radius-lg);
   padding: 4px;
-  justify-content: center;
   width: 100%;
+  max-width: 264px;
 }
 
 .diff-btn {
-  padding: 6px 11px;
+  padding: 7px 0;
   border: none;
   background: transparent;
   border-radius: var(--radius-md);
   font-family: var(--font-main);
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 500;
   color: var(--text-secondary);
   cursor: pointer;
   transition: all var(--transition-fast);
-  white-space: nowrap;
+  text-align: center;
 }
 
 .diff-btn:hover { color: var(--text-given); }
@@ -397,9 +397,9 @@ body {
 .numpad {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 10px;
   width: 100%;
-  max-width: 216px;
+  max-width: 264px;
 }
 
 .num-btn {
@@ -411,7 +411,7 @@ body {
   background: var(--bg-button);
   color: var(--text-user);
   font-family: var(--font-main);
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 700;
   border-radius: var(--radius-md);
   cursor: pointer;
@@ -420,7 +420,7 @@ body {
   user-select: none;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
-  min-height: 56px;
+  min-height: 68px;
 }
 
 .num-btn:hover { background: var(--bg-button-hover); transform: translateY(-1px); box-shadow: var(--shadow-md); }
@@ -558,8 +558,8 @@ body {
   .cell-value { font-size: 1.2rem; }
   .cell-notes span { font-size: 0.5rem; }
   .game-layout { gap: 24px; }
-  .numpad { max-width: 192px; gap: 6px; }
-  .num-btn { min-height: 50px; font-size: 1.3rem; }
+  .numpad { max-width: 240px; gap: 8px; }
+  .num-btn { min-height: 60px; font-size: 1.5rem; }
 }
 
 @media (max-width: 768px) {
@@ -570,8 +570,8 @@ body {
   .cell-notes span { font-size: clamp(0.4rem, 1.2vw, 0.55rem); }
   .controls-panel { width: 100%; max-width: 450px; padding: 0; }
   .timer { font-size: 1.1rem; }
-  .numpad { max-width: 264px; gap: 8px; }
-  .num-btn { min-height: 48px; font-size: clamp(1.2rem, 4vw, 1.5rem); }
+  .numpad { max-width: 252px; gap: 8px; }
+  .num-btn { min-height: 56px; font-size: clamp(1.3rem, 4vw, 1.6rem); }
   .actions { gap: 0; }
   .action-btn { max-width: none; }
   .difficulty-selector { gap: 3px; padding: 3px; }
@@ -588,8 +588,8 @@ body {
   .actions { gap: 0; }
   .action-btn { padding: 8px 6px; font-size: 0.62rem; }
   .action-btn svg { width: 18px; height: 18px; }
-  .numpad { max-width: 210px; gap: 6px; }
-  .num-btn { min-height: 44px; font-size: 1.2rem; border-radius: var(--radius-sm); }
+  .numpad { max-width: 220px; gap: 6px; }
+  .num-btn { min-height: 48px; font-size: 1.3rem; border-radius: var(--radius-sm); }
   .new-game-btn { padding: 10px 28px; font-size: 0.88rem; }
   .timer { font-size: 0.95rem; }
   .import-row { flex-direction: column; }
