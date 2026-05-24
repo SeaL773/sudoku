@@ -531,13 +531,8 @@
         }
         break;
       case 'z':
-        if (e.ctrlKey || e.metaKey) {
-          e.preventDefault();
-          undo();
-        } else {
-          e.preventDefault();
-          undo();
-        }
+        e.preventDefault();
+        undo();
         break;
       case 'Z':
         if (e.ctrlKey || e.metaKey) {

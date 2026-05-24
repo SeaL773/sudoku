@@ -214,7 +214,10 @@
     return board;
   }
 
-  var DIFFICULTY_GIVENS = { easy: [36, 45], medium: [29, 35], hard: [23, 28], expert: [17, 22] };
+  var DIFFICULTY_GIVENS = {
+    easy: [40, 49], medium: [33, 39], hard: [28, 32],
+    expert: [24, 27], evil: [21, 23], extreme: [17, 20]
+  };
 
   function generatePuzzle(difficulty) {
     difficulty = difficulty || 'medium';
