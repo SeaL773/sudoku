@@ -57,6 +57,7 @@
 
   function hashSeed(v) {
     if (typeof v === 'number') return v | 0;
+    if (typeof v === 'string' && /^-?\d+$/.test(v)) return parseInt(v, 10) | 0;
     var h = 0;
     for (var i = 0; i < v.length; i++) h = ((h << 5) - h) + v.charCodeAt(i) | 0;
     return h;
