@@ -208,29 +208,6 @@
     else inputNumber(digit);
   }
 
-  function restartPuzzle() {
-    if (!currentPuzzle) return;
-    for (var i = 0; i < 81; i++) {
-      if (!userGrid[i].isGiven) {
-        userGrid[i].value = 0;
-        userGrid[i].notes = [];
-        userGrid[i].isError = false;
-      }
-    }
-    selectedCell = -1;
-    undoStack = [];
-    mistakeCount = 0;
-    hintCount = 0;
-    notesMode = false;
-    notesBtn.classList.remove('active');
-    gameWon = false;
-    resetTimer();
-    updateMistakesDisplay();
-    hideWinOverlay();
-    checkConflicts();
-    render();
-    clearSavedState();
-  }
 
   function saveGameState() {
     if (currentMode === 'custom') return;
