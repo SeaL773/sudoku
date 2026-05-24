@@ -96,6 +96,69 @@ var avg = (Date.now() - t0) / runs * 1000;
 console.log('Perf: ' + avg.toFixed(0) + 'us/solve (AI Escargot)');
 assert(avg < 5000, 'Solve under 5ms');
 
+// ── Edge cases: unsolvable / invalid ──
+
+var unsolvable = '110000000000000000000000000000000000000000000000000000000000000000000000000000000';
+assert(solveSudoku(unsolvable) === null, 'Unsolvable puzzle returns null');
+
+var allOnes = '111111111111111111111111111111111111111111111111111111111111111111111111111111111';
+assert(solveSudoku(allOnes) === null, 'All-ones invalid returns null');
+
+assert(solveSudoku('') === null, 'Empty string returns null');
+assert(solveSudoku(undefined) === null, 'undefined returns null');
+
+// ── Seed edge cases ──
+
+var negSeed = generatePuzzle('easy', -12345);
+var negSeed2 = generatePuzzle('easy', -12345);
+assert(negSeed.puzzle === negSeed2.puzzle, 'Negative seed deterministic');
+
+var zeroSeed = generatePuzzle('medium', 0);
+var zeroSeed2 = generatePuzzle('medium', 0);
+assert(zeroSeed.puzzle === zeroSeed2.puzzle, 'Zero seed deterministic');
+
+var strSeed = generatePuzzle('hard', 'hello-world');
+var strSeed2 = generatePuzzle('hard', 'hello-world');
+assert(strSeed.puzzle === strSeed2.puzzle, 'Arbitrary string seed deterministic');
+
+var noSeed1 = generatePuzzle('easy');
+var noSeed2 = generatePuzzle('easy');
+assert(noSeed1.seed !== noSeed2.seed, 'No-seed generates different seeds');
+
+// ── parseSeed via generatePuzzle ──
+
+var plain = generatePuzzle('medium', 777);
+assert(plain.seed === 'medium:777', 'Plain seed format: difficulty:number');
+
+var encoded = generatePuzzle('easy', 'extreme:777');
+assert(encoded.seed === 'extreme:777', 'Encoded seed overrides difficulty');
+
+var noColon = generatePuzzle('hard', 'noseparator');
+assert(noColon.seed.startsWith('hard:'), 'String without colon uses provided difficulty');
+
+// ── Givens range per difficulty ──
+
+var ranges = { easy: [36,50], medium: [30,42], hard: [25,35], expert: [22,30], evil: [19,28], extreme: [17,28] };
+for (var i = 0; i < diffs.length; i++) {
+  var total = 0, min = 81, max = 0;
+  for (var j = 0; j < 20; j++) {
+    var r = generatePuzzle(diffs[i]);
+    if (r.givens < min) min = r.givens;
+    if (r.givens > max) max = r.givens;
+  }
+  var lo = ranges[diffs[i]][0], hi = ranges[diffs[i]][1];
+  assert(min >= lo && max <= hi, 'Givens range ' + diffs[i] + ': ' + min + '-' + max + ' within [' + lo + ',' + hi + ']');
+}
+
+// ── Solution uniqueness ──
+
+for (var i = 0; i < 10; i++) {
+  var r = generatePuzzle(diffs[i % diffs.length]);
+  var sol1 = solveSudoku(r.puzzle);
+  var sol2 = solveSudoku(r.puzzle);
+  assert(sol1 === sol2, 'Same puzzle always same solution (#' + i + ')');
+}
+
 // ── Summary ──
 
 console.log('\n' + passed + ' passed, ' + failed + ' failed');
