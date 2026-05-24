@@ -143,6 +143,9 @@
       })(diffButtons[i]));
     }
 
+    infoTimerEl.addEventListener('click', editTimer);
+    infoTimerEl.style.cursor = 'default';
+
     settingsBtn.addEventListener('click', function (e) {
       e.stopPropagation();
       settingsPopover.classList.toggle('hidden');
@@ -270,11 +273,11 @@
       infoLabelEl.style.display = '';
       infoBadgeEl.style.display = 'none';
       infoBadgeEl.textContent = '';
-      infoMistakesEl.textContent = 'Mistakes: ' + mistakeCount + '/3';
       infoMistakesEl.style.display = '';
       infoTimerEl.style.display = '';
       infoSecondaryEl.innerHTML = '';
       infoSecondaryEl.style.visibility = 'hidden';
+      updateMistakesDisplay();
     } else if (mode === 'daily') {
       infoLabelEl.textContent = currentDifficulty;
       infoLabelEl.style.display = '';
@@ -287,9 +290,9 @@
       infoBadgeEl.style.padding = '0';
       infoBadgeEl.style.color = 'var(--text-secondary)';
       infoBadgeEl.style.fontSize = '0.75rem';
-      infoMistakesEl.textContent = 'Mistakes: ' + mistakeCount + '/3';
       infoMistakesEl.style.display = '';
       infoTimerEl.style.display = '';
+      updateMistakesDisplay();
       infoSecondaryEl.style.visibility = 'visible';
       infoSecondaryEl.textContent = 'Next in --:--:--';
     } else {
@@ -447,7 +450,7 @@
       if (digit !== parseInt(currentSolution[index])) {
         mistakeCount++;
         updateMistakesDisplay();
-        if (mistakeCount === 3) showMistakeOverlay();
+        if (mistakeCount === 3 && !cheatMode) showMistakeOverlay();
       }
     }
 
@@ -576,13 +579,29 @@
   }
 
   function updateMistakesDisplay() {
-    if (infoMistakesEl) infoMistakesEl.textContent = 'Mistakes: ' + mistakeCount + '/3';
+    var limit = cheatMode ? '\u221E' : '3';
+    if (infoMistakesEl) infoMistakesEl.textContent = 'Mistakes: ' + mistakeCount + '/' + limit;
   }
 
   function updateTimerDisplay() {
     var m = Math.floor(timerSeconds / 60), s = timerSeconds % 60;
     var text = (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
     if (infoTimerEl) infoTimerEl.textContent = text;
+  }
+
+  function editTimer() {
+    if (!cheatMode) return;
+    var cur = formatTime(timerSeconds);
+    var input = prompt('Set timer (MM:SS):', cur);
+    if (!input) return;
+    var parts = input.split(':');
+    if (parts.length === 2) {
+      var m = parseInt(parts[0], 10), s = parseInt(parts[1], 10);
+      if (!isNaN(m) && !isNaN(s) && m >= 0 && s >= 0) {
+        timerSeconds = m * 60 + s;
+        updateTimerDisplay();
+      }
+    }
   }
 
   // ---- Custom mode ----
@@ -842,6 +861,8 @@
       if (match) {
         cheatMode = !cheatMode;
         konamiBuffer = [];
+        updateMistakesDisplay();
+        infoTimerEl.style.cursor = cheatMode ? 'pointer' : 'default';
         var msg = cheatMode ? 'Cheat mode ON' : 'Cheat mode OFF';
         var el = document.getElementById('status-bar');
         if (el) { el.textContent = msg; el.className = 'status-bar' + (cheatMode ? ' success' : ''); }
