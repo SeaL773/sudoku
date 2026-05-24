@@ -8,7 +8,6 @@
 
   var PEERS = [];
   var UNITS = [];
-  var CELL_UNITS = [];
 
   (function () {
     for (var i = 0; i < 81; i++) {
@@ -36,14 +35,6 @@
             box.push((br + dr) * 9 + (bc + dc));
         UNITS.push(box);
       }
-    // Precompute which 3 units each cell belongs to
-    for (var i = 0; i < 81; i++) {
-      var cu = [];
-      for (var u = 0; u < 27; u++) {
-        if (UNITS[u].indexOf(i) !== -1) cu.push(u);
-      }
-      CELL_UNITS.push(cu);
-    }
   })();
 
   function popcount(x) {
