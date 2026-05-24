@@ -299,7 +299,7 @@ body {
 .secondary-import .import-input {
   flex: 1; font-family: var(--font-mono); font-size: 0.72rem; padding: 6px 8px;
   border: 1px solid var(--border-thin); border-radius: var(--radius-sm);
-  background: #ffffff; color: var(--text-given); outline: none; min-width: 0;
+  background: var(--bg-cell); color: var(--text-given); outline: none; min-width: 0;
   transition: border-color var(--transition-fast);
 }
 .secondary-import .import-input:focus { border-color: var(--accent); }

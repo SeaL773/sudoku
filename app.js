@@ -218,6 +218,7 @@
         puzzle: currentPuzzle,
         solution: currentSolution,
         seed: currentSeed,
+        dailySeed: currentMode === 'daily' ? getDailySeed() : null,
         userGrid: userGrid,
         timerSeconds: timerSeconds,
         mistakeCount: mistakeCount,
@@ -238,8 +239,7 @@
       if (!state || !state.puzzle || !state.solution || !state.userGrid) return false;
 
       if (state.mode === 'daily') {
-        var todaySeed = getDailySeed();
-        if (state.seed !== todaySeed && state.seed.indexOf(todaySeed) === -1) return false;
+        if (state.dailySeed !== getDailySeed()) return false;
       }
 
       currentMode = state.mode || 'play';
@@ -474,6 +474,7 @@
   }
 
   function updateCountdown() {
+    if (getDailyStatus().completedToday || gameWon) return;
     var now = new Date();
     var tomorrow = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
     var diff = tomorrow.getTime() - now.getTime();
@@ -1016,7 +1017,7 @@
         }, delay);
       })(i);
     }
-    setTimeout(callback, 81 * 35 + 300);
+    setTimeout(callback, 16 * 35 + 700);
   }
 
   function hideWinOverlay() { winOverlay.classList.remove('visible'); }
