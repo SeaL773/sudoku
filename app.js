@@ -26,7 +26,7 @@
   var notesBtn, hintBtn, undoBtn, eraseBtn;
   var winMistakesEl, winHintsEl, mistakeOverlay;
   var infoLabelEl, infoBadgeEl, infoMistakesEl, infoTimerEl, infoSecondaryEl;
-  var newGameBtn, footerPlayBtns, customFooterActions, statusBar;
+  var newGameBtn, customFooterActions, statusBar;
   var cells = [];
   var numBtns = [];
   var diffBtns = [];
@@ -362,15 +362,15 @@
     infoBadgeEl.style.fontSize = '';
 
     if (mode === 'play') {
-      footerPlayBtns.classList.remove('hidden');
+      newGameBtn.classList.remove('hidden');
       customFooterActions.classList.add('hidden');
       statusBar.classList.add('hidden');
     } else if (mode === 'daily') {
-      footerPlayBtns.classList.add('hidden');
+      newGameBtn.classList.add('hidden');
       customFooterActions.classList.add('hidden');
       statusBar.classList.add('hidden');
     } else {
-      footerPlayBtns.classList.add('hidden');
+      newGameBtn.classList.add('hidden');
       customFooterActions.classList.remove('hidden');
       statusBar.classList.remove('hidden');
     }
