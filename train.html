@@ -420,9 +420,9 @@
 
     .practice-layout {
       display: flex;
-      gap: 24px;
-      align-items: flex-start;
-      flex-wrap: wrap;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
     }
 
     /* ── Practice board (full 9x9, interactive) ── */
@@ -467,27 +467,31 @@
 
     .practice-controls {
       display: flex;
-      flex-direction: column;
-      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      max-width: 324px;
     }
     .practice-numpad {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 7px;
-      width: 180px;
+      grid-template-columns: repeat(9, 1fr);
+      gap: 5px;
+      width: 100%;
     }
     .p-num-btn {
-      aspect-ratio: 1;
       display: flex;
       align-items: center;
       justify-content: center;
+      min-height: 32px;
       border: none;
       background: var(--bg-button);
       color: var(--text-user);
       font-family: var(--font-main);
-      font-size: 1.3rem;
+      font-size: 1rem;
       font-weight: 700;
-      border-radius: var(--radius-md);
+      border-radius: var(--radius-sm);
       cursor: pointer;
       box-shadow: var(--shadow-sm);
       transition: all 100ms ease;
@@ -497,8 +501,7 @@
     .p-num-btn:active { transform: scale(0.95); }
 
     .check-btn {
-      padding: 10px 0;
-      width: 180px;
+      padding: 8px 16px;
       border: none;
       background: var(--accent);
       color: #ffffff;
@@ -514,8 +517,7 @@
     .check-btn:active { transform: scale(0.97); }
 
     .erase-btn {
-      padding: 8px 0;
-      width: 180px;
+      padding: 8px 16px;
       border: 1px solid var(--border-thin);
       background: var(--bg-button);
       color: var(--text-given);
@@ -602,8 +604,9 @@
       .mini-board { width: 252px; height: 252px; }
       .mini-board.size-sm { width: 198px; height: 198px; }
       .mini-cell { font-size: 0.88rem; }
-      .practice-board { width: 288px; height: 288px; }
+      .practice-board { width: min(324px, calc(100vw - 80px)); height: auto; aspect-ratio: 1; }
       .practice-cell { font-size: 0.95rem; }
+      .practice-controls { max-width: min(324px, calc(100vw - 80px)); }
       .practice-cell .practice-notes span { font-size: 0.4rem; }
     }
     @media (max-width: 480px) {
@@ -612,11 +615,10 @@
       .mini-board { width: 216px; height: 216px; }
       .mini-board.size-sm { width: 162px; height: 162px; }
       .mini-cell { font-size: 0.75rem; }
-      .practice-board { width: 252px; height: 252px; }
+      .practice-board { width: min(280px, calc(100vw - 48px)); }
       .practice-cell { font-size: 0.82rem; }
-      .practice-numpad { width: 160px; gap: 5px; }
-      .p-num-btn { font-size: 1.1rem; }
-      .check-btn, .erase-btn, .new-puzzle-btn, .notes-toggle-btn { width: 160px; }
+      .practice-controls { max-width: min(280px, calc(100vw - 48px)); }
+      .p-num-btn { font-size: 0.9rem; min-height: 28px; }
       .practice-cell .practice-notes span { font-size: 0.35rem; }
     }
   </style>
