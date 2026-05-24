@@ -118,6 +118,72 @@ body {
 .board-panel { flex-shrink: 0; }
 .controls-panel { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: var(--section-gap); padding: 0 var(--panel-pad); }
 
+.board {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  grid-template-rows: repeat(9, 1fr);
+  width: 540px; height: 540px;
+  border: 2px solid var(--border-thick);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  background: var(--border-thin);
+}
+
+.cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-cell);
+  border-right: 1px solid var(--border-thin);
+  border-bottom: 1px solid var(--border-thin);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cell[data-col="2"], .cell[data-col="5"] { border-right: 2px solid var(--border-thick); }
+.cell[data-row="2"], .cell[data-row="5"] { border-bottom: 2px solid var(--border-thick); }
+.cell[data-col="8"] { border-right: none; }
+.cell[data-row="8"] { border-bottom: none; }
+
+.cell-value {
+  font-family: var(--font-main);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-given);
+  pointer-events: none;
+}
+
+.cell-notes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.cell-notes span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.55rem;
+  color: var(--text-notes);
+  line-height: 1;
+}
+
+.cell.selected { background: var(--bg-cell-selected); }
+.cell.peer-highlight { background: var(--bg-cell-peer); }
+.cell.same-number { background: var(--bg-cell-same-number); }
+.cell.error:not(.selected) { background: var(--bg-cell-error); }
+.cell.error .cell-value { color: var(--text-error); }
+.cell.given .cell-value { font-weight: 700; color: var(--text-given); }
+.cell:not(.given) .cell-value { color: var(--text-user); font-weight: 600; }
+
 .panel-header {
   display: flex; flex-direction: column; width: 100%;
   height: calc(var(--row-h) * 3 + 16px);

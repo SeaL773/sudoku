@@ -550,8 +550,46 @@
       transition: all 120ms ease;
     }
     .new-puzzle-btn:hover { background: var(--accent-light); border-color: var(--accent); }
-    @media (max-width: 480px) {
-      .new-puzzle-btn { width: 160px; }
+
+    .notes-toggle-btn {
+      padding: 8px 0;
+      width: 180px;
+      border: 1px solid var(--border-thin);
+      background: var(--bg-button);
+      color: var(--text-given);
+      font-family: var(--font-main);
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all 120ms ease;
+    }
+    .notes-toggle-btn:hover { background: var(--bg-button-hover); border-color: var(--accent); }
+    .notes-toggle-btn.active {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+      box-shadow: 0 2px 8px rgba(50,90,175,0.3);
+    }
+
+    .practice-cell .practice-notes {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .practice-cell .practice-notes span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.45rem;
+      font-weight: 600;
+      color: var(--text-notes);
+      line-height: 1;
     }
 
     /* ── Responsive ── */
@@ -565,6 +603,7 @@
       .mini-cell { font-size: 0.88rem; }
       .practice-board { width: 288px; height: 288px; }
       .practice-cell { font-size: 0.95rem; }
+      .practice-cell .practice-notes span { font-size: 0.4rem; }
     }
     @media (max-width: 480px) {
       .layout { padding: 14px 10px; }
@@ -576,7 +615,8 @@
       .practice-cell { font-size: 0.82rem; }
       .practice-numpad { width: 160px; gap: 5px; }
       .p-num-btn { font-size: 1.1rem; }
-      .check-btn, .erase-btn { width: 160px; }
+      .check-btn, .erase-btn, .new-puzzle-btn, .notes-toggle-btn { width: 160px; }
+      .practice-cell .practice-notes span { font-size: 0.35rem; }
     }
   </style>
 </head>
@@ -680,6 +720,7 @@
           <div class="practice-board" id="practice-1"></div>
           <div class="practice-controls">
             <div class="practice-numpad" id="numpad-1"></div>
+            <button class="notes-toggle-btn" data-practice="1">Notes</button>
             <button class="erase-btn" data-practice="1">Erase</button>
             <button class="check-btn" data-practice="1">Check</button>
             <button class="new-puzzle-btn" data-practice="1">New Puzzle</button>
@@ -721,6 +762,7 @@
           <div class="practice-board" id="practice-2"></div>
           <div class="practice-controls">
             <div class="practice-numpad" id="numpad-2"></div>
+            <button class="notes-toggle-btn" data-practice="2">Notes</button>
             <button class="erase-btn" data-practice="2">Erase</button>
             <button class="check-btn" data-practice="2">Check</button>
             <button class="new-puzzle-btn" data-practice="2">New Puzzle</button>
@@ -769,6 +811,7 @@
           <div class="practice-board" id="practice-3"></div>
           <div class="practice-controls">
             <div class="practice-numpad" id="numpad-3"></div>
+            <button class="notes-toggle-btn" data-practice="3">Notes</button>
             <button class="erase-btn" data-practice="3">Erase</button>
             <button class="check-btn" data-practice="3">Check</button>
             <button class="new-puzzle-btn" data-practice="3">New Puzzle</button>
@@ -817,6 +860,7 @@
           <div class="practice-board" id="practice-4"></div>
           <div class="practice-controls">
             <div class="practice-numpad" id="numpad-4"></div>
+            <button class="notes-toggle-btn" data-practice="4">Notes</button>
             <button class="erase-btn" data-practice="4">Erase</button>
             <button class="check-btn" data-practice="4">Check</button>
             <button class="new-puzzle-btn" data-practice="4">New Puzzle</button>
@@ -860,6 +904,7 @@
           <div class="practice-board" id="practice-5"></div>
           <div class="practice-controls">
             <div class="practice-numpad" id="numpad-5"></div>
+            <button class="notes-toggle-btn" data-practice="5">Notes</button>
             <button class="erase-btn" data-practice="5">Erase</button>
             <button class="check-btn" data-practice="5">Check</button>
             <button class="new-puzzle-btn" data-practice="5">New Puzzle</button>
@@ -910,6 +955,7 @@
           <div class="practice-board" id="practice-6"></div>
           <div class="practice-controls">
             <div class="practice-numpad" id="numpad-6"></div>
+            <button class="notes-toggle-btn" data-practice="6">Notes</button>
             <button class="erase-btn" data-practice="6">Erase</button>
             <button class="check-btn" data-practice="6">Check</button>
             <button class="new-puzzle-btn" data-practice="6">New Puzzle</button>
@@ -958,6 +1004,7 @@
           <div class="practice-board" id="practice-7"></div>
           <div class="practice-controls">
             <div class="practice-numpad" id="numpad-7"></div>
+            <button class="notes-toggle-btn" data-practice="7">Notes</button>
             <button class="erase-btn" data-practice="7">Erase</button>
             <button class="check-btn" data-practice="7">Check</button>
             <button class="new-puzzle-btn" data-practice="7">New Puzzle</button>
@@ -1000,6 +1047,7 @@
           <div class="practice-board" id="practice-8"></div>
           <div class="practice-controls">
             <div class="practice-numpad" id="numpad-8"></div>
+            <button class="notes-toggle-btn" data-practice="8">Notes</button>
             <button class="erase-btn" data-practice="8">Erase</button>
             <button class="check-btn" data-practice="8">Check</button>
             <button class="new-puzzle-btn" data-practice="8">New Puzzle</button>
@@ -1046,6 +1094,7 @@
           <div class="practice-board" id="practice-9"></div>
           <div class="practice-controls">
             <div class="practice-numpad" id="numpad-9"></div>
+            <button class="notes-toggle-btn" data-practice="9">Notes</button>
             <button class="erase-btn" data-practice="9">Erase</button>
             <button class="check-btn" data-practice="9">Check</button>
             <button class="new-puzzle-btn" data-practice="9">New Puzzle</button>
@@ -1092,6 +1141,7 @@
           <div class="practice-board" id="practice-10"></div>
           <div class="practice-controls">
             <div class="practice-numpad" id="numpad-10"></div>
+            <button class="notes-toggle-btn" data-practice="10">Notes</button>
             <button class="erase-btn" data-practice="10">Erase</button>
             <button class="check-btn" data-practice="10">Check</button>
             <button class="new-puzzle-btn" data-practice="10">New Puzzle</button>
@@ -1138,6 +1188,7 @@
           <div class="practice-board" id="practice-11"></div>
           <div class="practice-controls">
             <div class="practice-numpad" id="numpad-11"></div>
+            <button class="notes-toggle-btn" data-practice="11">Notes</button>
             <button class="erase-btn" data-practice="11">Erase</button>
             <button class="check-btn" data-practice="11">Check</button>
             <button class="new-puzzle-btn" data-practice="11">New Puzzle</button>
@@ -1178,6 +1229,7 @@
           <div class="practice-board" id="practice-12"></div>
           <div class="practice-controls">
             <div class="practice-numpad" id="numpad-12"></div>
+            <button class="notes-toggle-btn" data-practice="12">Notes</button>
             <button class="erase-btn" data-practice="12">Erase</button>
             <button class="check-btn" data-practice="12">Check</button>
             <button class="new-puzzle-btn" data-practice="12">New Puzzle</button>
@@ -1233,6 +1285,7 @@
           <div class="practice-board" id="practice-13"></div>
           <div class="practice-controls">
             <div class="practice-numpad" id="numpad-13"></div>
+            <button class="notes-toggle-btn" data-practice="13">Notes</button>
             <button class="erase-btn" data-practice="13">Erase</button>
             <button class="check-btn" data-practice="13">Check</button>
             <button class="new-puzzle-btn" data-practice="13">New Puzzle</button>
@@ -1280,6 +1333,7 @@
           <div class="practice-board" id="practice-14"></div>
           <div class="practice-controls">
             <div class="practice-numpad" id="numpad-14"></div>
+            <button class="notes-toggle-btn" data-practice="14">Notes</button>
             <button class="erase-btn" data-practice="14">Erase</button>
             <button class="check-btn" data-practice="14">Check</button>
             <button class="new-puzzle-btn" data-practice="14">New Puzzle</button>
@@ -1333,6 +1387,7 @@
           <div class="practice-board" id="practice-15"></div>
           <div class="practice-controls">
             <div class="practice-numpad" id="numpad-15"></div>
+            <button class="notes-toggle-btn" data-practice="15">Notes</button>
             <button class="erase-btn" data-practice="15">Erase</button>
             <button class="check-btn" data-practice="15">Check</button>
             <button class="new-puzzle-btn" data-practice="15">New Puzzle</button>
@@ -1713,6 +1768,14 @@
     return entry;
   }
 
+  function setNotesMode(id, on) {
+    var st = practiceState[id];
+    if (!st) return;
+    st.notesMode = on;
+    var btn = document.querySelector('.notes-toggle-btn[data-practice="' + id + '"]');
+    if (btn) btn.classList.toggle('active', on);
+  }
+
   function loadPractice(id) {
     var cfg = PRACTICES[id];
     if (!cfg) return;
@@ -1725,16 +1788,12 @@
       var arr = solution.split('');
       blanks.forEach(function (i) { arr[i] = '0'; });
       puzzle = arr.join('');
-      practiceState[id] = { solution: solution, puzzle: puzzle, blanks: blanks, userVals: {}, selected: -1 };
-
     } else if (cfg.type === 'pool') {
       var entry = resolvePoolSolution(cfg.pool[cfg.idx % cfg.pool.length]);
       puzzle = entry.p;
       solution = entry.s;
       blanks = [];
       for (var i = 0; i < 81; i++) { if (puzzle[i] === '0') blanks.push(i); }
-      practiceState[id] = { solution: solution, puzzle: puzzle, blanks: blanks, userVals: {}, selected: -1 };
-
     } else {
       var seed = cfg.seeds[cfg.idx % cfg.seeds.length];
       var gen = generatePuzzle(cfg.difficulty, seed);
@@ -1742,11 +1801,21 @@
       solution = gen.solution;
       blanks = [];
       for (var i = 0; i < 81; i++) { if (puzzle[i] === '0') blanks.push(i); }
-      practiceState[id] = { solution: solution, puzzle: puzzle, blanks: blanks, userVals: {}, selected: -1 };
     }
+
+    practiceState[id] = {
+      solution: solution,
+      puzzle: puzzle,
+      blanks: blanks,
+      userVals: {},
+      userNotes: {},
+      notesMode: false,
+      selected: -1
+    };
 
     renderPracticeBoard(id);
     buildPracticeNumpad(id);
+    setNotesMode(id, false);
     var statusEl = document.getElementById('status-' + id);
     if (statusEl) { statusEl.textContent = ''; statusEl.className = 'practice-status'; }
   }
@@ -1760,6 +1829,31 @@
       cfg.idx = (cfg.idx + 1) % (cfg.pool ? cfg.pool.length : cfg.seeds.length);
     }
     loadPractice(id);
+  }
+
+  function applyDigit(id, num) {
+    var st = practiceState[id];
+    if (!st || st.selected === -1) return;
+    var idx = st.selected;
+    if (st.puzzle[idx] !== '0') return;
+    var key = String(num);
+    if (st.notesMode) {
+      delete st.userVals[idx];
+      if (!st.userNotes[idx]) st.userNotes[idx] = [];
+      var pos = st.userNotes[idx].indexOf(num);
+      if (pos !== -1) {
+        st.userNotes[idx].splice(pos, 1);
+      } else {
+        st.userNotes[idx].push(num);
+        st.userNotes[idx].sort(function (a, b) { return a - b; });
+      }
+    } else {
+      st.userVals[idx] = key;
+      delete st.userNotes[idx];
+    }
+    renderPracticeBoard(id);
+    var statusEl = document.getElementById('status-' + id);
+    if (statusEl) { statusEl.textContent = ''; statusEl.className = 'practice-status'; }
   }
 
   function renderPracticeBoard(id) {
@@ -1779,6 +1873,7 @@
 
       var isGiven = state.puzzle[i] !== '0';
       var userVal = state.userVals[i];
+      var notes = state.userNotes[i];
 
       if (isGiven) {
         cell.classList.add('given');
@@ -1787,6 +1882,15 @@
         cell.classList.add('user-val');
         cell.textContent = userVal;
         if (userVal !== state.solution[i]) cell.classList.add('wrong');
+      } else if (notes && notes.length > 0) {
+        var notesGrid = document.createElement('div');
+        notesGrid.className = 'practice-notes';
+        for (var n = 1; n <= 9; n++) {
+          var ns = document.createElement('span');
+          ns.textContent = notes.indexOf(n) !== -1 ? n : '';
+          notesGrid.appendChild(ns);
+        }
+        cell.appendChild(notesGrid);
       }
 
       if (state.selected === i && !isGiven) cell.classList.add('selected');
@@ -1815,27 +1919,32 @@
       btn.className = 'p-num-btn';
       btn.textContent = n;
       btn.addEventListener('click', (function (num, lessonId) {
-        return function () {
-          var st = practiceState[lessonId];
-          if (!st || st.selected === -1) return;
-          if (st.puzzle[st.selected] !== '0') return;
-          st.userVals[st.selected] = String(num);
-          renderPracticeBoard(lessonId);
-          var statusEl = document.getElementById('status-' + lessonId);
-          if (statusEl) { statusEl.textContent = ''; statusEl.className = 'practice-status'; }
-        };
+        return function () { applyDigit(lessonId, num); };
       })(n, id));
       container.appendChild(btn);
     }
   }
 
   document.addEventListener('click', function (e) {
+    var notesBtn = e.target.closest('.notes-toggle-btn');
+    if (notesBtn) {
+      var id = notesBtn.dataset.practice;
+      var st = practiceState[id];
+      if (st) setNotesMode(id, !st.notesMode);
+      return;
+    }
+
     var eraseBtn = e.target.closest('.erase-btn');
     if (eraseBtn) {
       var id = eraseBtn.dataset.practice;
       var st = practiceState[id];
       if (!st || st.selected === -1) return;
-      delete st.userVals[st.selected];
+      var idx = st.selected;
+      if (st.userNotes[idx] && st.userNotes[idx].length > 0) {
+        delete st.userNotes[idx];
+      } else {
+        delete st.userVals[idx];
+      }
       renderPracticeBoard(id);
       return;
     }
@@ -1883,14 +1992,17 @@
       var st = practiceState[id];
       if (!st || st.selected === -1) return;
       if (key >= '1' && key <= '9') {
-        if (st.puzzle[st.selected] !== '0') return;
-        st.userVals[st.selected] = key;
-        renderPracticeBoard(id);
-        var statusEl = document.getElementById('status-' + id);
-        if (statusEl) { statusEl.textContent = ''; statusEl.className = 'practice-status'; }
+        applyDigit(id, parseInt(key));
       } else if (key === 'Backspace' || key === 'Delete' || key === '0') {
-        delete st.userVals[st.selected];
+        var idx = st.selected;
+        if (st.userNotes[idx] && st.userNotes[idx].length > 0) {
+          delete st.userNotes[idx];
+        } else {
+          delete st.userVals[idx];
+        }
         renderPracticeBoard(id);
+      } else if (key === 'n' || key === 'N') {
+        setNotesMode(id, !st.notesMode);
       }
     });
   });
