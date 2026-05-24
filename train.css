@@ -5,6 +5,16 @@
   --bg-cell-highlight: #fff9c4;
   --bg-cell-answer: #c8e6c9;
 }
+html.dark {
+  --bg-cell-highlight: #4a4520;
+  --bg-cell-answer: #1e3a20;
+}
+@media (prefers-color-scheme: dark) {
+  html:not(.light):not(.dark) {
+    --bg-cell-highlight: #4a4520;
+    --bg-cell-answer: #1e3a20;
+  }
+}
 
 body {
   display: block;

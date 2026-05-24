@@ -584,23 +584,26 @@
   document.addEventListener('keydown', function (e) {
     var key = e.key;
     var ALL_IDS = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15'];
-    ALL_IDS.forEach(function (id) {
-      var st = practiceState[id];
-      if (!st || st.selected === -1) return;
-      if (key >= '1' && key <= '9') {
-        applyDigit(id, parseInt(key));
-      } else if (key === 'Backspace' || key === 'Delete' || key === '0') {
-        var idx = st.selected;
-        if (st.userNotes[idx] && st.userNotes[idx].length > 0) {
-          delete st.userNotes[idx];
-        } else {
-          delete st.userVals[idx];
-        }
-        renderPracticeBoard(id);
-      } else if (key === 'n' || key === 'N') {
-        setNotesMode(id, !st.notesMode);
+    var activeId = null;
+    for (var i = 0; i < ALL_IDS.length; i++) {
+      var st = practiceState[ALL_IDS[i]];
+      if (st && st.selected !== -1) { activeId = ALL_IDS[i]; break; }
+    }
+    if (!activeId) return;
+    var st = practiceState[activeId];
+    if (key >= '1' && key <= '9') {
+      applyDigit(activeId, parseInt(key));
+    } else if (key === 'Backspace' || key === 'Delete' || key === '0') {
+      var idx = st.selected;
+      if (st.userNotes[idx] && st.userNotes[idx].length > 0) {
+        delete st.userNotes[idx];
+      } else {
+        delete st.userVals[idx];
       }
-    });
+      renderPracticeBoard(activeId);
+    } else if (key === 'n' || key === 'N') {
+      setNotesMode(activeId, !st.notesMode);
+    }
   });
 
   ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15'].forEach(function (id) {
