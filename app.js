@@ -815,13 +815,18 @@
   }
 
   function autoFillNotes() {
-    if (!cheatMode || !notesMode || selectedCell < 0) return;
-    var cell = userGrid[selectedCell];
-    if (cell.isGiven || cell.value > 0) return;
-    var cands = getCandidates(selectedCell);
-    var changes = [{ index: selectedCell, prev: copyCell(cell) }];
-    cell.notes = cands;
-    undoStack.push({ changes: changes });
+    if (!cheatMode || !notesMode) return;
+    var changes = [];
+    for (var i = 0; i < 81; i++) {
+      var cell = userGrid[i];
+      if (cell.isGiven || cell.value > 0) continue;
+      var cands = getCandidates(i);
+      if (cands.length > 0) {
+        changes.push({ index: i, prev: copyCell(cell) });
+        cell.notes = cands;
+      }
+    }
+    if (changes.length > 0) undoStack.push({ changes: changes });
     render();
   }
 
