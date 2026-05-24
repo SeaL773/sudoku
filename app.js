@@ -726,11 +726,38 @@
 
   // ---- Win overlay ----
 
+  function formatTime(sec) {
+    var m = Math.floor(sec / 60), s = sec % 60;
+    return (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+  }
+
+  function getBestTime(diff) {
+    try { var v = localStorage.getItem('sudoku-best-' + diff); return v ? parseInt(v, 10) : null; } catch (e) { return null; }
+  }
+
+  function setBestTime(diff, sec) {
+    try { localStorage.setItem('sudoku-best-' + diff, sec); } catch (e) {}
+  }
+
   function showWinOverlay() {
-    var m = Math.floor(timerSeconds / 60), s = timerSeconds % 60;
-    winTimeEl.textContent = (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+    winTimeEl.textContent = formatTime(timerSeconds);
     winMistakesEl.textContent = 'Mistakes: ' + mistakeCount;
     winHintsEl.textContent = 'Hints: ' + hintCount;
+
+    var bestEl = document.getElementById('win-best');
+    var diff = currentDifficulty;
+    var prev = getBestTime(diff);
+    var isRecord = prev === null || timerSeconds < prev;
+
+    if (currentMode !== 'custom' && timerSeconds > 0) {
+      if (isRecord) setBestTime(diff, timerSeconds);
+      var bestSec = isRecord ? timerSeconds : prev;
+      bestEl.innerHTML = 'Best (' + diff + '): ' + formatTime(bestSec) +
+        (isRecord ? ' <span class="new-record">New Record!</span>' : '');
+    } else {
+      bestEl.innerHTML = '';
+    }
+
     winOverlay.classList.add('visible');
   }
 
@@ -748,8 +775,7 @@
       case 'ArrowRight': e.preventDefault(); navigateCell(1, 0); break;
       case 'Backspace': case 'Delete': e.preventDefault(); erase(); break;
       case 'n': case 'N': if (!e.ctrlKey && !e.metaKey) { e.preventDefault(); toggleNotesMode(); } break;
-      case 'z': e.preventDefault(); undo(); break;
-      case 'Z': if (e.ctrlKey || e.metaKey) { e.preventDefault(); undo(); } break;
+      case 'z': case 'Z': if (e.ctrlKey || e.metaKey) { e.preventDefault(); undo(); } break;
       case 'h': case 'H': if (!e.ctrlKey && !e.metaKey) { e.preventDefault(); hint(); } break;
       default: if (/^[1-9]$/.test(e.key)) { e.preventDefault(); handleNumpadClick(parseInt(e.key)); } break;
     }
