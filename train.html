@@ -572,6 +572,13 @@
   <a class="mobile-pill" href="#lesson-6">6. Hidden Singles</a>
   <a class="mobile-pill" href="#lesson-7">7. Naked Pairs</a>
   <a class="mobile-pill" href="#lesson-8">8. Pointing Pairs</a>
+  <a class="mobile-pill" href="#lesson-9">9. Naked Triples</a>
+  <a class="mobile-pill" href="#lesson-10">10. Hidden Pairs</a>
+  <a class="mobile-pill" href="#lesson-11">11. Hidden Triples</a>
+  <a class="mobile-pill" href="#lesson-12">12. Pointing Triples</a>
+  <a class="mobile-pill" href="#lesson-13">13. X-Wing</a>
+  <a class="mobile-pill" href="#lesson-14">14. Y-Wing</a>
+  <a class="mobile-pill" href="#lesson-15">15. Swordfish</a>
 </nav>
 
 <div class="layout">
@@ -590,6 +597,14 @@
       <div class="sidebar-level">Level 3 — Pairs &amp; Beyond</div>
       <a class="sidebar-link" href="#lesson-7">7. Naked Pairs</a>
       <a class="sidebar-link" href="#lesson-8">8. Pointing Pairs</a>
+      <a class="sidebar-link" href="#lesson-9">9. Naked Triples</a>
+      <a class="sidebar-link" href="#lesson-10">10. Hidden Pairs</a>
+      <a class="sidebar-link" href="#lesson-11">11. Hidden Triples</a>
+      <a class="sidebar-link" href="#lesson-12">12. Pointing Triples</a>
+      <div class="sidebar-level">Level 4 — Advanced</div>
+      <a class="sidebar-link" href="#lesson-13">13. X-Wing</a>
+      <a class="sidebar-link" href="#lesson-14">14. Y-Wing</a>
+      <a class="sidebar-link" href="#lesson-15">15. Swordfish</a>
     </div>
   </aside>
 
@@ -885,8 +900,226 @@
         </div>
       </div>
 
+    </section>
+
+    <!-- Lesson 9 -->
+    <section class="lesson" id="lesson-9">
+      <div class="lesson-header">
+        <div class="lesson-num">Lesson 9</div>
+        <h2>Naked Triples</h2>
+      </div>
+
+      <p>A <strong>naked triple</strong> extends the naked pair concept to three cells. Three cells in the same unit collectively contain only three candidates (or subsets of those three candidates). Those three digits are "used up" by those three cells and can be eliminated from all other cells in the unit.</p>
+
+      <p>The cells don't all need to have all three candidates. The rule is that the union of candidates across the three cells contains exactly three digits. For example:</p>
+      <ul>
+        <li>Cell A: [1, 3, 7]</li>
+        <li>Cell B: [1, 7]</li>
+        <li>Cell C: [3, 7]</li>
+      </ul>
+      <p>The union is {1, 3, 7} — three digits in three cells. Remove 1, 3, and 7 from every other cell in that unit.</p>
+
+      <div class="callout">
+        <strong>Spotting them:</strong> Look for three cells in a unit whose combined candidates total exactly three digits. Cells with only two candidates are common members of naked triples.
+      </div>
+
+      <div class="example-section">
+        <div class="example-label">Example — Naked Triple [1, 3, 7] in Row 6</div>
+        <div class="example-wrap">
+          <p class="example-caption">Three blue cells in row 6 hold only candidates from {1, 3, 7}. The yellow cell previously had 1 and 7 in its notes — both can now be removed, leaving it a naked single.</p>
+          <div class="mini-board" id="board-l9"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lesson 10 -->
+    <section class="lesson" id="lesson-10">
+      <div class="lesson-header">
+        <div class="lesson-num">Lesson 10</div>
+        <h2>Hidden Pairs</h2>
+      </div>
+
+      <p>A <strong>hidden pair</strong> is the complement of a naked pair. Two digits appear as candidates in only two cells within a unit. Those two cells must contain those two digits — so all other candidates in those two cells can be removed.</p>
+
+      <p>The pair is "hidden" because the two cells appear to have many candidates. But once you notice that two specific digits only appear in those two cells within the unit, you know those cells are locked to those two digits.</p>
+
+      <ul>
+        <li>Scan a unit for a digit that appears in only two cells.</li>
+        <li>Check if another digit also appears in only those same two cells.</li>
+        <li>If so, you have a hidden pair. Remove all other candidates from those two cells.</li>
+      </ul>
+
+      <div class="callout">
+        <strong>Hidden vs. Naked:</strong> A naked pair has exactly two candidates per cell. A hidden pair has extra candidates that get eliminated once you spot the pair. The end result is the same — two cells locked to two digits.
+      </div>
+
+      <div class="example-section">
+        <div class="example-label">Example — Hidden Pair {2, 8} in a Box</div>
+        <div class="example-wrap">
+          <p class="example-caption">In the center box, digits 2 and 8 only appear as candidates in the two blue cells. Those cells also have other candidates (shown in notes). All candidates except 2 and 8 can be removed from those two cells.</p>
+          <div class="mini-board" id="board-l10"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lesson 11 -->
+    <section class="lesson" id="lesson-11">
+      <div class="lesson-header">
+        <div class="lesson-num">Lesson 11</div>
+        <h2>Hidden Triples</h2>
+      </div>
+
+      <p>A <strong>hidden triple</strong> extends hidden pairs to three digits and three cells. Three digits appear as candidates in only three cells within a unit. Those three cells must contain those three digits, so all other candidates in those three cells can be eliminated.</p>
+
+      <p>Hidden triples are harder to spot than hidden pairs because the three cells each have multiple candidates, and the three "hidden" digits may not all appear in every one of the three cells — they just collectively appear nowhere else in the unit.</p>
+
+      <ul>
+        <li>Find three digits in a unit that only appear in three cells (combined).</li>
+        <li>Those three cells are locked to those three digits.</li>
+        <li>Remove all other candidates from those three cells.</li>
+      </ul>
+
+      <div class="callout">
+        <strong>Practical tip:</strong> Hidden triples are rare and difficult to find manually. If you're solving by hand, focus on naked triples first — they're easier to spot. Hidden triples become more relevant when using systematic candidate analysis.
+      </div>
+
+      <div class="example-section">
+        <div class="example-label">Example — Hidden Triple {2, 5, 9} in Column 3</div>
+        <div class="example-wrap">
+          <p class="example-caption">In column 3, digits 2, 5, and 9 only appear as candidates in the three blue cells. Other candidates in those cells (shown in notes) can all be removed, potentially creating naked singles or pairs.</p>
+          <div class="mini-board" id="board-l11"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lesson 12 -->
+    <section class="lesson" id="lesson-12">
+      <div class="lesson-header">
+        <div class="lesson-num">Lesson 12</div>
+        <h2>Pointing Triples</h2>
+      </div>
+
+      <p>A <strong>pointing triple</strong> works exactly like a pointing pair (Lesson 8), but with three cells instead of two. If a candidate in a box appears in only three cells, and all three cells fall in the same row or column, that candidate can be eliminated from the rest of that row or column outside the box.</p>
+
+      <p>The logic is identical: those three cells in the box "claim" that row or column for that digit. No other cell in that row or column can hold it.</p>
+
+      <div class="callout">
+        <strong>Pointing pairs vs. triples:</strong> Both work the same way. The only difference is whether two or three cells in the box are aligned. In practice, pointing pairs are more common, but triples appear regularly in medium and hard puzzles.
+      </div>
+
+      <div class="example-section">
+        <div class="example-label">Example — Pointing Triple for digit 7 in Column 5</div>
+        <div class="example-wrap">
+          <p class="example-caption">In the center-right box, digit 7 can only go in three cells (blue), all in column 5. So 7 can be removed from the yellow cells in column 5 outside the box.</p>
+          <div class="mini-board" id="board-l12"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Level 4 -->
+    <div class="level-heading">
+      <span class="level-badge l3">Level 4 — Advanced</span>
+      <div class="level-line"></div>
+    </div>
+
+    <!-- Lesson 13 -->
+    <section class="lesson" id="lesson-13">
+      <div class="lesson-header">
+        <div class="lesson-num">Lesson 13</div>
+        <h2>X-Wing</h2>
+      </div>
+
+      <p>The <strong>X-Wing</strong> is the first technique that looks across multiple rows and columns simultaneously. It targets a candidate that appears in exactly two cells in each of two different rows, where those cells align in the same two columns.</p>
+
+      <p>Here's the logic: if digit 4 appears in only two cells in row 2 (columns 3 and 8), and also in only two cells in row 7 (the same columns 3 and 8), then digit 4 must go in one of those four cells. Specifically, it must occupy column 3 in one row and column 8 in the other. Either way, columns 3 and 8 each get exactly one 4 from this pattern. So 4 can be eliminated from all other cells in columns 3 and 8.</p>
+
+      <p>The four cells form a rectangle — the "X" shape that gives the technique its name.</p>
+
+      <ul>
+        <li>Find a candidate that appears in exactly 2 cells in row A and exactly 2 cells in row B.</li>
+        <li>Check if those cells share the same two columns.</li>
+        <li>If yes: eliminate that candidate from all other cells in those two columns.</li>
+        <li>The same pattern works with columns instead of rows (eliminate from rows).</li>
+      </ul>
+
+      <div class="callout">
+        <strong>Why it works:</strong> The four cells form two possible solutions (diagonal pairs). In both cases, each of the two columns gets exactly one instance of the digit. So no other cell in those columns can hold it.
+      </div>
+
+      <div class="example-section">
+        <div class="example-label">Example — X-Wing on digit 4 in rows 2 and 7</div>
+        <div class="example-wrap">
+          <p class="example-caption">Digit 4 appears in only two cells in row 2 (blue) and only two cells in row 7 (blue), both pairs in columns 3 and 8. The yellow cells in columns 3 and 8 can have 4 eliminated from their notes.</p>
+          <div class="mini-board" id="board-l13"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lesson 14 -->
+    <section class="lesson" id="lesson-14">
+      <div class="lesson-header">
+        <div class="lesson-num">Lesson 14</div>
+        <h2>Y-Wing (XY-Wing)</h2>
+      </div>
+
+      <p>The <strong>Y-Wing</strong> (also called XY-Wing) is a three-cell chain technique. It involves a pivot cell and two wing cells, connected by shared candidates.</p>
+
+      <p>The setup:</p>
+      <ul>
+        <li><strong>Pivot cell:</strong> has exactly two candidates [A, B].</li>
+        <li><strong>Wing 1:</strong> shares a unit with the pivot, has candidates [A, C].</li>
+        <li><strong>Wing 2:</strong> shares a unit with the pivot, has candidates [B, C].</li>
+      </ul>
+
+      <p>The logic: the pivot must be either A or B. If it's A, then Wing 1 (which shares A with the pivot) must be C. If it's B, then Wing 2 (which shares B with the pivot) must be C. Either way, at least one wing is C. Any cell that sees both wings cannot be C — eliminate C from those cells.</p>
+
+      <div class="callout">
+        <strong>Key requirement:</strong> The two wings don't need to share a unit with each other — they only need to each share a unit with the pivot. The elimination targets cells that see both wings simultaneously.
+      </div>
+
+      <div class="example-section">
+        <div class="example-label">Example — Y-Wing with pivot [3, 7], wings [3, 5] and [7, 5]</div>
+        <div class="example-wrap">
+          <p class="example-caption">The blue pivot cell has candidates [3, 7]. Wing 1 (green) shares its row and has [3, 5]. Wing 2 (green) shares its column and has [7, 5]. The yellow cell sees both wings — candidate 5 can be eliminated from it.</p>
+          <div class="mini-board" id="board-l14"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lesson 15 -->
+    <section class="lesson" id="lesson-15">
+      <div class="lesson-header">
+        <div class="lesson-num">Lesson 15</div>
+        <h2>Swordfish</h2>
+      </div>
+
+      <p>The <strong>Swordfish</strong> is the three-row (or three-column) extension of the X-Wing. Instead of two rows and two columns, it uses three rows and three columns.</p>
+
+      <p>A candidate forms a Swordfish when it appears in 2 or 3 cells in each of three rows, and all those cells fall within the same three columns. In that case, the candidate can be eliminated from all other cells in those three columns.</p>
+
+      <p>The logic mirrors X-Wing: across the three rows, the candidate must be placed in the three columns exactly once each. So no other cell in those columns can hold it.</p>
+
+      <ul>
+        <li>Find a candidate that appears in 2-3 cells in row A, row B, and row C.</li>
+        <li>Check that all those cells fall within the same three columns.</li>
+        <li>Eliminate that candidate from all other cells in those three columns.</li>
+        <li>The same pattern works column-first (eliminate from rows).</li>
+      </ul>
+
+      <div class="callout">
+        <strong>Swordfish vs. X-Wing:</strong> X-Wing is a 2x2 rectangle. Swordfish is a 3x3 pattern. Both follow the same logic — the candidate is "locked" into a set of rows/columns and can be eliminated from the rest. Jellyfish (4x4) follows the same principle further.
+      </div>
+
+      <div class="example-section">
+        <div class="example-label">Example — Swordfish on digit 2 across rows 1, 4, and 7</div>
+        <div class="example-wrap">
+          <p class="example-caption">Digit 2 appears in only 2-3 cells in rows 1, 4, and 7 (blue), all within columns 2, 5, and 8. The yellow cells in those three columns can have 2 eliminated from their notes.</p>
+          <div class="mini-board" id="board-l15"></div>
+        </div>
+      </div>
+
       <div class="callout" style="margin-top: 20px;">
-        <strong>What's next?</strong> After naked pairs and pointing pairs, the next techniques are hidden pairs, X-Wings, and Swordfish. These follow the same logical principles but look at larger patterns. The best way to learn them is to keep playing and look up each technique as you encounter it.
+        <strong>Where to go from here:</strong> You've covered the full standard technique set. Beyond Swordfish, puzzles may require Jellyfish, Skyscraper, Two-String Kite, or forcing chains. These are rare in published puzzles but appear in "extreme" difficulty levels. The best way to learn them is to keep playing and look up each technique as you encounter it.
       </div>
     </section>
 
@@ -1375,6 +1608,141 @@
   buildPracticeBoard('2');
   buildPracticeBoard('5');
   buildPracticeBoard('6');
+
+  // ── Lesson 9 board — naked triple [1,3,7] in row 6 ───────────────
+  (function () {
+    var p = new Array(81).fill('0');
+    // Row 6 (indices 54-62): fill cols 0,3,6 with solved values; leave cols 1,4,7 as triple cells; col 2,5,8 solved
+    p[54] = '5'; p[56] = '6'; p[57] = '8'; p[59] = '2'; p[60] = '4'; p[62] = '9';
+    var highlights = [];
+    // Naked triple cells: col 1 (idx 55) [1,3,7], col 4 (idx 58) [1,7], col 7 (idx 61) [3,7]
+    highlights.push({ idx: 55, cls: 'target', notes: [1, 3, 7] });
+    highlights.push({ idx: 58, cls: 'target', notes: [1, 7] });
+    highlights.push({ idx: 61, cls: 'target', notes: [3, 7] });
+    // A cell in the same row that had 1,7 in notes but can now have them removed
+    // Use a cell in another row that shares a column with one of the triple cells to show elimination
+    // Actually show a cell in row 6 that is not part of the triple — but row 6 is fully filled except triple cells
+    // Instead show a cell in col 1 (outside row 6) that had 1 or 7 as candidate
+    highlights.push({ idx: 1, cls: 'highlight', notes: [2, 6] });  // was [1,2,6,7] -> now [2,6]
+    highlights.push({ idx: 19, cls: 'highlight', notes: [4, 8] }); // was [1,4,7,8] -> now [4,8]
+    buildMiniBoard('board-l9', p.join(''), highlights);
+  })();
+
+  // ── Lesson 10 board — hidden pair {2,8} in center box ─────────────
+  (function () {
+    var p = new Array(81).fill('0');
+    // Center box: rows 3-5, cols 3-5 (indices 30,31,32,39,40,41,48,49,50)
+    // Fill 7 of 9 cells, leave idx 31 (r3,c4) and idx 49 (r5,c4) as the hidden pair cells
+    p[30] = '5'; p[32] = '9'; p[39] = '7'; p[40] = '4'; p[41] = '3'; p[48] = '6'; p[50] = '1';
+    // Digits 2 and 8 only appear as candidates in idx 31 and idx 49 within the box
+    var highlights = [];
+    highlights.push({ idx: 31, cls: 'target', notes: [2, 4, 6, 8] });
+    highlights.push({ idx: 49, cls: 'target', notes: [2, 3, 8] });
+    buildMiniBoard('board-l10', p.join(''), highlights);
+  })();
+
+  // ── Lesson 11 board — hidden triple {2,5,9} in col 3 ─────────────
+  (function () {
+    var p = new Array(81).fill('0');
+    // Column 3 (indices 3,12,21,30,39,48,57,66,75)
+    // Fill 6 cells, leave 3 as hidden triple cells: idx 12 (r1), idx 39 (r4), idx 66 (r7)
+    p[3] = '7'; p[21] = '4'; p[30] = '6'; p[48] = '3'; p[57] = '8'; p[75] = '1';
+    // Digits 2,5,9 only appear in idx 12, 39, 66 within col 3
+    var highlights = [];
+    highlights.push({ idx: 12, cls: 'target', notes: [2, 5, 6, 9] });
+    highlights.push({ idx: 39, cls: 'target', notes: [2, 4, 9] });
+    highlights.push({ idx: 66, cls: 'target', notes: [2, 5, 7, 9] });
+    buildMiniBoard('board-l11', p.join(''), highlights);
+  })();
+
+  // ── Lesson 12 board — pointing triple for 7 in col 5 ─────────────
+  (function () {
+    // Center-right box: rows 3-5, cols 6-8 (indices 33,34,35,42,43,44,51,52,53)
+    // Digit 7 can only go in col 5... wait, col 5 is not in that box.
+    // Use center box (rows 3-5, cols 3-5): indices 30,31,32,39,40,41,48,49,50
+    // Digit 7 can only go in col 4 cells of the box: idx 31,40,49 (all col 4)
+    // Eliminate 7 from rest of col 4: indices 4,13,22,58,67,76
+    var p = new Array(81).fill('0');
+    // Block 7 from cols 3 and 5 within the box via 7s in those cols outside the box
+    p[3] = '7';  // row 0, col 3 -> blocks col 3 in box
+    p[50] = '3'; p[48] = '6'; p[30] = '5'; p[32] = '9'; // fill other box cells
+    // Block col 5 in box: 7 in col 5 outside box
+    p[5] = '7';  // row 0, col 5 -> blocks col 5 in box
+    // Now 7 in box can only go in col 4: idx 31, 40, 49
+    var highlights = [];
+    highlights.push({ idx: 31, cls: 'target' });
+    highlights.push({ idx: 40, cls: 'target' });
+    highlights.push({ idx: 49, cls: 'target' });
+    // Cells in col 4 outside box that get 7 eliminated
+    [4, 13, 22, 58, 67, 76].forEach(function (i) { highlights.push({ idx: i, cls: 'highlight' }); });
+    // The blocking 7s
+    highlights.push({ idx: 3, cls: 'highlight' });
+    highlights.push({ idx: 5, cls: 'highlight' });
+    buildMiniBoard('board-l12', p.join(''), highlights);
+  })();
+
+  // ── Lesson 13 board — X-Wing on digit 4, rows 2 and 7, cols 3 and 8 ──
+  (function () {
+    var p = new Array(81).fill('0');
+    // Row 2 (indices 18-26): 4 only in col 3 (idx 21) and col 8 (idx 26)
+    // Row 7 (indices 63-71): 4 only in col 3 (idx 66) and col 8 (idx 71)
+    // Fill other cells in those rows to block 4 elsewhere
+    p[18] = '2'; p[19] = '7'; p[20] = '9'; p[22] = '5'; p[23] = '1'; p[24] = '6'; p[25] = '3';
+    p[63] = '8'; p[64] = '3'; p[65] = '1'; p[67] = '6'; p[68] = '9'; p[69] = '2'; p[70] = '5';
+    var highlights = [];
+    // X-Wing cells (blue)
+    highlights.push({ idx: 21, cls: 'target' });
+    highlights.push({ idx: 26, cls: 'target' });
+    highlights.push({ idx: 66, cls: 'target' });
+    highlights.push({ idx: 71, cls: 'target' });
+    // Elimination cells in col 3 (outside rows 2 and 7): rows 0,1,3,4,5,6,8
+    [3, 12, 30, 39, 48, 57, 75].forEach(function (i) { highlights.push({ idx: i, cls: 'highlight' }); });
+    // Elimination cells in col 8 (outside rows 2 and 7): rows 0,1,3,4,5,6,8
+    [8, 17, 35, 44, 53, 62, 80].forEach(function (i) { highlights.push({ idx: i, cls: 'highlight' }); });
+    buildMiniBoard('board-l13', p.join(''), highlights);
+  })();
+
+  // ── Lesson 14 board — Y-Wing: pivot [3,7], wing1 [3,5], wing2 [7,5] ──
+  (function () {
+    var p = new Array(81).fill('0');
+    // Pivot: idx 20 (row 2, col 2) — candidates [3,7]
+    // Wing 1: idx 24 (row 2, col 6) — shares row with pivot, candidates [3,5]
+    // Wing 2: idx 56 (row 6, col 2) — shares col with pivot, candidates [7,5]
+    // Elimination target: idx 60 (row 6, col 6) — sees both wings, eliminate 5
+    var highlights = [];
+    highlights.push({ idx: 20, cls: 'target', notes: [3, 7] });
+    highlights.push({ idx: 24, cls: 'answer', notes: [3, 5] });
+    highlights.push({ idx: 56, cls: 'answer', notes: [7, 5] });
+    highlights.push({ idx: 60, cls: 'highlight', notes: [5, 8] });
+    buildMiniBoard('board-l14', p.join(''), highlights);
+    // Override answer cells to show as green (not hidden)
+    var board = document.getElementById('board-l14');
+    board.querySelectorAll('.mini-cell.answer').forEach(function (cell) {
+      cell.classList.remove('hidden-answer');
+    });
+  })();
+
+  // ── Lesson 15 board — Swordfish on digit 2, rows 1,4,7, cols 2,5,8 ──
+  (function () {
+    var p = new Array(81).fill('0');
+    // Row 1 (indices 9-17): 2 only in cols 2,5,8 -> idx 11,14,17
+    // Row 4 (indices 36-44): 2 only in cols 2,5 -> idx 38,41
+    // Row 7 (indices 63-71): 2 only in cols 5,8 -> idx 68,71
+    // Fill other cells in those rows to block 2 elsewhere
+    p[9] = '7'; p[10] = '4'; p[12] = '9'; p[13] = '1'; p[15] = '6'; p[16] = '3';
+    p[36] = '5'; p[37] = '8'; p[39] = '7'; p[40] = '4'; p[42] = '9'; p[43] = '1'; p[44] = '6';
+    p[63] = '4'; p[64] = '9'; p[65] = '1'; p[66] = '3'; p[67] = '7'; p[69] = '8'; p[70] = '6';
+    var highlights = [];
+    // Swordfish cells (blue)
+    [11, 14, 17, 38, 41, 68, 71].forEach(function (i) { highlights.push({ idx: i, cls: 'target' }); });
+    // Elimination cells in col 2 (outside rows 1,4,7): rows 0,2,3,5,6,8
+    [2, 20, 29, 47, 56, 74].forEach(function (i) { highlights.push({ idx: i, cls: 'highlight' }); });
+    // Elimination cells in col 5 (outside rows 1,4,7): rows 0,2,3,5,6,8
+    [5, 23, 32, 50, 59, 77].forEach(function (i) { highlights.push({ idx: i, cls: 'highlight' }); });
+    // Elimination cells in col 8 (outside rows 1,4,7): rows 0,2,3,5,6,8
+    [8, 26, 35, 53, 62, 80].forEach(function (i) { highlights.push({ idx: i, cls: 'highlight' }); });
+    buildMiniBoard('board-l15', p.join(''), highlights);
+  })();
 
   // ── Intersection Observer for sidebar/mobile nav ───────────────
 
