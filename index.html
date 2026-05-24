@@ -21,10 +21,23 @@
           </svg>
         </button>
         <div class="settings-popover hidden" id="settings-popover">
-          <label class="settings-label" for="seed-input">Seed</label>
-          <div class="settings-row">
-            <input type="text" id="seed-input" class="seed-input" spellcheck="false" autocomplete="off">
-            <button class="seed-apply-btn" id="seed-apply">Apply</button>
+          <div class="settings-section">
+            <label class="settings-label">Difficulty</label>
+            <div class="difficulty-selector">
+              <button class="diff-btn" data-difficulty="easy">Easy</button>
+              <button class="diff-btn active" data-difficulty="medium">Medium</button>
+              <button class="diff-btn" data-difficulty="hard">Hard</button>
+              <button class="diff-btn" data-difficulty="expert">Expert</button>
+              <button class="diff-btn" data-difficulty="evil">Evil</button>
+              <button class="diff-btn" data-difficulty="extreme">Extreme</button>
+            </div>
+          </div>
+          <div class="settings-section">
+            <label class="settings-label" for="seed-input">Seed</label>
+            <div class="settings-row">
+              <input type="text" id="seed-input" class="seed-input" spellcheck="false" autocomplete="off">
+              <button class="seed-apply-btn" id="seed-apply">Apply</button>
+            </div>
           </div>
         </div>
       </div>
@@ -43,13 +56,9 @@
       <div class="controls-panel">
 
         <div class="panel-header" id="panel-header-play">
-          <div class="difficulty-selector">
-            <button class="diff-btn" data-difficulty="easy">Easy</button>
-            <button class="diff-btn active" data-difficulty="medium">Medium</button>
-            <button class="diff-btn" data-difficulty="hard">Hard</button>
-            <button class="diff-btn" data-difficulty="expert">Expert</button>
-            <button class="diff-btn" data-difficulty="evil">Evil</button>
-            <button class="diff-btn" data-difficulty="extreme">Extreme</button>
+          <div class="play-stats">
+            <span class="diff-label" id="diff-label">Medium</span>
+            <span class="mistakes-display" id="mistakes-display">Mistakes: 0/3</span>
           </div>
           <div class="timer" id="timer">00:00</div>
         </div>
@@ -58,6 +67,9 @@
           <div class="daily-info">
             <span class="daily-date" id="daily-date"></span>
             <span class="daily-diff-badge" id="daily-diff-badge"></span>
+          </div>
+          <div class="daily-stats">
+            <span class="mistakes-display" id="daily-mistakes-display">Mistakes: 0/3</span>
           </div>
           <div class="timer" id="daily-timer">00:00</div>
           <div class="daily-countdown" id="daily-countdown">Next in --:--:--</div>
@@ -141,7 +153,14 @@
       <h2>Congratulations!</h2>
       <p>You solved the puzzle in</p>
       <div class="win-time" id="win-time">00:00</div>
-      <button class="new-game-btn" id="btn-play-again">New Game</button>
+      <div class="win-stats" id="win-stats">
+        <span id="win-mistakes">Mistakes: 0</span>
+        <span id="win-hints">Hints: 0</span>
+      </div>
+      <div class="win-buttons">
+        <button class="new-game-btn" id="btn-play-again">New Game</button>
+        <button class="btn-secondary" id="btn-win-close">Close</button>
+      </div>
     </div>
   </div>
 

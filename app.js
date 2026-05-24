@@ -15,11 +15,15 @@
   var gameWon = false;
   var currentMode = 'play';
   var countdownInterval = null;
+  var mistakeCount = 0;
+  var hintCount = 0;
 
   var boardEl, timerEl, dailyTimerEl, winOverlay, winTimeEl, seedInput;
   var settingsBtn, settingsPopover;
   var notesBtn, hintBtn, undoBtn, eraseBtn;
   var dailyDateEl, dailyDiffBadge, dailyCountdownEl;
+  var diffLabelEl, mistakesEl, dailyMistakesEl;
+  var winMistakesEl, winHintsEl;
   var statusBar, importInput;
   var cells = [];
   var numBtns = [];
@@ -45,6 +49,11 @@
     dailyDateEl = document.getElementById('daily-date');
     dailyDiffBadge = document.getElementById('daily-diff-badge');
     dailyCountdownEl = document.getElementById('daily-countdown');
+    diffLabelEl = document.getElementById('diff-label');
+    mistakesEl = document.getElementById('mistakes-display');
+    dailyMistakesEl = document.getElementById('daily-mistakes-display');
+    winMistakesEl = document.getElementById('win-mistakes');
+    winHintsEl = document.getElementById('win-hints');
     statusBar = document.getElementById('status-bar');
     importInput = document.getElementById('import-input');
 
@@ -116,11 +125,17 @@
       else startNewGame(currentDifficulty);
     });
 
+    document.getElementById('btn-win-close').addEventListener('click', hideWinOverlay);
+
     var diffButtons = document.querySelectorAll('.diff-btn');
     for (var i = 0; i < diffButtons.length; i++) {
       diffBtns.push(diffButtons[i]);
       diffButtons[i].addEventListener('click', (function (btn) {
-        return function () { startNewGame(btn.getAttribute('data-difficulty')); };
+        return function () {
+          var diff = btn.getAttribute('data-difficulty');
+          settingsPopover.classList.add('hidden');
+          startNewGame(diff);
+        };
       })(diffButtons[i]));
     }
 
@@ -130,7 +145,7 @@
     });
 
     document.addEventListener('click', function (e) {
-      if (!settingsPopover.contains(e.target) && e.target !== settingsBtn) {
+      if (!settingsPopover.contains(e.target) && e.target !== settingsBtn && !settingsBtn.contains(e.target)) {
         settingsPopover.classList.add('hidden');
       }
     });
@@ -159,11 +174,8 @@
   }
 
   function handleNumpadClick(digit) {
-    if (currentMode === 'custom') {
-      customInputNumber(digit);
-    } else {
-      inputNumber(digit);
-    }
+    if (currentMode === 'custom') customInputNumber(digit);
+    else inputNumber(digit);
   }
 
   // ---- Mode switching ----
@@ -236,6 +248,9 @@
     currentSeed = String(result.seed !== undefined ? result.seed : seed);
 
     loadPuzzleIntoGrid(currentPuzzle);
+    mistakeCount = 0;
+    hintCount = 0;
+    updateMistakesDisplay();
     resetTimer();
     hideWinOverlay();
     notesMode = false;
@@ -258,9 +273,7 @@
     var now = new Date();
     var tomorrow = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
     var diff = tomorrow.getTime() - now.getTime();
-
     if (diff <= 0) { stopCountdown(); startDailyGame(); return; }
-
     var h = Math.floor(diff / 3600000);
     var m = Math.floor((diff % 3600000) / 60000);
     var s = Math.floor((diff % 60000) / 1000);
@@ -279,43 +292,29 @@
     for (var i = 0; i < 81; i++) {
       cells[i].classList.remove('selected', 'peer-highlight', 'same-number');
     }
-    for (var d = 0; d < 9; d++) {
-      numBtns[d].classList.remove('active-digit');
-    }
+    for (var d = 0; d < 9; d++) numBtns[d].classList.remove('active-digit');
 
     if (selectedCell < 0) return;
-
     cells[selectedCell].classList.add('selected');
 
     var peers = getPeers(selectedCell);
-    for (var i = 0; i < peers.length; i++) {
-      cells[peers[i]].classList.add('peer-highlight');
-    }
+    for (var i = 0; i < peers.length; i++) cells[peers[i]].classList.add('peer-highlight');
 
     var selectedValue = userGrid[selectedCell].value;
     if (selectedValue > 0) {
       for (var i = 0; i < 81; i++) {
-        if (i !== selectedCell && userGrid[i].value === selectedValue) {
-          cells[i].classList.add('same-number');
-        }
+        if (i !== selectedCell && userGrid[i].value === selectedValue) cells[i].classList.add('same-number');
       }
-      if (currentMode !== 'custom') {
-        numBtns[selectedValue - 1].classList.add('active-digit');
-      }
+      if (currentMode !== 'custom') numBtns[selectedValue - 1].classList.add('active-digit');
     }
   }
 
   function inputNumber(digit) {
     if (selectedCell < 0 || gameWon) return;
     if (userGrid[selectedCell].isGiven) return;
-
     startTimerIfNeeded();
-
-    if (notesMode) {
-      toggleNote(selectedCell, digit);
-    } else {
-      setDigit(selectedCell, digit);
-    }
+    if (notesMode) { toggleNote(selectedCell, digit); }
+    else { setDigit(selectedCell, digit); }
   }
 
   function setDigit(index, digit) {
@@ -336,6 +335,15 @@
     }
 
     undoStack.push({ changes: changes });
+
+    if (currentMode !== 'custom' && currentSolution) {
+      var correct = parseInt(currentSolution[index]);
+      if (digit !== correct) {
+        mistakeCount++;
+        updateMistakesDisplay();
+      }
+    }
+
     checkConflicts();
     render();
     checkWin();
@@ -343,13 +351,11 @@
 
   function toggleNote(index, digit) {
     if (userGrid[index].value > 0) return;
-
     var changes = [{ index: index, prev: copyCell(userGrid[index]) }];
     var notes = userGrid[index].notes;
     var noteIdx = notes.indexOf(digit);
-    if (noteIdx >= 0) { notes.splice(noteIdx, 1); }
+    if (noteIdx >= 0) notes.splice(noteIdx, 1);
     else { notes.push(digit); notes.sort(function (a, b) { return a - b; }); }
-
     undoStack.push({ changes: changes });
     render();
   }
@@ -363,7 +369,6 @@
     var changes = [{ index: selectedCell, prev: copyCell(userGrid[selectedCell]) }];
     userGrid[selectedCell].value = 0;
     userGrid[selectedCell].notes = [];
-
     undoStack.push({ changes: changes });
     checkConflicts();
     render();
@@ -372,49 +377,36 @@
   function undo() {
     if (currentMode === 'custom') return;
     if (undoStack.length === 0 || gameWon) return;
-
     var entry = undoStack.pop();
-    for (var i = 0; i < entry.changes.length; i++) {
-      userGrid[entry.changes[i].index] = entry.changes[i].prev;
-    }
+    for (var i = 0; i < entry.changes.length; i++) userGrid[entry.changes[i].index] = entry.changes[i].prev;
     checkConflicts();
     render();
   }
 
   function hint() {
     if (currentMode === 'custom' || gameWon) return;
-
     var target = selectedCell;
-    if (target < 0 || userGrid[target].isGiven ||
-        userGrid[target].value === parseInt(currentSolution[target])) {
+    if (target < 0 || userGrid[target].isGiven || userGrid[target].value === parseInt(currentSolution[target])) {
       var emptyCells = [];
       for (var i = 0; i < 81; i++) {
-        if (!userGrid[i].isGiven && userGrid[i].value !== parseInt(currentSolution[i])) {
-          emptyCells.push(i);
-        }
+        if (!userGrid[i].isGiven && userGrid[i].value !== parseInt(currentSolution[i])) emptyCells.push(i);
       }
       if (emptyCells.length === 0) return;
       target = emptyCells[Math.floor(Math.random() * emptyCells.length)];
       selectCell(target);
     }
-
+    hintCount++;
     startTimerIfNeeded();
     var correctDigit = parseInt(currentSolution[target]);
     var changes = [{ index: target, prev: copyCell(userGrid[target]) }];
-
     userGrid[target].value = correctDigit;
     userGrid[target].notes = [];
-
     var peers = getPeers(target);
     for (var i = 0; i < peers.length; i++) {
       var p = peers[i];
       var noteIdx = userGrid[p].notes.indexOf(correctDigit);
-      if (noteIdx >= 0) {
-        changes.push({ index: p, prev: copyCell(userGrid[p]) });
-        userGrid[p].notes.splice(noteIdx, 1);
-      }
+      if (noteIdx >= 0) { changes.push({ index: p, prev: copyCell(userGrid[p]) }); userGrid[p].notes.splice(noteIdx, 1); }
     }
-
     undoStack.push({ changes: changes });
     checkConflicts();
     render();
@@ -438,8 +430,12 @@
     seedInput.value = currentSeed;
 
     loadPuzzleIntoGrid(currentPuzzle);
+    mistakeCount = 0;
+    hintCount = 0;
+    updateMistakesDisplay();
     resetTimer();
     updateDifficultyButtons();
+    updateDiffLabel();
     hideWinOverlay();
     notesMode = false;
     notesBtn.classList.remove('active');
@@ -450,12 +446,7 @@
     userGrid = [];
     for (var i = 0; i < 81; i++) {
       var ch = puzzle[i];
-      userGrid.push({
-        value: ch !== '0' ? parseInt(ch) : 0,
-        isGiven: ch !== '0',
-        notes: [],
-        isError: false
-      });
+      userGrid.push({ value: ch !== '0' ? parseInt(ch) : 0, isGiven: ch !== '0', notes: [], isError: false });
     }
     selectedCell = -1;
     undoStack = [];
@@ -464,16 +455,23 @@
 
   function applySeed() {
     var seed = seedInput.value.trim();
-    if (seed) {
-      startNewGame(currentDifficulty, seed);
-      settingsPopover.classList.add('hidden');
-    }
+    if (seed) { startNewGame(currentDifficulty, seed); settingsPopover.classList.add('hidden'); }
   }
 
   function updateDifficultyButtons() {
     for (var i = 0; i < diffBtns.length; i++) {
       diffBtns[i].classList.toggle('active', diffBtns[i].getAttribute('data-difficulty') === currentDifficulty);
     }
+  }
+
+  function updateDiffLabel() {
+    if (diffLabelEl) diffLabelEl.textContent = currentDifficulty;
+  }
+
+  function updateMistakesDisplay() {
+    var text = 'Mistakes: ' + mistakeCount + '/3';
+    if (mistakesEl) mistakesEl.textContent = text;
+    if (dailyMistakesEl) dailyMistakesEl.textContent = text;
   }
 
   // ---- Custom mode ----
@@ -496,9 +494,7 @@
 
   function clearCustom() {
     userGrid = [];
-    for (var i = 0; i < 81; i++) {
-      userGrid.push({ value: 0, isGiven: false, notes: [], isError: false });
-    }
+    for (var i = 0; i < 81; i++) userGrid.push({ value: 0, isGiven: false, notes: [], isError: false });
     selectedCell = -1;
     setStatus('', '');
     render();
@@ -507,36 +503,24 @@
   function solveCustom() {
     var puzzle = getGridString();
     if (/^0+$/.test(puzzle)) { setStatus('Grid is empty', 'error'); return; }
-
     var solution = solveSudoku(puzzle);
     if (!solution) { setStatus('No solution exists', 'error'); return; }
-
     for (var i = 0; i < 81; i++) {
-      if (userGrid[i].value === 0) {
-        userGrid[i].value = parseInt(solution[i]);
-        userGrid[i].isGiven = false;
-      }
+      if (userGrid[i].value === 0) { userGrid[i].value = parseInt(solution[i]); userGrid[i].isGiven = false; }
     }
-    checkConflicts();
-    render();
-    setStatus('Solved!', 'success');
+    checkConflicts(); render(); setStatus('Solved!', 'success');
   }
 
   function loadImport() {
     var raw = importInput.value.trim();
     var cleaned = raw.replace(/[^0-9.]/g, '').replace(/\./g, '0');
     if (cleaned.length !== 81) { setStatus('Input must be exactly 81 characters', 'error'); return; }
-
     userGrid = [];
     for (var i = 0; i < 81; i++) {
       var ch = cleaned[i];
       userGrid.push({ value: ch !== '0' ? parseInt(ch) : 0, isGiven: ch !== '0', notes: [], isError: false });
     }
-    selectedCell = -1;
-    checkConflicts();
-    render();
-    setStatus('Puzzle loaded', 'success');
-    importInput.value = '';
+    selectedCell = -1; checkConflicts(); render(); setStatus('Puzzle loaded', 'success'); importInput.value = '';
   }
 
   function getGridString() {
@@ -602,9 +586,7 @@
     for (var i = 0; i < 81; i++) {
       if (userGrid[i].value === 0 || userGrid[i].value !== parseInt(currentSolution[i])) return;
     }
-    gameWon = true;
-    stopTimer();
-    showWinOverlay();
+    gameWon = true; stopTimer(); showWinOverlay();
   }
 
   // ---- Timer ----
@@ -617,12 +599,7 @@
 
   function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
 
-  function resetTimer() {
-    stopTimer();
-    timerSeconds = 0;
-    timerStarted = false;
-    updateTimerDisplay();
-  }
+  function resetTimer() { stopTimer(); timerSeconds = 0; timerStarted = false; updateTimerDisplay(); }
 
   function updateTimerDisplay() {
     var m = Math.floor(timerSeconds / 60), s = timerSeconds % 60;
@@ -638,32 +615,23 @@
       var cell = cells[i], data = userGrid[i];
       var valueSpan = cell.querySelector('.cell-value');
       var notesDiv = cell.querySelector('.cell-notes');
-
       cell.classList.remove('given', 'user-value', 'error', 'has-notes');
 
       if (data.isGiven && data.value > 0) {
         cell.classList.add('given');
         if (data.isError) cell.classList.add('error');
-        valueSpan.textContent = data.value;
-        valueSpan.style.display = '';
-        notesDiv.style.display = 'none';
+        valueSpan.textContent = data.value; valueSpan.style.display = ''; notesDiv.style.display = 'none';
       } else if (data.value > 0) {
         cell.classList.add('user-value');
         if (data.isError) cell.classList.add('error');
-        valueSpan.textContent = data.value;
-        valueSpan.style.display = '';
-        notesDiv.style.display = 'none';
+        valueSpan.textContent = data.value; valueSpan.style.display = ''; notesDiv.style.display = 'none';
       } else if (data.notes.length > 0) {
-        cell.classList.add('has-notes');
-        valueSpan.style.display = 'none';
-        notesDiv.style.display = '';
+        cell.classList.add('has-notes'); valueSpan.style.display = 'none'; notesDiv.style.display = '';
         for (var n = 1; n <= 9; n++) {
           notesDiv.querySelector('[data-note="' + n + '"]').textContent = data.notes.indexOf(n) >= 0 ? n : '';
         }
       } else {
-        valueSpan.textContent = '';
-        valueSpan.style.display = '';
-        notesDiv.style.display = 'none';
+        valueSpan.textContent = ''; valueSpan.style.display = ''; notesDiv.style.display = 'none';
       }
     }
     updateHighlights();
@@ -683,6 +651,8 @@
   function showWinOverlay() {
     var m = Math.floor(timerSeconds / 60), s = timerSeconds % 60;
     winTimeEl.textContent = (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+    winMistakesEl.textContent = 'Mistakes: ' + mistakeCount;
+    winHintsEl.textContent = 'Hints: ' + hintCount;
     winOverlay.classList.add('visible');
   }
 
@@ -692,24 +662,17 @@
 
   function handleKeydown(e) {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-
     switch (e.key) {
       case 'ArrowUp': e.preventDefault(); navigateCell(0, -1); break;
       case 'ArrowDown': e.preventDefault(); navigateCell(0, 1); break;
       case 'ArrowLeft': e.preventDefault(); navigateCell(-1, 0); break;
       case 'ArrowRight': e.preventDefault(); navigateCell(1, 0); break;
       case 'Backspace': case 'Delete': e.preventDefault(); erase(); break;
-      case 'n': case 'N':
-        if (!e.ctrlKey && !e.metaKey) { e.preventDefault(); toggleNotesMode(); } break;
-      case 'z':
-        e.preventDefault(); undo(); break;
-      case 'Z':
-        if (e.ctrlKey || e.metaKey) { e.preventDefault(); undo(); } break;
-      case 'h': case 'H':
-        if (!e.ctrlKey && !e.metaKey) { e.preventDefault(); hint(); } break;
-      default:
-        if (/^[1-9]$/.test(e.key)) { e.preventDefault(); handleNumpadClick(parseInt(e.key)); }
-        break;
+      case 'n': case 'N': if (!e.ctrlKey && !e.metaKey) { e.preventDefault(); toggleNotesMode(); } break;
+      case 'z': e.preventDefault(); undo(); break;
+      case 'Z': if (e.ctrlKey || e.metaKey) { e.preventDefault(); undo(); } break;
+      case 'h': case 'H': if (!e.ctrlKey && !e.metaKey) { e.preventDefault(); hint(); } break;
+      default: if (/^[1-9]$/.test(e.key)) { e.preventDefault(); handleNumpadClick(parseInt(e.key)); } break;
     }
   }
 
