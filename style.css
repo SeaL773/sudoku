@@ -357,7 +357,7 @@ body {
 }
 .btn-secondary:hover { background: var(--bg-button-hover); border-color: var(--accent); }
 
-.footer-play-btns { display: flex; gap: 12px; align-items: center; }
+
 .custom-actions { display: flex; gap: 12px; align-items: center; }
 .status-bar { width: 100%; min-height: 20px; text-align: center; font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); }
 .status-bar.error { color: var(--text-error); }
@@ -417,8 +417,7 @@ body {
 .cell .cell-value.just-entered { animation: digitPop 150ms ease-out; }
 
 .num-btn { flex-direction: column; }
-.num-remaining { display: block; font-size: 0.5rem; font-weight: 500; opacity: 0.55; margin-top: -2px; line-height: 1; }
-.num-btn.completed .num-remaining { display: none; }
+
 
 @keyframes unitPop {
   0% { transform: scale(1); background-color: var(--bg-cell); }

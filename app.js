@@ -52,13 +52,13 @@
     infoTimerEl = document.getElementById('info-timer');
     infoSecondaryEl = document.getElementById('info-secondary-row');
     newGameBtn = document.getElementById('btn-new-game');
-    footerPlayBtns = document.getElementById('footer-play-btns');
+
     customFooterActions = document.getElementById('custom-footer-actions');
     statusBar = document.getElementById('status-bar');
 
     buildBoard();
     bindEvents();
-    buildNumpadCounts();
+
 
     if (!restoreGameState()) {
       startNewGame('medium');
@@ -119,7 +119,7 @@
       startNewGame(currentDifficulty);
     });
 
-    document.getElementById('btn-restart').addEventListener('click', restartPuzzle);
+
 
     document.getElementById('btn-play-again').addEventListener('click', function () {
       hideWinOverlay();
@@ -206,26 +206,6 @@
   function handleNumpadClick(digit) {
     if (currentMode === 'custom') customInputNumber(digit);
     else inputNumber(digit);
-  }
-
-  function buildNumpadCounts() {
-    for (var i = 0; i < numBtns.length; i++) {
-      var span = document.createElement('span');
-      span.className = 'num-remaining';
-      numBtns[i].appendChild(span);
-    }
-  }
-
-  function updateNumpadCounts() {
-    if (currentMode === 'custom') return;
-    var counts = {};
-    for (var d = 1; d <= 9; d++) counts[d] = 0;
-    for (var i = 0; i < 81; i++) { var v = userGrid[i].value; if (v > 0) counts[v]++; }
-    for (var d = 1; d <= 9; d++) {
-      var rem = 9 - counts[d];
-      var span = numBtns[d - 1].querySelector('.num-remaining');
-      if (span) span.textContent = rem > 0 ? rem : '';
-    }
   }
 
   function restartPuzzle() {
@@ -1000,7 +980,7 @@
     }
     updateHighlights();
     updateNumpadCompletion();
-    updateNumpadCounts();
+
   }
 
   function updateNumpadCompletion() {
