@@ -11,18 +11,21 @@ A fully client-side Sudoku game with puzzle generation, solving engine, daily ch
 - **Play** — Generate puzzles across 6 difficulty levels (Easy → Extreme). Seed-based generation for reproducible puzzles.
 - **Daily** — One puzzle per day (UTC midnight refresh), same for everyone. Difficulty rotates automatically.
 - **Custom** — Blank board for entering your own puzzles. Paste an 81-character string or type manually. One-click solve.
+- **Train** — 15 interactive lessons teaching Sudoku techniques from basics to advanced.
 
 ### Gameplay
 
-- 3x3 numpad input + keyboard support (digits, arrows, Backspace)
-- Notes / pencil marks mode
+- 3x3 numpad input + full keyboard support (digits, arrows, Backspace, Ctrl+Z)
+- Notes / pencil marks mode with auto-removal when digits are placed
 - Undo with full state restore (including auto-removed notes)
 - Hint — reveals the correct digit for the selected cell
-- Conflict detection — highlights rule violations in real-time
+- Conflict detection — highlights rule violations and wrong digits in real-time
 - Same-number highlighting — selecting a digit highlights all matching cells
-- Mistake counter (game over at 3)
+- Mistake counter (game over popup at 3, with option to continue)
 - Timer with pause on completion
-- Win overlay with stats (time, mistakes, hints used)
+- Best time tracking per difficulty (localStorage)
+- Win overlay with stats (time, mistakes, hints used, best time, new record badge)
+- Dark mode (Auto / Light / Dark toggle in settings)
 
 ### Seed System
 
@@ -39,16 +42,24 @@ Interactive tutorial covering all standard Sudoku techniques:
 | Pairs & Beyond | Naked Pairs, Pointing Pairs, Naked Triples, Hidden Pairs, Hidden Triples, Pointing Triples |
 | Advanced | X-Wing, Y-Wing, Swordfish |
 
-Each lesson includes a fixed example board with visual highlights and an interactive practice puzzle with a "New Puzzle" button. Practice boards support notes mode.
+Each lesson includes a fixed example board with visual highlights and an interactive practice puzzle with notes support and a "New Puzzle" button.
+
+### Accessibility
+
+- ARIA labels (`role="grid"`, `role="gridcell"`, `aria-pressed`)
+- Dark mode respects `prefers-color-scheme` by default
+- Open Graph meta tags for link previews
 
 ## Architecture
 
 ```
 index.html    — Game page (Play / Daily / Custom)
 train.html    — Training tutorial (15 lessons)
-engine.js     — Solver + puzzle generator (constraint propagation + backtracking)
+train.css     — Training page styles
+train.js      — Training page logic
+engine.js     — Solver + puzzle generator
 app.js        — Game UI logic
-style.css     — Styling
+style.css     — Shared styles + dark mode
 favicon.svg   — SUDOKU grid icon
 ```
 
@@ -57,6 +68,17 @@ favicon.svg   — SUDOKU grid icon
 The solver uses constraint propagation (naked singles + hidden singles) with MRV-heuristic backtracking. The puzzle generator creates a complete grid via randomized backtracking, then removes cells while verifying unique solvability. A seeded PRNG (Mulberry32) ensures deterministic generation.
 
 Typical performance: solving extreme-difficulty puzzles in < 30ms, puzzle generation in < 10ms.
+
+## Keyboard Shortcuts
+
+| Key | Action |
+|---|---|
+| `1-9` | Enter digit / toggle note |
+| Arrow keys | Navigate cells |
+| `Backspace` / `Delete` | Erase cell |
+| `N` | Toggle notes mode |
+| `Ctrl+Z` | Undo |
+| `H` | Hint |
 
 ## Run Locally
 
@@ -72,8 +94,6 @@ xdg-open index.html
 # Windows
 start index.html
 ```
-
-Or serve with any static file server for a more production-like setup.
 
 ## Acknowledgments
 
