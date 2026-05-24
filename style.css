@@ -328,6 +328,19 @@ body {
 }
 .cell.hint-flash { animation: hintFlash 600ms ease-out; }
 
+.site-footer {
+  margin-top: 24px;
+  padding: 12px 0;
+  text-align: center;
+}
+.site-footer a {
+  font-size: 0.7rem;
+  color: var(--border-thin);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+.site-footer a:hover { color: var(--text-secondary); }
+
 @media (max-width: 1024px) {
   .board { width: 450px; height: 450px; }
   .cell-value { font-size: 1.2rem; }

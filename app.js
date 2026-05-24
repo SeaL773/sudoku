@@ -210,6 +210,14 @@
   function updatePanelLayout() {
     var mode = currentMode;
 
+    infoLabelEl.style.background = '';
+    infoLabelEl.style.padding = '';
+    infoLabelEl.style.color = '';
+    infoBadgeEl.style.background = '';
+    infoBadgeEl.style.padding = '';
+    infoBadgeEl.style.color = '';
+    infoBadgeEl.style.fontSize = '';
+
     if (mode === 'play') {
       newGameBtn.classList.remove('hidden');
       customFooterActions.classList.add('hidden');
@@ -241,13 +249,17 @@
       infoSecondaryEl.innerHTML = '';
       infoSecondaryEl.style.visibility = 'hidden';
     } else if (mode === 'daily') {
-      infoLabelEl.textContent = formatDateNice();
+      infoLabelEl.textContent = currentDifficulty;
       infoLabelEl.style.display = '';
-      infoLabelEl.style.background = 'none';
-      infoLabelEl.style.padding = '0';
-      infoLabelEl.style.color = 'var(--text-given)';
-      infoBadgeEl.textContent = currentDifficulty;
+      infoLabelEl.style.background = '';
+      infoLabelEl.style.padding = '';
+      infoLabelEl.style.color = '';
+      infoBadgeEl.textContent = formatDateNice();
       infoBadgeEl.style.display = '';
+      infoBadgeEl.style.background = 'none';
+      infoBadgeEl.style.padding = '0';
+      infoBadgeEl.style.color = 'var(--text-secondary)';
+      infoBadgeEl.style.fontSize = '0.75rem';
       infoMistakesEl.textContent = 'Mistakes: ' + mistakeCount + '/3';
       infoMistakesEl.style.display = '';
       infoTimerEl.style.display = '';
@@ -256,9 +268,6 @@
     } else {
       infoLabelEl.textContent = 'Custom Puzzle';
       infoLabelEl.style.display = '';
-      infoLabelEl.style.background = 'none';
-      infoLabelEl.style.padding = '0';
-      infoLabelEl.style.color = 'var(--text-given)';
       infoBadgeEl.style.display = 'none';
       infoBadgeEl.textContent = '';
       infoMistakesEl.style.display = 'none';
