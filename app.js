@@ -17,6 +17,9 @@
   var countdownInterval = null;
   var mistakeCount = 0;
   var hintCount = 0;
+  var cheatMode = false;
+  var konamiBuffer = [];
+  var KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowLeft','ArrowRight','ArrowRight','a','b','a','b'];
 
   var boardEl, winOverlay, winTimeEl, seedInput;
   var settingsBtn, settingsPopover;
@@ -799,8 +802,51 @@
 
   // ---- Keyboard ----
 
+  function getCandidates(index) {
+    var used = {};
+    var peers = getPeers(index);
+    for (var i = 0; i < peers.length; i++) {
+      var v = userGrid[peers[i]].value;
+      if (v > 0) used[v] = true;
+    }
+    var cands = [];
+    for (var d = 1; d <= 9; d++) { if (!used[d]) cands.push(d); }
+    return cands;
+  }
+
+  function autoFillNotes() {
+    if (!cheatMode || !notesMode || selectedCell < 0) return;
+    var cell = userGrid[selectedCell];
+    if (cell.isGiven || cell.value > 0) return;
+    var cands = getCandidates(selectedCell);
+    var changes = [{ index: selectedCell, prev: copyCell(cell) }];
+    cell.notes = cands;
+    undoStack.push({ changes: changes });
+    render();
+  }
+
+  function checkKonami(key) {
+    konamiBuffer.push(key);
+    if (konamiBuffer.length > KONAMI.length) konamiBuffer.shift();
+    if (konamiBuffer.length === KONAMI.length) {
+      var match = true;
+      for (var i = 0; i < KONAMI.length; i++) {
+        if (konamiBuffer[i] !== KONAMI[i]) { match = false; break; }
+      }
+      if (match) {
+        cheatMode = !cheatMode;
+        konamiBuffer = [];
+        var msg = cheatMode ? 'Cheat mode ON — Notes auto-fill enabled (select cell in Notes mode, press Space)' : 'Cheat mode OFF';
+        var el = document.getElementById('status-bar');
+        if (el) { el.textContent = msg; el.className = 'status-bar' + (cheatMode ? ' success' : ''); }
+      }
+    }
+  }
+
   function handleKeydown(e) {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    checkKonami(e.key);
+    if (e.key === ' ' && cheatMode) { e.preventDefault(); autoFillNotes(); return; }
     switch (e.key) {
       case 'ArrowUp': e.preventDefault(); navigateCell(0, -1); break;
       case 'ArrowDown': e.preventDefault(); navigateCell(0, 1); break;
