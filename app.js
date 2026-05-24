@@ -523,6 +523,7 @@
     render();
     cells[target].classList.add('hint-flash');
     setTimeout(function () { cells[target].classList.remove('hint-flash'); }, 600);
+    checkUnitComplete(target);
     checkWin();
   }
 
