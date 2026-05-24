@@ -179,7 +179,7 @@
       min-width: 0;
       display: flex;
       flex-direction: column;
-      gap: 48px;
+      gap: 40px;
     }
 
     /* ── Level heading ── */
@@ -187,14 +187,17 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: -32px;
+      margin-top: 16px;
+      margin-bottom: -24px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border-thin);
     }
     .level-badge {
-      font-size: 0.72rem;
+      font-size: 0.82rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.8px;
-      padding: 3px 12px;
+      padding: 5px 16px;
       border-radius: var(--radius-full);
       background: var(--accent-light);
       color: var(--accent);
@@ -212,9 +215,13 @@
       background: #ffffff;
       border-radius: var(--radius-lg);
       border: 1px solid var(--border-thin);
+      border-left: 3px solid var(--accent);
       padding: 32px;
       box-shadow: var(--shadow-sm);
       scroll-margin-top: 80px;
+    }
+    .lesson:nth-child(even) {
+      background: #f8fafc;
     }
     .lesson-header {
       margin-bottom: 20px;

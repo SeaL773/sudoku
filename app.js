@@ -205,8 +205,12 @@
       panelFooters[modes[i]].classList.toggle('hidden', modes[i] !== mode);
     }
 
-    settingsBtn.classList.toggle('hidden', mode !== 'play');
     notesBtn.classList.toggle('hidden', mode === 'custom');
+    for (var i = 0; i < diffBtns.length; i++) {
+      diffBtns[i].disabled = (mode !== 'play');
+      diffBtns[i].style.opacity = (mode !== 'play') ? '0.4' : '';
+      diffBtns[i].style.pointerEvents = (mode !== 'play') ? 'none' : '';
+    }
     hintBtn.classList.toggle('hidden', mode === 'custom');
 
     stopCountdown();

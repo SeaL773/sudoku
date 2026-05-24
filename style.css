@@ -115,7 +115,8 @@ body {
 .game-layout { display: flex; flex-direction: row; align-items: center; gap: 32px; width: 100%; }
 .board-panel { flex-shrink: 0; }
 .controls-panel { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: var(--section-gap); padding: 0 var(--panel-pad); }
-.panel-header, .panel-footer { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
+.panel-header { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; width: 100%; min-height: 120px; }
+.panel-footer { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
 
 .board {
   display: grid; grid-template-columns: repeat(9, 1fr); grid-template-rows: repeat(9, 1fr);
@@ -287,6 +288,7 @@ body {
   .cell-value { font-size: clamp(0.95rem, 4vw, 1.4rem); }
   .cell-notes span { font-size: clamp(0.4rem, 1.2vw, 0.55rem); }
   .controls-panel { width: 100%; max-width: 540px; padding: 0; }
+  .panel-header { min-height: auto; }
   .timer { font-size: 1.1rem; }
   .numpad { max-width: 264px; gap: 8px; }
   .num-btn { min-height: 56px; font-size: clamp(1.3rem, 4vw, 1.6rem); }
