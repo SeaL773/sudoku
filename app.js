@@ -156,6 +156,26 @@
       if (e.key === 'Enter') applySeed();
     });
 
+    var themeBtns = document.querySelectorAll('.theme-btn');
+    for (var t = 0; t < themeBtns.length; t++) {
+      themeBtns[t].addEventListener('click', (function (btn) {
+        return function () {
+          var theme = btn.getAttribute('data-theme');
+          document.documentElement.classList.remove('dark', 'light');
+          if (theme !== 'auto') document.documentElement.classList.add(theme);
+          for (var j = 0; j < themeBtns.length; j++) themeBtns[j].classList.toggle('active', themeBtns[j] === btn);
+          try { localStorage.setItem('sudoku-theme', theme); } catch (e) {}
+        };
+      })(themeBtns[t]));
+    }
+    try {
+      var saved = localStorage.getItem('sudoku-theme');
+      if (saved && saved !== 'auto') {
+        document.documentElement.classList.add(saved);
+        for (var t = 0; t < themeBtns.length; t++) themeBtns[t].classList.toggle('active', themeBtns[t].getAttribute('data-theme') === saved);
+      }
+    } catch (e) {}
+
     document.getElementById('btn-solve').addEventListener('click', solveCustom);
     document.getElementById('btn-clear').addEventListener('click', clearCustom);
 
