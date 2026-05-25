@@ -1,6 +1,11 @@
 (function () {
   'use strict';
 
+  try {
+    var theme = localStorage.getItem('sudoku-theme');
+    if (theme && theme !== 'auto') document.documentElement.classList.add(theme);
+  } catch (e) {}
+
   // ── Board builder helpers ──────────────────────────────────────
 
   function buildMiniBoard(containerId, puzzle, highlights) {
