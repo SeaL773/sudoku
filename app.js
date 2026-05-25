@@ -848,7 +848,6 @@
   function checkUnitComplete(triggerIdx) {
     if (currentMode === 'custom' || gameWon) return;
     var row = Math.floor(triggerIdx / 9), col = triggerIdx % 9;
-    var boxRow = Math.floor(row / 3) * 3, boxCol = Math.floor(col / 3) * 3;
 
     var unitsToCheck = [
       row,

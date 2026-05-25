@@ -795,7 +795,8 @@
       renderPracticeBoard(activeId);
     } else if (key === 'n' || key === 'N') {
       setNotesMode(activeId, !st.notesMode);
-    } else if (key === 'z' || key === 'Z') {
+    } else if ((key === 'z' || key === 'Z') && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
       if (st.undoStack.length === 0) return;
       var entry = st.undoStack.pop();
       if (entry.prevVal !== null) st.userVals[entry.idx] = entry.prevVal;
