@@ -24,7 +24,7 @@
 
   var boardEl, winOverlay, winTimeEl, seedInput;
   var settingsBtn, settingsPopover;
-  var pauseOverlay;
+  var pauseOverlay, pauseBtn;
   var notesBtn, hintBtn, undoBtn, eraseBtn;
   var winMistakesEl, winHintsEl, mistakeOverlay;
   var infoLabelEl, infoBadgeEl, infoMistakesEl, infoTimerEl, infoSecondaryEl;
@@ -56,6 +56,7 @@
     newGameBtn = document.getElementById('btn-new-game');
 
     pauseOverlay = document.getElementById('pause-overlay');
+    pauseBtn = document.getElementById('btn-pause');
     customFooterActions = document.getElementById('custom-footer-actions');
     statusBar = document.getElementById('status-bar');
 
@@ -153,7 +154,7 @@
       })(diffButtons[i]));
     }
 
-    infoTimerEl.addEventListener('click', togglePause);
+    pauseBtn.addEventListener('click', togglePause);
     pauseOverlay.addEventListener('click', togglePause);
 
     settingsBtn.addEventListener('click', function (e) {
@@ -288,6 +289,7 @@
       if (gamePaused) {
         boardEl.classList.add('paused');
         pauseOverlay.classList.remove('hidden');
+        pauseBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5,3 19,12 5,21"/></svg>';
         timerStarted = true;
       }
       if (currentMode === 'daily' && !gameWon) startCountdown();
@@ -703,8 +705,7 @@
 
   function updateTimerDisplay() {
     var m = Math.floor(timerSeconds / 60), s = timerSeconds % 60;
-    var time = (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
-    if (infoTimerEl) infoTimerEl.textContent = gamePaused ? '\u23F8 ' + time : time;
+    if (infoTimerEl) infoTimerEl.textContent = (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
   }
 
   function editTimer() {
@@ -929,10 +930,12 @@
       stopTimer();
       boardEl.classList.add('paused');
       pauseOverlay.classList.remove('hidden');
+      pauseBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5,3 19,12 5,21"/></svg>';
     } else {
       timerInterval = setInterval(function () { timerSeconds++; updateTimerDisplay(); }, 1000);
       boardEl.classList.remove('paused');
       pauseOverlay.classList.add('hidden');
+      pauseBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
     }
     updateTimerDisplay();
   }
@@ -945,7 +948,12 @@
 
   function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
 
-  function resetTimer() { stopTimer(); timerSeconds = 0; timerStarted = false; gamePaused = false; boardEl.classList.remove('paused'); pauseOverlay.classList.add('hidden'); updateTimerDisplay(); }
+  function resetTimer() {
+    stopTimer(); timerSeconds = 0; timerStarted = false; gamePaused = false;
+    boardEl.classList.remove('paused'); pauseOverlay.classList.add('hidden');
+    if (pauseBtn) pauseBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+    updateTimerDisplay();
+  }
 
   function animateDigitPop(index) {
     var vs = cells[index].querySelector('.cell-value');

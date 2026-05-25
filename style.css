@@ -284,9 +284,16 @@ body {
 
 .info-timer {
   font-family: var(--font-mono); font-size: 1.1rem; font-weight: 500;
-  color: var(--text-secondary); letter-spacing: 0.5px; cursor: pointer;
+  color: var(--text-secondary); letter-spacing: 0.5px;
 }
-.info-timer:hover { color: var(--accent); }
+.pause-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; border: none; background: none;
+  color: var(--text-secondary); cursor: pointer; border-radius: 4px;
+  transition: color 120ms ease, background 120ms ease;
+  margin-left: 4px; padding: 0; vertical-align: middle;
+}
+.pause-btn:hover { color: var(--accent); background: var(--accent-light); }
 
 /* Pause overlay */
 .pause-overlay {
