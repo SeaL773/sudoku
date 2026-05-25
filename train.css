@@ -484,10 +484,10 @@ body {
 .practice-controls {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   gap: 10px;
-  flex: 1;
-  min-width: 0;
+  width: 180px;
+  flex-shrink: 0;
 }
 
 /* .actions already defined in style.css — no override needed */
@@ -498,7 +498,6 @@ body {
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
   width: 100%;
-  max-width: 180px;
 }
 
 /* ── Practice numpad buttons — matches .num-btn from style.css ── */
@@ -528,7 +527,6 @@ body {
 /* ── Practice footer buttons ── */
 .practice-footer {
   display: flex;
-  gap: 10px;
   justify-content: center;
 }
 
@@ -571,8 +569,8 @@ body {
   .practice-layout { flex-direction: column; align-items: center; }
   .practice-board { width: min(324px, calc(100vw - 80px)); height: auto; aspect-ratio: 1; }
   .practice-cell .cell-value { font-size: clamp(0.85rem, 3.5vw, 1.1rem); }
-  .practice-controls { width: 100%; max-width: min(324px, calc(100vw - 80px)); }
-  .practice-numpad { max-width: 160px; }
+  .practice-controls { width: 100%; max-width: 180px; }
+  .practice-numpad { max-width: none; }
   .practice-cell .cell-notes span { font-size: 0.38rem; }
 }
 @media (max-width: 480px) {
@@ -583,8 +581,8 @@ body {
   .mini-cell { font-size: 0.75rem; }
   .practice-board { width: min(280px, calc(100vw - 48px)); }
   .practice-cell .cell-value { font-size: clamp(0.75rem, 3vw, 0.95rem); }
-  .practice-controls { width: 100%; max-width: min(280px, calc(100vw - 48px)); }
-  .practice-numpad { max-width: 130px; gap: 4px; }
+  .practice-controls { width: 100%; max-width: 160px; }
+  .practice-numpad { gap: 4px; }
   .p-num-btn { font-size: 1rem; }
   .practice-controls .action-btn { font-size: 0.6rem; padding: 6px 2px; }
   .practice-controls .action-btn svg { width: 16px; height: 16px; }
