@@ -709,7 +709,7 @@
     // idx50(R5C5): block 2 and 8 via row 5 — put 2 at R5C7, 8 at R5C1
     p[30] = '5'; p[32] = '9'; p[39] = '7'; p[41] = '3'; p[48] = '6';
     p[36] = '2'; p[44] = '8'; // R4C0=2, R4C8=8 -> blocks 2,8 from R4C4
-    p[46] = '8'; p[52] = '2'; // R5C1=8, R5C7=2 -> blocks 2,8 from R5C5
+    p[5] = '2'; p[68] = '8'; // R0C5=2, R7C5=8 -> blocks 2,8 from col 5 -> R5C5
     // Now:
     // idx31(R3C4): candidates from box = {1,2,4,8}
     // idx40(R4C4): candidates from box = {1,2,4,8}, row blocks {2,8} -> [1,4]
@@ -744,8 +744,8 @@
     // idx12,idx39,idx66: can have {2,3,4,5,9}
     // Hidden triple: {2,5,9} only in idx12,39,66. Remove 3,4 from those cells.
     var highlights = [];
-    highlights.push({ idx: 12, cls: 'target', notes: [2, 3, 4, 5, 9] });
-    highlights.push({ idx: 39, cls: 'target', notes: [2, 3, 4, 5, 9] });
+    highlights.push({ idx: 12, cls: 'target', notes: [2, 3, 4, 9] });
+    highlights.push({ idx: 39, cls: 'target', notes: [2, 3, 4, 9] });
     highlights.push({ idx: 66, cls: 'target', notes: [2, 3, 4, 5, 9] });
     highlights.push({ idx: 21, cls: 'highlight', notes: [3, 4] });
     highlights.push({ idx: 48, cls: 'highlight', notes: [3, 4] });
