@@ -490,13 +490,21 @@ body {
   min-width: 0;
 }
 
-/* .actions already defined in style.css — no override needed */
+.practice-controls .actions {
+  width: 180px;
+  justify-content: space-between;
+}
 
 .practice-numpad {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
   width: 180px;
+}
+
+.practice-footer {
+  width: 180px;
+  justify-content: center;
 }
 
 /* ── Practice numpad buttons — matches .num-btn from style.css ── */
@@ -526,7 +534,6 @@ body {
 /* ── Practice footer buttons ── */
 .practice-footer {
   display: flex;
-  justify-content: center;
 }
 
 .new-puzzle-btn {
