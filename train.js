@@ -628,36 +628,6 @@
       return;
     }
 
-    var checkBtn = e.target.closest('.check-btn');
-    if (checkBtn) {
-      var id = checkBtn.dataset.practice;
-      var st = practiceState[id];
-      if (!st) return;
-      var statusEl = document.getElementById('status-' + id);
-      var allFilled = true, allCorrect = true;
-      st.blanks.forEach(function (i) {
-        var uv = st.userVals[i];
-        if (!uv) { allFilled = false; return; }
-        if (uv !== st.solution[i]) allCorrect = false;
-      });
-      if (!allFilled) {
-        statusEl.textContent = 'Fill in all empty cells first.';
-        statusEl.className = 'practice-status err';
-        return;
-      }
-      if (allCorrect) {
-        statusEl.textContent = 'Correct! Well done.';
-        statusEl.className = 'practice-status ok';
-        var container = document.getElementById('practice-' + id);
-        container.querySelectorAll('.practice-cell:not(.given)').forEach(function (c) { c.classList.add('correct-flash'); });
-      } else {
-        statusEl.textContent = 'Some cells are wrong. Check the highlighted ones.';
-        statusEl.className = 'practice-status err';
-        renderPracticeBoard(id);
-      }
-      return;
-    }
-
     var newBtn = e.target.closest('.new-puzzle-btn');
     if (newBtn) {
       newPuzzle(newBtn.dataset.practice);

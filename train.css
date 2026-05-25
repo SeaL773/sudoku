@@ -532,35 +532,21 @@ body {
   justify-content: center;
 }
 
-.check-btn {
-  padding: 8px 20px;
+.new-puzzle-btn {
+  padding: 10px 28px;
   border: none;
   background: var(--accent);
   color: #ffffff;
   font-family: var(--font-main);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 600;
   border-radius: var(--radius-full);
   cursor: pointer;
   transition: background var(--transition-fast), transform var(--transition-fast);
   box-shadow: 0 2px 8px rgba(50, 90, 175, 0.3);
 }
-.check-btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
-.check-btn:active { transform: scale(0.97); }
-
-.new-puzzle-btn {
-  padding: 8px 20px;
-  border: 1px solid var(--border-thin);
-  background: var(--bg-button);
-  color: var(--accent);
-  font-family: var(--font-main);
-  font-size: 0.85rem;
-  font-weight: 600;
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-.new-puzzle-btn:hover { background: var(--accent-light); border-color: var(--accent); }
+.new-puzzle-btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.new-puzzle-btn:active { transform: scale(0.97); }
 
 /* ── Practice status ── */
 .practice-status {
@@ -602,6 +588,6 @@ body {
   .p-num-btn { font-size: 1rem; }
   .practice-controls .action-btn { font-size: 0.6rem; padding: 6px 2px; }
   .practice-controls .action-btn svg { width: 16px; height: 16px; }
-  .check-btn, .new-puzzle-btn { padding: 6px 14px; font-size: 0.8rem; }
+  .new-puzzle-btn { padding: 6px 14px; font-size: 0.8rem; }
   .practice-cell .cell-notes span { font-size: 0.3rem; }
 }
