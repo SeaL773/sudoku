@@ -262,7 +262,7 @@
     highlights.push({ idx: 28, cls: 'target', notes: [4, 7] });
     highlights.push({ idx: 32, cls: 'target', notes: [4, 7] });
     // Cells that had 4 or 7 eliminated (yellow) - the empty ones in row 3
-    highlights.push({ idx: 31, cls: 'highlight', notes: [5, 6] }); // was [4,5,6,7] -> now [5,6]
+    highlights.push({ idx: 31, cls: 'highlight', notes: [5] });
     buildMiniBoard('board-l7', peerPuzzle.join(''), highlights);
   })();
 
@@ -674,46 +674,81 @@
   // ── Lesson 9 board — naked triple [1,3,7] in row 6 ───────────────
   (function () {
     var p = new Array(81).fill('0');
-    // Row 6 (indices 54-62): fill cols 0,3,6 with solved values; leave cols 1,4,7 as triple cells; col 2,5,8 solved
-    p[54] = '5'; p[56] = '6'; p[57] = '8'; p[59] = '2'; p[60] = '4'; p[62] = '9';
+    // Row 6 (idx 54-62): 5,_,6,8,_,2,4,_,9
+    // Present: {2,4,5,6,8,9}. Missing: {1,3,7} across 3 empty cells.
+    // Add a 4th empty cell so there's something to eliminate FROM.
+    // Row 6: _,_,6,8,_,2,_,_,9 — present {2,6,8,9}, missing {1,3,4,5,7}
+    // Triple [1,3,7] at col1, col4, col7. Col0 and col6 have other candidates.
+    p[56] = '6'; p[57] = '8'; p[59] = '2'; p[62] = '9';
     var highlights = [];
-    // Naked triple cells: col 1 (idx 55) [1,3,7], col 4 (idx 58) [1,7], col 7 (idx 61) [3,7]
+    // Triple cells (blue)
     highlights.push({ idx: 55, cls: 'target', notes: [1, 3, 7] });
     highlights.push({ idx: 58, cls: 'target', notes: [1, 7] });
     highlights.push({ idx: 61, cls: 'target', notes: [3, 7] });
-    // A cell in the same row that had 1,7 in notes but can now have them removed
-    // Use a cell in another row that shares a column with one of the triple cells to show elimination
-    // Actually show a cell in row 6 that is not part of the triple — but row 6 is fully filled except triple cells
-    // Instead show a cell in col 1 (outside row 6) that had 1 or 7 as candidate
-    highlights.push({ idx: 1, cls: 'highlight', notes: [2, 6] });  // was [1,2,6,7] -> now [2,6]
-    highlights.push({ idx: 19, cls: 'highlight', notes: [4, 8] }); // was [1,4,7,8] -> now [4,8]
+    // Cells in same row where 1,3,7 get eliminated (yellow)
+    highlights.push({ idx: 54, cls: 'highlight', notes: [4, 5] });
+    highlights.push({ idx: 60, cls: 'highlight', notes: [4, 5] });
     buildMiniBoard('board-l9', p.join(''), highlights);
   })();
 
   // ── Lesson 10 board — hidden pair {2,8} in center box ─────────────
   (function () {
     var p = new Array(81).fill('0');
-    // Center box: rows 3-5, cols 3-5 (indices 30,31,32,39,40,41,48,49,50)
-    // Fill 7 of 9 cells, leave idx 31 (r3,c4) and idx 49 (r5,c4) as the hidden pair cells
-    p[30] = '5'; p[32] = '9'; p[39] = '7'; p[40] = '4'; p[41] = '3'; p[48] = '6'; p[50] = '1';
-    // Digits 2 and 8 only appear as candidates in idx 31 and idx 49 within the box
+    // Center box (R3-5,C3-5): leave 4 cells empty so hidden pair is meaningful
+    // Fill 5 of 9: idx30=5(R3C3), idx32=9(R3C5), idx39=7(R4C3), idx41=3(R4C5), idx48=6(R5C3)
+    // Empty: idx31(R3C4), idx40(R4C4), idx49(R5C4), idx50(R5C5)
+    // Box present: {3,5,6,7,9}. Missing: {1,2,4,8}
+    // Add row/col constraints: put 1,4 outside box in col 4 to block them from idx31,49
+    // 1 at idx4(R0C4), 4 at idx76(R8C4)
+    // Now col 4 has {1,4} -> idx31,40,49 can't have 1 or 4 in col 4
+    // idx31(R3C4): box missing {1,2,4,8}, col blocks {1,4} -> candidates [2,8]
+    // idx40(R4C4): box missing {1,2,4,8}, col blocks {1,4} -> candidates [2,8] too...
+    // Need different constraints. Let me use row constraints instead.
+    // Put 2,8 only reachable from idx31 and idx49 within the box:
+    // idx40(R4C4): block 2 and 8 via row 4 — put 2 at R4C0, 8 at R4C8
+    // idx50(R5C5): block 2 and 8 via row 5 — put 2 at R5C7, 8 at R5C1
+    p[30] = '5'; p[32] = '9'; p[39] = '7'; p[41] = '3'; p[48] = '6';
+    p[36] = '2'; p[44] = '8'; // R4C0=2, R4C8=8 -> blocks 2,8 from R4C4
+    p[46] = '8'; p[52] = '2'; // R5C1=8, R5C7=2 -> blocks 2,8 from R5C5
+    // Now:
+    // idx31(R3C4): candidates from box = {1,2,4,8}
+    // idx40(R4C4): candidates from box = {1,2,4,8}, row blocks {2,8} -> [1,4]
+    // idx49(R5C4): candidates from box = {1,2,4,8}
+    // idx50(R5C5): candidates from box = {1,2,4,8}, row blocks {2,8} -> [1,4]
+    // Hidden pair: 2 and 8 only appear in idx31 and idx49 within the box
+    // So idx31 and idx49 must be {2,8}, other candidates can be removed
     var highlights = [];
-    highlights.push({ idx: 31, cls: 'target', notes: [2, 4, 6, 8] });
-    highlights.push({ idx: 49, cls: 'target', notes: [2, 3, 8] });
+    highlights.push({ idx: 31, cls: 'target', notes: [1, 2, 4, 8] });
+    highlights.push({ idx: 49, cls: 'target', notes: [1, 2, 4, 8] });
+    highlights.push({ idx: 40, cls: 'highlight', notes: [1, 4] });
+    highlights.push({ idx: 50, cls: 'highlight', notes: [1, 4] });
     buildMiniBoard('board-l10', p.join(''), highlights);
   })();
 
   // ── Lesson 11 board — hidden triple {2,5,9} in col 3 ─────────────
   (function () {
     var p = new Array(81).fill('0');
-    // Column 3 (indices 3,12,21,30,39,48,57,66,75)
-    // Fill 6 cells, leave 3 as hidden triple cells: idx 12 (r1), idx 39 (r4), idx 66 (r7)
-    p[3] = '7'; p[21] = '4'; p[30] = '6'; p[48] = '3'; p[57] = '8'; p[75] = '1';
-    // Digits 2,5,9 only appear in idx 12, 39, 66 within col 3
+    // Col 3: idx3=7, idx21=4, idx30=6, idx48=3, idx57=8, idx75=1
+    // Present: {1,3,4,6,7,8}. Missing: {2,5,9}
+    // Empty: idx12(R1C3), idx39(R4C3), idx66(R7C3)
+    // Only 3 cells for 3 digits — need more empty cells for a real hidden triple.
+    // Redesign: leave 5 cells empty in col 3.
+    // Col 3: idx3=7, idx30=6, idx57=8, idx75=1. Present: {1,6,7,8}. Missing: {2,3,4,5,9}
+    // 5 empty cells: idx12,idx21,idx39,idx48,idx66
+    // Add row constraints: block 2,5,9 from idx21 and idx48
+    p[3] = '7'; p[30] = '6'; p[57] = '8'; p[75] = '1';
+    p[18] = '2'; p[23] = '5'; p[25] = '9'; // R2: block 2,5,9 from idx21(R2C3)
+    p[45] = '9'; p[50] = '5'; p[53] = '2'; // R5: block 2,5,9 from idx48(R5C3)
+    // Now idx21(R2C3): col missing {2,3,4,5,9}, row blocks {2,5,9} -> [3,4]
+    // idx48(R5C3): col missing {2,3,4,5,9}, row blocks {2,5,9} -> [3,4]
+    // idx12,idx39,idx66: can have {2,3,4,5,9}
+    // Hidden triple: {2,5,9} only in idx12,39,66. Remove 3,4 from those cells.
     var highlights = [];
-    highlights.push({ idx: 12, cls: 'target', notes: [2, 5, 6, 9] });
-    highlights.push({ idx: 39, cls: 'target', notes: [2, 4, 9] });
-    highlights.push({ idx: 66, cls: 'target', notes: [2, 5, 7, 9] });
+    highlights.push({ idx: 12, cls: 'target', notes: [2, 3, 4, 5, 9] });
+    highlights.push({ idx: 39, cls: 'target', notes: [2, 3, 4, 5, 9] });
+    highlights.push({ idx: 66, cls: 'target', notes: [2, 3, 4, 5, 9] });
+    highlights.push({ idx: 21, cls: 'highlight', notes: [3, 4] });
+    highlights.push({ idx: 48, cls: 'highlight', notes: [3, 4] });
     buildMiniBoard('board-l11', p.join(''), highlights);
   })();
 
