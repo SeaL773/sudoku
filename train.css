@@ -440,35 +440,62 @@ body {
 
 .practice-controls {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   width: 100%;
   max-width: 324px;
 }
+.practice-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  width: 100%;
+}
+.p-action-btn {
+  flex: 1;
+  max-width: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 4px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-main);
+  font-size: 0.72rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: all 100ms ease;
+}
+.p-action-btn:hover { background: var(--bg-button-hover); color: var(--text-given); }
+.p-action-btn.active { background: var(--accent); color: #ffffff; }
 .practice-numpad {
   display: grid;
-  grid-template-columns: repeat(9, 1fr);
-  gap: 5px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
   width: 100%;
-  flex-basis: 100%;
+  max-width: 180px;
 }
-.practice-status {
-  flex-basis: 100%;
+.practice-footer {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
 }
 .p-num-btn {
+  aspect-ratio: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 32px;
   border: none;
   background: var(--bg-button);
   color: var(--text-user);
   font-family: var(--font-main);
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 700;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   cursor: pointer;
   box-shadow: var(--shadow-sm);
   transition: all 100ms ease;
@@ -478,7 +505,7 @@ body {
 .p-num-btn:active { transform: scale(0.95); }
 
 .check-btn {
-  padding: 6px 12px;
+  padding: 8px 20px;
   border: none;
   background: var(--accent);
   color: #ffffff;
@@ -493,19 +520,7 @@ body {
 .check-btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
 .check-btn:active { transform: scale(0.97); }
 
-.erase-btn {
-  padding: 6px 12px;
-  border: 1px solid var(--border-thin);
-  background: var(--bg-button);
-  color: var(--text-given);
-  font-family: var(--font-main);
-  font-size: 0.85rem;
-  font-weight: 600;
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  transition: all 120ms ease;
-}
-.erase-btn:hover { background: var(--bg-button-hover); border-color: var(--accent); }
+
 
 .practice-status {
   font-size: 0.85rem;
@@ -518,7 +533,7 @@ body {
 .practice-status.err { color: var(--text-error); }
 
 .new-puzzle-btn {
-  padding: 6px 12px;
+  padding: 8px 20px;
   border: 1px solid var(--border-thin);
   background: var(--bg-button);
   color: var(--accent);
@@ -531,19 +546,7 @@ body {
 }
 .new-puzzle-btn:hover { background: var(--accent-light); border-color: var(--accent); }
 
-.notes-toggle-btn {
-  padding: 6px 12px;
-  border: 1px solid var(--border-thin);
-  background: var(--bg-button);
-  color: var(--text-given);
-  font-family: var(--font-main);
-  font-size: 0.85rem;
-  font-weight: 600;
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  transition: all 120ms ease;
-}
-.notes-toggle-btn:hover { background: var(--bg-button-hover); border-color: var(--accent); }
+
 .notes-toggle-btn.active {
   background: var(--accent);
   color: #ffffff;
@@ -583,6 +586,7 @@ body {
   .practice-board { width: min(324px, calc(100vw - 80px)); height: auto; aspect-ratio: 1; }
   .practice-cell { font-size: 0.95rem; }
   .practice-controls { max-width: min(324px, calc(100vw - 80px)); }
+  .practice-numpad { max-width: 160px; }
   .practice-cell .practice-notes span { font-size: 0.4rem; }
 }
 @media (max-width: 480px) {
@@ -594,6 +598,9 @@ body {
   .practice-board { width: min(280px, calc(100vw - 48px)); }
   .practice-cell { font-size: 0.82rem; }
   .practice-controls { max-width: min(280px, calc(100vw - 48px)); }
-  .p-num-btn { font-size: 0.9rem; min-height: 28px; }
+  .practice-numpad { max-width: 140px; gap: 4px; }
+  .p-num-btn { font-size: 1rem; }
+  .p-action-btn { font-size: 0.65rem; padding: 6px 2px; }
+  .check-btn, .new-puzzle-btn { padding: 6px 14px; font-size: 0.8rem; }
   .practice-cell .practice-notes span { font-size: 0.35rem; }
 }
