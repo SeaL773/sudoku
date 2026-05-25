@@ -393,9 +393,9 @@ body {
 
 .practice-layout {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 20px;
 }
 
 /* ── Practice board (full 9x9, interactive) ── */
@@ -443,8 +443,8 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  width: 100%;
-  max-width: 324px;
+  flex: 1;
+  min-width: 0;
 }
 .practice-actions {
   display: flex;
@@ -583,9 +583,10 @@ body {
   .mini-board { width: 252px; height: 252px; }
   .mini-board.size-sm { width: 198px; height: 198px; }
   .mini-cell { font-size: 0.88rem; }
+  .practice-layout { flex-direction: column; align-items: center; }
   .practice-board { width: min(324px, calc(100vw - 80px)); height: auto; aspect-ratio: 1; }
   .practice-cell { font-size: 0.95rem; }
-  .practice-controls { max-width: min(324px, calc(100vw - 80px)); }
+  .practice-controls { width: 100%; max-width: min(324px, calc(100vw - 80px)); }
   .practice-numpad { max-width: 160px; }
   .practice-cell .practice-notes span { font-size: 0.4rem; }
 }
@@ -597,10 +598,11 @@ body {
   .mini-cell { font-size: 0.75rem; }
   .practice-board { width: min(280px, calc(100vw - 48px)); }
   .practice-cell { font-size: 0.82rem; }
-  .practice-controls { max-width: min(280px, calc(100vw - 48px)); }
-  .practice-numpad { max-width: 140px; gap: 4px; }
+  .practice-controls { width: 100%; max-width: min(280px, calc(100vw - 48px)); }
+  .practice-numpad { max-width: 130px; gap: 4px; }
   .p-num-btn { font-size: 1rem; }
-  .p-action-btn { font-size: 0.65rem; padding: 6px 2px; }
+  .p-action-btn { font-size: 0.6rem; padding: 6px 2px; }
+  .p-action-btn svg { width: 16px; height: 16px; }
   .check-btn, .new-puzzle-btn { padding: 6px 14px; font-size: 0.8rem; }
   .practice-cell .practice-notes span { font-size: 0.35rem; }
 }
