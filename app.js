@@ -377,6 +377,7 @@
       infoBadgeEl.textContent = '';
       infoMistakesEl.style.display = '';
       infoTimerEl.style.display = '';
+      pauseBtn.style.display = '';
       infoSecondaryEl.innerHTML = '';
       infoSecondaryEl.style.visibility = 'hidden';
       updateMistakesDisplay();
@@ -394,6 +395,7 @@
       infoBadgeEl.style.fontSize = '0.75rem';
       infoMistakesEl.style.display = '';
       infoTimerEl.style.display = '';
+      pauseBtn.style.display = '';
       updateMistakesDisplay();
       infoSecondaryEl.style.visibility = 'visible';
       var ds = getDailyStatus();
@@ -409,6 +411,7 @@
       infoBadgeEl.textContent = '';
       infoMistakesEl.style.display = 'none';
       infoTimerEl.style.display = 'none';
+      pauseBtn.style.display = 'none';
       infoSecondaryEl.style.visibility = 'visible';
       infoSecondaryEl.innerHTML = '<div class="secondary-import">' +
         '<input type="text" id="import-input" class="import-input" maxlength="120" spellcheck="false" autocomplete="off" placeholder="81 chars (0=empty)...">' +

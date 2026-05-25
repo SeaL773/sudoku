@@ -22,7 +22,7 @@ A fully client-side Sudoku game with puzzle generation, solving engine, daily ch
 - Conflict detection — highlights rule violations and wrong digits in real-time
 - Same-number highlighting — selecting a digit highlights all matching cells
 - Mistake counter (game over popup at 3, with option to continue)
-- Timer with pause on completion
+- Pause button — hides the board and stops the timer (click pause icon or press Space)
 - Best time tracking per difficulty (localStorage)
 - Win overlay with stats (time, mistakes, hints used, best time, new record badge)
 - Dark mode (Auto / Light / Dark toggle in settings)
