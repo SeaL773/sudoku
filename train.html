@@ -104,8 +104,8 @@
 
       <div class="practice-section">
         <div class="practice-label">Practice</div>
-        <div class="practice-title">Try It Yourself</div>
-        <p class="practice-desc">A nearly-complete puzzle — just a few cells left. Fill them in using the three rules: no repeats in any row, column, or box.</p>
+        <div class="practice-title">Quick Puzzle</div>
+        <p class="practice-desc">One cell is missing. Look at its row, column, and box to figure out which digit goes there.</p>
         <div class="practice-layout">
           <div class="practice-board" id="practice-1"></div>
           <div class="practice-controls">
@@ -119,6 +119,7 @@
             <div class="practice-footer">
               <button class="new-puzzle-btn" data-practice="1">New Puzzle</button>
             </div>
+            <div class="practice-status" id="status-1"></div>
           </div>
         </div>
       </div>
@@ -150,8 +151,8 @@
 
       <div class="practice-section">
         <div class="practice-label">Practice</div>
-        <div class="practice-title">Fill the Last Cells</div>
-        <p class="practice-desc">This puzzle has only a few empty cells. Every one of them can be solved with the Last Free Cell technique. Fill them in, then click Check.</p>
+        <div class="practice-title">Find the Last Cell</div>
+        <p class="practice-desc">A few cells are empty, but one row, column, or box has only one cell left. Find it and fill in the missing digit.</p>
         <div class="practice-layout">
           <div class="practice-board" id="practice-2"></div>
           <div class="practice-controls">
@@ -165,6 +166,7 @@
             <div class="practice-footer">
               <button class="new-puzzle-btn" data-practice="2">New Puzzle</button>
             </div>
+            <div class="practice-status" id="status-2"></div>
           </div>
         </div>
       </div>
@@ -204,7 +206,7 @@
       <div class="practice-section">
         <div class="practice-label">Practice</div>
         <div class="practice-title">Scan and Place</div>
-        <p class="practice-desc">About 10 cells are empty. Each can be found by scanning — look at where each digit already appears in crossing rows and columns to narrow it down to one cell.</p>
+        <p class="practice-desc">Look at where each digit already appears in crossing rows and columns. The highlighted cells show the blocking pattern. Fill in the target cell.</p>
         <div class="practice-layout">
           <div class="practice-board" id="practice-3"></div>
           <div class="practice-controls">
@@ -218,6 +220,7 @@
             <div class="practice-footer">
               <button class="new-puzzle-btn" data-practice="3">New Puzzle</button>
             </div>
+            <div class="practice-status" id="status-3"></div>
           </div>
         </div>
       </div>
@@ -256,8 +259,8 @@
 
       <div class="practice-section">
         <div class="practice-label">Practice</div>
-        <div class="practice-title">Fill in the Candidates</div>
-        <p class="practice-desc">About 15 cells are empty. For each one, figure out which digits are still possible given its row, column, and box — then fill in the one that must go there.</p>
+        <div class="practice-title">Read the Notes</div>
+        <p class="practice-desc">Notes are shown on each empty cell. Find the cell with only one candidate and fill it in.</p>
         <div class="practice-layout">
           <div class="practice-board" id="practice-4"></div>
           <div class="practice-controls">
@@ -271,6 +274,7 @@
             <div class="practice-footer">
               <button class="new-puzzle-btn" data-practice="4">New Puzzle</button>
             </div>
+            <div class="practice-status" id="status-4"></div>
           </div>
         </div>
       </div>
@@ -304,8 +308,8 @@
 
       <div class="practice-section">
         <div class="practice-label">Practice</div>
-        <div class="practice-title">Find the Naked Singles</div>
-        <p class="practice-desc">Several cells in this puzzle have only one possible candidate. Find them and fill them in. Use the notes in each cell as a guide.</p>
+        <div class="practice-title">Spot the Single</div>
+        <p class="practice-desc">Notes show the candidates for each empty cell. One cell has only one possible digit. Find it and fill it in.</p>
         <div class="practice-layout">
           <div class="practice-board" id="practice-5"></div>
           <div class="practice-controls">
@@ -319,6 +323,7 @@
             <div class="practice-footer">
               <button class="new-puzzle-btn" data-practice="5">New Puzzle</button>
             </div>
+            <div class="practice-status" id="status-5"></div>
           </div>
         </div>
       </div>
@@ -359,8 +364,8 @@
 
       <div class="practice-section">
         <div class="practice-label">Practice</div>
-        <div class="practice-title">Find the Hidden Singles</div>
-        <p class="practice-desc">This puzzle requires hidden singles to progress. For each unit, check whether any digit has only one valid cell. Fill in what you find.</p>
+        <div class="practice-title">Find the Hidden Single</div>
+        <p class="practice-desc">Check the highlighted box. One digit can only go in one cell within that box, even though that cell has multiple candidates. Fill it in.</p>
         <div class="practice-layout">
           <div class="practice-board" id="practice-6"></div>
           <div class="practice-controls">
@@ -374,6 +379,7 @@
             <div class="practice-footer">
               <button class="new-puzzle-btn" data-practice="6">New Puzzle</button>
             </div>
+            <div class="practice-status" id="status-6"></div>
           </div>
         </div>
       </div>
@@ -412,8 +418,8 @@
 
       <div class="practice-section">
         <div class="practice-label">Practice</div>
-        <div class="practice-title">Spot the Naked Pairs</div>
-        <p class="practice-desc">A medium puzzle where naked pairs unlock progress. Find two cells in the same unit with identical two-candidate notes, then eliminate those digits from the rest of the unit.</p>
+        <div class="practice-title">After the Pair</div>
+        <p class="practice-desc">The highlighted cells show a technique pattern. Focus on the target cell and determine which digit must go there.</p>
         <div class="practice-layout">
           <div class="practice-board" id="practice-7"></div>
           <div class="practice-controls">
@@ -427,6 +433,7 @@
             <div class="practice-footer">
               <button class="new-puzzle-btn" data-practice="7">New Puzzle</button>
             </div>
+            <div class="practice-status" id="status-7"></div>
           </div>
         </div>
       </div>
@@ -459,8 +466,8 @@
 
       <div class="practice-section">
         <div class="practice-label">Practice</div>
-        <div class="practice-title">Find the Pointing Pairs</div>
-        <p class="practice-desc">A medium puzzle where pointing pairs are needed. Look for a digit in a box that only appears in one row or column within that box, then eliminate it from the rest of that row or column.</p>
+        <div class="practice-title">After the Pointing Pair</div>
+        <p class="practice-desc">The highlighted cells show a technique pattern. Focus on the target cell and determine which digit must go there.</p>
         <div class="practice-layout">
           <div class="practice-board" id="practice-8"></div>
           <div class="practice-controls">
@@ -474,6 +481,7 @@
             <div class="practice-footer">
               <button class="new-puzzle-btn" data-practice="8">New Puzzle</button>
             </div>
+            <div class="practice-status" id="status-8"></div>
           </div>
         </div>
       </div>
@@ -510,8 +518,8 @@
 
       <div class="practice-section">
         <div class="practice-label">Practice</div>
-        <div class="practice-title">Find the Naked Triples</div>
-        <p class="practice-desc">A hard puzzle where naked triples are key. Look for three cells in a unit whose combined candidates total exactly three digits, then eliminate those digits from all other cells in the unit.</p>
+        <div class="practice-title">After the Triple</div>
+        <p class="practice-desc">The highlighted cells show a technique pattern. Focus on the target cell and determine which digit must go there.</p>
         <div class="practice-layout">
           <div class="practice-board" id="practice-9"></div>
           <div class="practice-controls">
@@ -525,6 +533,7 @@
             <div class="practice-footer">
               <button class="new-puzzle-btn" data-practice="9">New Puzzle</button>
             </div>
+            <div class="practice-status" id="status-9"></div>
           </div>
         </div>
       </div>
@@ -561,8 +570,8 @@
 
       <div class="practice-section">
         <div class="practice-label">Practice</div>
-        <div class="practice-title">Find the Hidden Pairs</div>
-        <p class="practice-desc">A hard puzzle where hidden pairs unlock progress. For each unit, check if two digits only appear as candidates in exactly two cells — then remove all other candidates from those cells.</p>
+        <div class="practice-title">After the Hidden Pair</div>
+        <p class="practice-desc">The highlighted cells show a technique pattern. Focus on the target cell and determine which digit must go there.</p>
         <div class="practice-layout">
           <div class="practice-board" id="practice-10"></div>
           <div class="practice-controls">
@@ -576,6 +585,7 @@
             <div class="practice-footer">
               <button class="new-puzzle-btn" data-practice="10">New Puzzle</button>
             </div>
+            <div class="practice-status" id="status-10"></div>
           </div>
         </div>
       </div>
@@ -612,8 +622,8 @@
 
       <div class="practice-section">
         <div class="practice-label">Practice</div>
-        <div class="practice-title">Find the Hidden Triples</div>
-        <p class="practice-desc">A hard puzzle requiring hidden triples. Find three digits that only appear in three cells within a unit, then strip all other candidates from those three cells.</p>
+        <div class="practice-title">After the Hidden Triple</div>
+        <p class="practice-desc">The highlighted cells show a technique pattern. Focus on the target cell and determine which digit must go there.</p>
         <div class="practice-layout">
           <div class="practice-board" id="practice-11"></div>
           <div class="practice-controls">
@@ -627,6 +637,7 @@
             <div class="practice-footer">
               <button class="new-puzzle-btn" data-practice="11">New Puzzle</button>
             </div>
+            <div class="practice-status" id="status-11"></div>
           </div>
         </div>
       </div>
@@ -657,8 +668,8 @@
 
       <div class="practice-section">
         <div class="practice-label">Practice</div>
-        <div class="practice-title">Find the Pointing Triples</div>
-        <p class="practice-desc">A hard puzzle where pointing triples are needed. Look for a digit in a box that only appears in three cells, all in the same row or column, then eliminate it from the rest of that row or column.</p>
+        <div class="practice-title">After the Pointing Triple</div>
+        <p class="practice-desc">The highlighted cells show a technique pattern. Focus on the target cell and determine which digit must go there.</p>
         <div class="practice-layout">
           <div class="practice-board" id="practice-12"></div>
           <div class="practice-controls">
@@ -672,6 +683,7 @@
             <div class="practice-footer">
               <button class="new-puzzle-btn" data-practice="12">New Puzzle</button>
             </div>
+            <div class="practice-status" id="status-12"></div>
           </div>
         </div>
       </div>
@@ -717,8 +729,8 @@
 
       <div class="practice-section">
         <div class="practice-label">Practice</div>
-        <div class="practice-title">Spot the X-Wing</div>
-        <p class="practice-desc">An expert puzzle where an X-Wing is required. Find a candidate that appears in exactly two cells in each of two rows, aligned in the same two columns, then eliminate it from those columns.</p>
+        <div class="practice-title">Apply the X-Wing</div>
+        <p class="practice-desc">The highlighted area shows cells involved in the technique. Use the candidate notes to determine what goes in the target cell.</p>
         <div class="practice-layout">
           <div class="practice-board" id="practice-13"></div>
           <div class="practice-controls">
@@ -732,6 +744,7 @@
             <div class="practice-footer">
               <button class="new-puzzle-btn" data-practice="13">New Puzzle</button>
             </div>
+            <div class="practice-status" id="status-13"></div>
           </div>
         </div>
       </div>
@@ -769,8 +782,8 @@
 
       <div class="practice-section">
         <div class="practice-label">Practice</div>
-        <div class="practice-title">Find the Y-Wing</div>
-        <p class="practice-desc">An expert puzzle where a Y-Wing is needed. Find a pivot cell with two candidates, connected to two wing cells that share one candidate each — then eliminate the shared candidate from cells that see both wings.</p>
+        <div class="practice-title">Apply the Y-Wing</div>
+        <p class="practice-desc">The highlighted area shows cells involved in the technique. Use the candidate notes to determine what goes in the target cell.</p>
         <div class="practice-layout">
           <div class="practice-board" id="practice-14"></div>
           <div class="practice-controls">
@@ -784,6 +797,7 @@
             <div class="practice-footer">
               <button class="new-puzzle-btn" data-practice="14">New Puzzle</button>
             </div>
+            <div class="practice-status" id="status-14"></div>
           </div>
         </div>
       </div>
@@ -827,8 +841,8 @@
 
       <div class="practice-section">
         <div class="practice-label">Practice</div>
-        <div class="practice-title">Find the Swordfish</div>
-        <p class="practice-desc">An extreme puzzle where a Swordfish pattern is required. Find a candidate that appears in 2-3 cells in each of three rows, all within the same three columns, then eliminate it from those columns.</p>
+        <div class="practice-title">Apply the Swordfish</div>
+        <p class="practice-desc">The highlighted area shows cells involved in the technique. Use the candidate notes to determine what goes in the target cell.</p>
         <div class="practice-layout">
           <div class="practice-board" id="practice-15"></div>
           <div class="practice-controls">
@@ -842,6 +856,7 @@
             <div class="practice-footer">
               <button class="new-puzzle-btn" data-practice="15">New Puzzle</button>
             </div>
+            <div class="practice-status" id="status-15"></div>
           </div>
         </div>
       </div>

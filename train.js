@@ -296,77 +296,143 @@
     buildMiniBoard('board-l8', peerPuzzle.join(''), highlights);
   })();
 
-  // ── Practice system ───────────────────────────────────────────
-
-  var BASE = '974236158638591742125487936316754289742918563589362417867125394253649871491873625';
-
-  var POOL7 = [
-    { p: '200080300060070084030500209000105408000000000402706000301007040720040060004010003', s: null },
-    { p: '000000000904607000076804100309701080008000300050308702007502610000403208000000000', s: null },
-    { p: '000700800006000031040002000024070000010030080000060290000800070860000500002006000', s: null },
-    { p: '020000000036040000100203000000300107070000090301006000000609001000070860000000050', s: null }
-  ];
-  var POOL8 = [
-    { p: '300200000000107000706030500070009080900020004010800050009060701000701000000004006', s: null },
-    { p: '100000709000600001006003400020100060005000200030007010002800500700005000308000007', s: null },
-    { p: '000900002050123400030000160500000090000000000070000006062000070009543020400002000', s: null },
-    { p: '000000010400009002020010000000630520000000000071054000000080070900700008060000000', s: null }
-  ];
-  var POOL9 = [
-    { p: '000030086000020040090078520370000000040000060000000071017460090060090000980010000', s: null },
-    { p: '600302000040100726000006003380000500010000040004000012200500000156004080000201004', s: null },
-    { p: '000001030231090000065003100678924513000000000000000000510300920000010845020800000', s: null },
-    { p: '800000000003600000070090200060005300400803001005020060000419005000080079000000000', s: null }
-  ];
-  var POOL10 = [
-    { p: '000000000000003085001020000000507000004000100090000000500000073002010000000040009', s: null },
-    { p: '300000000970010000600583000200000900500621003008000001000195007000060049000000005', s: null },
-    { p: '000200401800400000005100800400050000000304000000010009001008700000007004504001000', s: null },
-    { p: '020000000036040000100203000000300107070000090301006000000609001000070860000000050', s: null }
-  ];
-
   var PRACTICES = {
-    '1':  { type: 'blanks', base: BASE, blankSets: [[0,10,20],[60,70,80],[4,40,76],[8,36,72]] },
-    '2':  { type: 'blanks', base: BASE, blankSets: [[0,10,20,60,70,80],[4,13,22,31,40,49],[8,17,26,35,44,53],[0,40,80,9,45,72]] },
-    '3':  { type: 'blanks', base: BASE, blankSets: [
-      [0,10,20,30,40,50,60,70,80],
-      [4,13,22,31,49,58,67,76,8],
-      [2,11,20,29,38,47,56,65,74],
-      [6,15,24,33,42,51,60,69,78]
-    ]},
-    '4':  { type: 'blanks', base: BASE, blankSets: [
-      [0,2,4,6,8,10,12,14,16,18,20,22,24,26],
-      [60,62,64,66,68,70,72,74,76,78,80,30,40,50],
-      [1,3,5,7,9,11,13,15,17,19,21,23,25,27],
-      [54,56,58,61,63,65,67,69,71,73,75,77,79,31]
-    ]},
-    '5':  { type: 'blanks', base: BASE, blankSets: [
-      [0,2,10,12,20,22,60,62,70,72,80,78,40,30,50],
-      [1,3,11,13,21,23,61,63,71,73,79,77,41,31,51],
-      [4,6,14,16,24,26,64,66,74,76,80,78,42,32,52],
-      [0,8,9,17,18,26,54,62,63,71,72,80,36,44,40]
-    ]},
-    '6':  { type: 'blanks', base: BASE, blankSets: [
-      [0,2,4,6,8,10,12,14,16,18,20,22,24,26,60,62,64,66,68,70,72,74,76,78,80,40,30,50,31,41],
-      [1,3,5,7,9,11,13,15,17,19,21,23,25,27,61,63,65,67,69,71,73,75,77,79,39,29,49,32,42],
-      [0,4,8,9,13,17,18,22,26,54,58,62,63,67,71,72,76,80,27,35,36,44,45,53,40,30,50,31,41,32]
-    ]},
-    '7':  { type: 'pool', pool: POOL7, idx: 0 },
-    '8':  { type: 'pool', pool: POOL8, idx: 0 },
-    '9':  { type: 'pool', pool: POOL9, idx: 0 },
-    '10': { type: 'pool', pool: POOL10, idx: 0 },
-    '11': { type: 'generated', difficulty: 'hard',   seeds: ['train-11-0','train-11-1','train-11-2','train-11-3'], idx: 0 },
-    '12': { type: 'generated', difficulty: 'hard',   seeds: ['train-12-0','train-12-1','train-12-2','train-12-3'], idx: 0 },
-    '13': { type: 'generated', difficulty: 'expert', seeds: ['train-13-0','train-13-1','train-13-2','train-13-3'], idx: 0 },
-    '14': { type: 'generated', difficulty: 'expert', seeds: ['train-14-0','train-14-1','train-14-2','train-14-3'], idx: 0 },
-    '15': { type: 'generated', difficulty: 'evil',   seeds: ['train-15-0','train-15-1','train-15-2','train-15-3'], idx: 0 }
+    '1': {
+      puzzles: [
+        { p: '974236158638591742125487936316754289742908563589362417867125394253649871491873625', s: '974236158638591742125487936316754289742918563589362417867125394253649871491873625', targets: [40], focus: [36,4,37,13,38,22,39,31,41,49,42,58,43,67,44,76,30,32,48,50] },
+        { p: '074236158638591742125487936316754289742918563589362417867125394253649871491873625', s: '974236158638591742125487936316754289742918563589362417867125394253649871491873625', targets: [0], focus: [1,9,2,18,3,27,4,36,5,45,6,54,7,63,8,72,10,11,19,20] },
+        { p: '974236150638591742125487936316754289742918563589362417867125394253649871491873625', s: '974236158638591742125487936316754289742918563589362417867125394253649871491873625', targets: [8], focus: [0,1,17,2,26,3,35,4,44,5,53,6,62,7,71,80,15,16,24,25] },
+        { p: '974236158638591742125487936316754289742918563589362417867125394253649871491873620', s: '974236158638591742125487936316754289742918563589362417867125394253649871491873625', targets: [80], focus: [72,8,73,17,74,26,75,35,76,44,77,53,78,62,79,71,60,61,69,70] }
+      ], idx: 0
+    },
+    '2': {
+      puzzles: [
+        { p: '074236158638591742125487936316054289742918563589362417867125094253649871491873625', s: '974236158638591742125487936316754289742918563589362417867125394253649871491873625', targets: [0], focus: [0,1,2,3,4,5,6,7,8] },
+        { p: '974206158638591742120487936316754289742918563589360417867125394253649871491873625', s: '974236158638591742125487936316754289742918563589362417867125394253649871491873625', targets: [4], focus: [4,13,22,31,40,49,58,67,76] },
+        { p: '974236158608591742125487936316754289742908563589362417867125394253649801491873625', s: '974236158638591742125487936316754289742918563589362417867125394253649871491873625', targets: [10], focus: [0,1,2,9,10,11,18,19,20] },
+        { p: '974236158638591042125487936316054289742918563589362417867125394253649871091873625', s: '974236158638591742125487936316754289742918563589362417867125394253649871491873625', targets: [72], focus: [72,73,74,75,76,77,78,79,80] }
+      ], idx: 0
+    },
+    '3': {
+      puzzles: [
+        { p: '974236158608591742125487906316754289742018563589362417867125094253649871491873625', s: '974236158638591742125487936316754289742918563589362417867125394253649871491873625', targets: [39], focus: [35,47,13,68] },
+        { p: '904236158638591742125487936316754089742908563589362417867125094253649871491873625', s: '974236158638591742125487936316754289742918563589362417867125394253649871491873625', targets: [1], focus: [15,23,36,56] },
+        { p: '974236158638591742120487936316754089742908563589362417867125394250649871491873625', s: '974236158638591742125487936316754289742918563589362417867125394253649871491873625', targets: [20], focus: [7,12,45,64] },
+        { p: '974236158608591742125487936316754289742908563589362417807125394253649871091873625', s: '974236158638591742125487936316754289742918563589362417867125394253649871491873625', targets: [72], focus: [62,67,37,2] }
+      ], idx: 0
+    },
+    '4': {
+      puzzles: [
+        { p: '074236158608591742120487936316054289742908563589362417867125394253649871491873625', s: '974236158638591742125487936316754289742918563589362417867125394253649871491873625', targets: [0], focus: [0], autoNotes: true },
+        { p: '974236150638591740125487930316754280742918560589362417867125394253649871491873625', s: '974236158638591742125487936316754289742918563589362417867125394253649871491873625', targets: [8], focus: [8], autoNotes: true },
+        { p: '974206158638501742125407936316704289742908563589362417867125394253649871491873625', s: '974236158638591742125487936316754289742918563589362417867125394253649871491873625', targets: [4], focus: [4], autoNotes: true },
+        { p: '974236158638591742125487936316754289042918563089362417067125394053649871091873625', s: '974236158638591742125487936316754289742918563589362417867125394253649871491873625', targets: [36], focus: [36], autoNotes: true }
+      ], idx: 0
+    },
+    '5': {
+      puzzles: [
+        { p: '004236158008591742005487936316754289742918563589362417867125394253649871491873625', s: '974236158638591742125487936316754289742918563589362417867125394253649871491873625', targets: [0], focus: [1,9,2,18,3,27,4,36,5,45,6,54,7,63,8,72,10,11,19,20], autoNotes: true },
+        { p: '974236000638591000125487936316754289742918563589362417867125394253649871491873625', s: '974236158638591742125487936316754289742918563589362417867125394253649871491873625', targets: [6], focus: [0,1,15,2,24,3,33,4,42,5,51,60,7,69,8,78,16,17,25,26], autoNotes: true },
+        { p: '974236158638591742125487936316754289742918563589362417867125004253649001491873005', s: '974236158638591742125487936316754289742918563589362417867125394253649871491873625', targets: [60], focus: [54,6,55,15,56,24,57,33,58,42,59,51,61,69,62,78,70,71,79,80], autoNotes: true },
+        { p: '974236158638591742125487936316754289742918563589362417007125394003649871001873625', s: '974236158638591742125487936316754289742918563589362417867125394253649871491873625', targets: [54], focus: [0,55,9,56,18,57,27,58,36,59,45,60,61,63,62,72,64,65,73,74], autoNotes: true }
+      ], idx: 0
+    },
+    '6': {
+      puzzles: [
+        { p: '000236158000591742000487936316754289742918563589362417867125394253649871491873625', s: '974236158638591742125487936316754289742918563589362417867125394253649871491873625', targets: [18], focus: [0,1,2,9,10,11,18,19,20], autoNotes: true },
+        { p: '974236000638591000125487000316754289742918563589362417867125394253649871491873625', s: '974236158638591742125487936316754289742918563589362417867125394253649871491873625', targets: [6], focus: [6,7,8,15,16,17,24,25,26], autoNotes: true },
+        { p: '974236158638591742125487936316754289742918563589362417000125394000649871000873625', s: '974236158638591742125487936316754289742918563589362417867125394253649871491873625', targets: [74], focus: [54,55,56,63,64,65,72,73,74], autoNotes: true },
+        { p: '974236158638591742125487936316754289742918563589362417867125000253649000491873000', s: '974236158638591742125487936316754289742918563589362417867125394253649871491873625', targets: [71], focus: [60,61,62,69,70,71,78,79,80], autoNotes: true }
+      ], idx: 0
+    },
+    '7': {
+      puzzles: [
+        { p: '245981376169273584837564219000105408000000627402736951391657842728349165654812793', s: '245981376169273584837564219976125438513498627482736951391657842728349165654812793', targets: [27,28], focus: [29,36,37,38,46,31,34,39,40,41], autoNotes: true },
+        { p: '000019000914637000276854100349721586728965341651348792497582613165493278832176954', s: '583219467914637825276854139349721586728965341651348792497582613165493278832176954', targets: [15,16], focus: [6,7,8,17,25,26,0,1,2,3], autoNotes: true },
+        { p: '000700800006089431040612759624978315917235684583164297435821976861497523792356148', s: '159743862276589431348612759624978315917235684583164297435821976861497523792356148', targets: [1,2], focus: [0,9,10,18,20,4,5,7,8,12], autoNotes: true },
+        { p: '020017000736945000158263000564398127872154693391726485245689371913572864687431952', s: '429817536736945218158263749564398127872154693391726485245689371913572864687431952', targets: [6,15], focus: [7,8,16,17,24,25,26,0,2,3], autoNotes: true }
+      ], idx: 0
+    },
+    '8': {
+      puzzles: [
+        { p: '300200000295147000746938500572419683938625174614873259859362741463781925127594836', s: '381256497295147368746938512572419683938625174614873259859362741463781925127594836', targets: [6,15], focus: [7,8,16,17,25,26,1,2,4,5], autoNotes: true },
+        { p: '000000010400369782020817345894631527536278491271954836142586973953742168768193254', s: '387425619415369782629817345894631527536278491271954836142586973953742168768193254', targets: [1,10], focus: [0,2,11,18,20,3,4,5,6,8], autoNotes: true }
+      ], idx: 0
+    },
+    '9': {
+      puzzles: [
+        { p: '521934786738526149694178523370000002142000968856000371217463895463895217985712634', s: '521934786738526149694178523379681452142357968856249371217463895463895217985712634', targets: [30,39], focus: [31,32,40,41,48,49,50,29,33,34], autoNotes: true },
+        { p: '891234756243657918576198234169745382427863591385921467000419005000082179000576843', s: '891234756243657918576198234169745382427863591385921467738419625654382179912576843', targets: [55,63], focus: [54,56,64,65,72,73,74,60,61,66], autoNotes: true }
+      ], idx: 0
+    },
+    '10': {
+      puzzles: [
+        { p: '000000021000173985001928746128537694634892157795461832519286473472319568863745219', s: '987654321246173985351928746128537694634892157795461832519286473472319568863745219', targets: [9,10], focus: [0,1,2,11,18,19,3,4,5,6], autoNotes: true },
+        { p: '300049000974216000612583000231458976597621483468937521846195237753862149129374865', s: '385749612974216358612583794231458976597621483468937521846195237753862149129374865', targets: [15,16], focus: [6,7,8,17,24,25,26,1,2,3], autoNotes: true },
+        { p: '937285461812469357645173892400050008000394275000812649391548726268937514574621983', s: '937285461812469357645173892429756138186394275753812649391548726268937514574621983', targets: [28,36], focus: [29,37,38,45,46,47,30,32,33,34], autoNotes: true },
+        { p: '020017000736945000158263000564398127872154693391726485245689371913572864687431952', s: '429817536736945218158263749564398127872154693391726485245689371913572864687431952', targets: [6,15], focus: [7,8,16,17,24,25,26,0,2,3], autoNotes: true }
+      ], idx: 0
+    },
+    '11': {
+      puzzles: [
+        { p: '600013000948000513231000697183542769465789231729361485394825176512697348876134952', s: '657913824948276513231458697183542769465789231729361485394825176512697348876134952', targets: [12,13], focus: [3,14,21,22,23,1,2,6,7,8], autoNotes: true },
+        { p: '870000100062030978513000246794312685135846792628597314347651829256978431981423567', s: '879264153462135978513789246794312685135846792628597314347651829256978431981423567', targets: [3,4], focus: [5,12,14,21,22,23,2,7,8,9], autoNotes: true },
+        { p: '951723486247186953863495721614358279592671834738249615000000047000814592005937168', s: '951723486247186953863495721614358279592671834738249615189562347376814592425937168', targets: [63,64], focus: [54,55,56,65,72,73,57,58,59,60], autoNotes: true },
+        { p: '007000008035001746841500932968235471473918265512476893124659387786143529359782614', s: '697324158235891746841567932968235471473918265512476893124659387786143529359782614', targets: [3,5], focus: [4,12,13,22,23,0,1,6,7,9], autoNotes: true }
+      ], idx: 0
+    },
+    '12': {
+      puzzles: [
+        { p: '789342165645971283213586794420690500000418000961725008394167852172854639856239417', s: '789342165645971283213586794428693571537418926961725348394167852172854639856239417', targets: [34,35], focus: [42,43,44,51,52,29,32,36,37,38], autoNotes: true },
+        { p: '849563271735912684126847935693251748487396152251478369504029003008735000362184000', s: '849563271735912684126847935693251748487396152251478369574629813918735426362184597', targets: [60,61], focus: [69,70,71,78,79,80,55,57,63,64], autoNotes: true },
+        { p: '561439728832675491479128635010000280296007054348000976657894312924513867183762549', s: '561439728832675491479128635715946283296387154348251976657894312924513867183762549', targets: [32,39], focus: [30,31,40,48,49,50,27,29,35,42], autoNotes: true },
+        { p: '548397216263415798179682453384269175956178324712534689020050000835000962497006531', s: '548397216263415798179682453384269175956178324712534689621953847835741962497826531', targets: [66,67], focus: [57,59,68,75,76,54,56,60,61,62], autoNotes: true }
+      ], idx: 0
+    },
+    '13': {
+      puzzles: [
+        { p: '962138547317945862458276319000653001000012975000497638596321784781564293234789156', s: '962138547317945862458276319879653421643812975125497638596321784781564293234789156', targets: [27,29], focus: [28,36,37,38,45,46,47,33,34,39], autoNotes: true },
+        { p: '800002010024591300615378000139827654257964831486153729368219475941735286572486193', s: '893642517724591368615378942139827654257964831486153729368219475941735286572486193', targets: [8,16], focus: [6,17,24,25,26,1,2,3,4,9], autoNotes: true },
+        { p: '461395287793218456852764139978146523536982741214573968000400002020839674000627815', s: '461395287793218456852764139978146523536982741214573968687451392125839674349627815', targets: [55,63], focus: [54,56,65,72,73,74,58,59,60,61], autoNotes: true },
+        { p: '174852936532769148896341725257986413318274569469135872920000080745000391681000257', s: '174852936532769148896341725257986413318274569469135872923517684745628391681493257', targets: [58,66], focus: [57,59,67,68,75,76,77,56,60,62], autoNotes: true }
+      ], idx: 0
+    },
+    '14': {
+      puzzles: [
+        { p: '000000052271000638569003147348976521196352784752148369637489215825761493914235876', s: '483617952271594638569823147348976521196352784752148369637489215825761493914235876', targets: [12,13], focus: [3,4,5,14,21,22,0,1,2,6], autoNotes: true },
+        { p: '000005400475831006169724000516289374734156289982347651653478192897612543241593768', s: '328965417475831926169724835516289374734156289982347651653478192897612543241593768', targets: [8,15], focus: [7,16,24,25,26,0,1,2,3,4], autoNotes: true },
+        { p: '681752439549138276327964851963547182814293567752816394005609040000001925090475613', s: '681752439549138276327964851963547182814293567752816394135629748476381925298475613', targets: [63,72], focus: [54,55,64,65,74,58,60,62,66,67], autoNotes: true },
+        { p: '039407020001983000847125000758219643163548279492376815374851962285694731916732584', s: '539467128621983457847125396758219643163548279492376815374851962285694731916732584', targets: [6,15], focus: [8,16,17,24,25,26,0,4,9,10], autoNotes: true }
+      ], idx: 0
+    },
+    '15': {
+      puzzles: [
+        { p: '564827193298163574713945268000059006439682000657431000841296357376518942925374681', s: '564827193298163574713945268182759436439682715657431829841296357376518942925374681', targets: [42,43], focus: [33,34,44,51,52,53,27,28,29,30], autoNotes: true },
+        { p: '003500600000907413100236785261394578948675231357812964415768329879423156632159847', s: '783541692526987413194236785261394578948675231357812964415768329879423156632159847', targets: [0,9], focus: [1,10,11,19,20,4,5,7,8,13], autoNotes: true },
+        { p: '020001004053784600684239000392867145476125983815493762541376298768942351239518476', s: '927651834153784629684239517392867145476125983815493762541376298768942351239518476', targets: [7,17], focus: [6,16,24,25,26,0,2,3,4,9], autoNotes: true },
+        { p: '372614859168359274945287631400106000296438000813795000721863945689541723534972186', s: '372614859168359274945287631457126398296438517813795462721863945689541723534972186', targets: [34,42], focus: [33,35,43,44,51,52,53,28,29,31], autoNotes: true }
+      ], idx: 0
+    }
   };
 
   var practiceState = {};
 
-  function resolvePoolSolution(entry) {
-    if (!entry.s) entry.s = solveSudoku(entry.p) || entry.p;
-    return entry;
+  function computeCandidates(puzzle, idx) {
+    var r = Math.floor(idx / 9), c = idx % 9;
+    var br = Math.floor(r / 3) * 3, bc = Math.floor(c / 3) * 3;
+    var used = {};
+    for (var j = 0; j < 9; j++) {
+      if (puzzle[r * 9 + j] !== '0') used[puzzle[r * 9 + j]] = true;
+      if (puzzle[j * 9 + c] !== '0') used[puzzle[j * 9 + c]] = true;
+    }
+    for (var dr = 0; dr < 3; dr++)
+      for (var dc = 0; dc < 3; dc++) {
+        var v = puzzle[(br + dr) * 9 + (bc + dc)];
+        if (v !== '0') used[v] = true;
+      }
+    var cands = [];
+    for (var d = 1; d <= 9; d++) if (!used[String(d)]) cands.push(d);
+    return cands;
   }
 
   function setNotesMode(id, on) {
@@ -379,55 +445,58 @@
 
   function loadPractice(id) {
     var cfg = PRACTICES[id];
-    if (!cfg) return;
-    var puzzle, solution, blanks;
+    if (!cfg || !cfg.puzzles || cfg.puzzles.length === 0) return;
+    var entry = cfg.puzzles[cfg.idx % cfg.puzzles.length];
+    var puzzle = entry.p;
+    var solution = entry.s;
+    var targets = entry.targets || [];
+    var focusCells = entry.focus || [];
+    var showAutoNotes = entry.autoNotes || false;
 
-    if (cfg.type === 'blanks') {
-      var setIdx = cfg._setIdx || 0;
-      blanks = cfg.blankSets[setIdx % cfg.blankSets.length];
-      solution = cfg.base;
-      var arr = solution.split('');
-      blanks.forEach(function (i) { arr[i] = '0'; });
-      puzzle = arr.join('');
-    } else if (cfg.type === 'pool') {
-      var entry = resolvePoolSolution(cfg.pool[cfg.idx % cfg.pool.length]);
-      puzzle = entry.p;
-      solution = entry.s;
-      blanks = [];
-      for (var i = 0; i < 81; i++) { if (puzzle[i] === '0') blanks.push(i); }
-    } else {
-      var seed = cfg.seeds[cfg.idx % cfg.seeds.length];
-      var gen = generatePuzzle(cfg.difficulty, seed);
-      puzzle = gen.puzzle;
-      solution = gen.solution;
-      blanks = [];
-      for (var i = 0; i < 81; i++) { if (puzzle[i] === '0') blanks.push(i); }
+    var blanks = [];
+    for (var i = 0; i < 81; i++) { if (puzzle[i] === '0') blanks.push(i); }
+
+    var computedNotes = {};
+    if (showAutoNotes) {
+      for (var b = 0; b < blanks.length; b++) {
+        computedNotes[blanks[b]] = computeCandidates(puzzle, blanks[b]);
+      }
+    }
+
+    var targetSet = {};
+    targets.forEach(function(t) { targetSet[t] = true; });
+    var lockedCells = {};
+    if (showAutoNotes) {
+      blanks.forEach(function(idx) {
+        if (!targetSet[idx]) lockedCells[idx] = true;
+      });
     }
 
     practiceState[id] = {
       solution: solution, puzzle: puzzle, blanks: blanks,
-      userVals: {},
-      userNotes: {},
-      undoStack: [],
-      notesMode: false,
-      selected: -1
+      targets: targets, focusCells: focusCells,
+      computedNotes: computedNotes, lockedCells: lockedCells,
+      userVals: {}, userNotes: {}, undoStack: [],
+      notesMode: false, selected: -1, completed: false
     };
 
     renderPracticeBoard(id);
     buildPracticeNumpad(id);
     setNotesMode(id, false);
+
+    if (targets.length > 0) {
+      practiceState[id].selected = targets[0];
+      renderPracticeBoard(id);
+    }
+
     var statusEl = document.getElementById('status-' + id);
     if (statusEl) { statusEl.textContent = ''; statusEl.className = 'practice-status'; }
   }
 
   function newPuzzle(id) {
     var cfg = PRACTICES[id];
-    if (!cfg) return;
-    if (cfg.type === 'blanks') {
-      cfg._setIdx = ((cfg._setIdx || 0) + 1) % cfg.blankSets.length;
-    } else {
-      cfg.idx = (cfg.idx + 1) % (cfg.pool ? cfg.pool.length : cfg.seeds.length);
-    }
+    if (!cfg || !cfg.puzzles) return;
+    cfg.idx = (cfg.idx + 1) % cfg.puzzles.length;
     loadPractice(id);
   }
 
@@ -436,6 +505,7 @@
     if (!st || st.selected === -1) return;
     var idx = st.selected;
     if (st.puzzle[idx] !== '0') return;
+    if (st.lockedCells && st.lockedCells[idx]) return;
     st.undoStack.push({
       idx: idx,
       prevVal: st.userVals[idx] !== undefined ? st.userVals[idx] : null,
@@ -457,6 +527,34 @@
       delete st.userNotes[idx];
     }
     renderPracticeBoard(id);
+
+    var targetSet = {};
+    if (st.targets) st.targets.forEach(function(t) { targetSet[t] = true; });
+    if (!st.notesMode && targetSet[idx]) {
+      if (st.userVals[idx] === st.solution[idx]) {
+        setTimeout(function() {
+          var cell = document.querySelector('#practice-' + id + ' .practice-cell[data-idx="' + idx + '"]');
+          if (cell) {
+            cell.classList.add('correct-flash');
+            setTimeout(function() { cell.classList.remove('correct-flash'); }, 500);
+          }
+        }, 10);
+
+        var allCorrect = st.targets.every(function(t) {
+          return st.userVals[t] === st.solution[t];
+        });
+        if (allCorrect) {
+          st.completed = true;
+          var statusEl = document.getElementById('status-' + id);
+          if (statusEl) {
+            statusEl.textContent = 'Correct! Try another puzzle.';
+            statusEl.className = 'practice-status ok';
+          }
+          return;
+        }
+      }
+    }
+
     var statusEl = document.getElementById('status-' + id);
     if (statusEl) { statusEl.textContent = ''; statusEl.className = 'practice-status'; }
   }
@@ -468,6 +566,10 @@
     container.innerHTML = '';
 
     var cells = [];
+    var targetSet = {};
+    if (state.targets) state.targets.forEach(function(t) { targetSet[t] = true; });
+    var focusSet = {};
+    if (state.focusCells) state.focusCells.forEach(function(f) { focusSet[f] = true; });
 
     for (var i = 0; i < 81; i++) {
       var r = (i / 9) | 0;
@@ -481,6 +583,7 @@
       var isGiven = state.puzzle[i] !== '0';
       var userVal = state.userVals[i];
       var notes = state.userNotes[i];
+      var isLocked = state.lockedCells && state.lockedCells[i];
 
       if (isGiven) {
         cell.classList.add('given');
@@ -488,12 +591,26 @@
         valSpan.className = 'cell-value';
         valSpan.textContent = state.puzzle[i];
         cell.appendChild(valSpan);
+      } else if (isLocked) {
+        cell.classList.add('locked');
+        var cNotes = state.computedNotes[i];
+        if (cNotes && cNotes.length > 0) {
+          var notesGrid = document.createElement('div');
+          notesGrid.className = 'cell-notes';
+          for (var n = 1; n <= 9; n++) {
+            var ns = document.createElement('span');
+            ns.textContent = cNotes.indexOf(n) !== -1 ? n : '';
+            notesGrid.appendChild(ns);
+          }
+          cell.appendChild(notesGrid);
+        }
       } else if (userVal) {
         var valSpan = document.createElement('span');
         valSpan.className = 'cell-value';
         valSpan.textContent = userVal;
         cell.appendChild(valSpan);
         if (userVal !== state.solution[i]) cell.classList.add('error');
+        if (targetSet[i] && userVal === state.solution[i]) cell.classList.add('correct-fill');
       } else if (notes && notes.length > 0) {
         var notesGrid = document.createElement('div');
         notesGrid.className = 'cell-notes';
@@ -505,16 +622,19 @@
         cell.appendChild(notesGrid);
       }
 
-      cell.addEventListener('click', (function (idx, lessonId) {
-        return function () {
-          var st = practiceState[lessonId];
-          if (!st) return;
-          st.selected = idx;
-          renderPracticeBoard(lessonId);
-          var statusEl = document.getElementById('status-' + lessonId);
-          if (statusEl) { statusEl.textContent = ''; statusEl.className = 'practice-status'; }
-        };
-      })(i, id));
+      if (focusSet[i]) cell.classList.add('focus');
+      if (targetSet[i] && !(userVal && userVal === state.solution[i])) cell.classList.add('target-cell');
+
+      if (!isLocked) {
+        cell.addEventListener('click', (function (idx, lessonId) {
+          return function () {
+            var st = practiceState[lessonId];
+            if (!st) return;
+            st.selected = idx;
+            renderPracticeBoard(lessonId);
+          };
+        })(i, id));
+      }
 
       cells.push(cell);
     }
@@ -573,6 +693,9 @@
       else delete st.userVals[entry.idx];
       if (entry.prevNotes !== null) st.userNotes[entry.idx] = entry.prevNotes;
       else delete st.userNotes[entry.idx];
+      st.completed = false;
+      var statusEl = document.getElementById('status-' + id);
+      if (statusEl) { statusEl.textContent = ''; statusEl.className = 'practice-status'; }
       renderPracticeBoard(id);
       return;
     }
@@ -591,6 +714,7 @@
       var st = practiceState[id];
       if (!st || st.selected === -1) return;
       var idx = st.selected;
+      if (st.lockedCells && st.lockedCells[idx]) return;
       st.undoStack.push({
         idx: idx,
         prevVal: st.userVals[idx] !== undefined ? st.userVals[idx] : null,
@@ -601,6 +725,9 @@
       } else {
         delete st.userVals[idx];
       }
+      st.completed = false;
+      var statusEl = document.getElementById('status-' + id);
+      if (statusEl) { statusEl.textContent = ''; statusEl.className = 'practice-status'; }
       renderPracticeBoard(id);
       return;
     }
@@ -611,8 +738,8 @@
       var st = practiceState[id];
       if (!st) return;
       var target = st.selected;
-      if (target === -1 || st.puzzle[target] !== '0' || st.userVals[target] === st.solution[target]) {
-        var empties = st.blanks.filter(function (i) { return st.userVals[i] !== st.solution[i]; });
+      if (target === -1 || st.puzzle[target] !== '0' || st.userVals[target] === st.solution[target] || (st.lockedCells && st.lockedCells[target])) {
+        var empties = st.blanks.filter(function (i) { return st.userVals[i] !== st.solution[i] && !(st.lockedCells && st.lockedCells[i]); });
         if (empties.length === 0) return;
         target = empties[Math.floor(Math.random() * empties.length)];
         st.selected = target;
@@ -624,6 +751,14 @@
       });
       st.userVals[target] = st.solution[target];
       delete st.userNotes[target];
+      var allCorrect = st.targets && st.targets.every(function(t) {
+        return st.userVals[t] === st.solution[t];
+      });
+      if (allCorrect) {
+        st.completed = true;
+        var statusEl = document.getElementById('status-' + id);
+        if (statusEl) { statusEl.textContent = 'Correct! Try another puzzle.'; statusEl.className = 'practice-status ok'; }
+      }
       renderPracticeBoard(id);
       return;
     }
@@ -648,11 +783,15 @@
       applyDigit(activeId, parseInt(key));
     } else if (key === 'Backspace' || key === 'Delete' || key === '0') {
       var idx = st.selected;
+      if (st.lockedCells && st.lockedCells[idx]) return;
       if (st.userNotes[idx] && st.userNotes[idx].length > 0) {
         delete st.userNotes[idx];
       } else {
         delete st.userVals[idx];
       }
+      st.completed = false;
+      var statusEl = document.getElementById('status-' + activeId);
+      if (statusEl) { statusEl.textContent = ''; statusEl.className = 'practice-status'; }
       renderPracticeBoard(activeId);
     } else if (key === 'n' || key === 'N') {
       setNotesMode(activeId, !st.notesMode);
@@ -663,6 +802,9 @@
       else delete st.userVals[entry.idx];
       if (entry.prevNotes !== null) st.userNotes[entry.idx] = entry.prevNotes;
       else delete st.userNotes[entry.idx];
+      st.completed = false;
+      var statusEl = document.getElementById('status-' + activeId);
+      if (statusEl) { statusEl.textContent = ''; statusEl.className = 'practice-status'; }
       renderPracticeBoard(activeId);
     }
   });
