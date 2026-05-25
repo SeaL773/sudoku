@@ -443,7 +443,7 @@ body {
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
   max-width: 324px;
 }
@@ -452,6 +452,10 @@ body {
   grid-template-columns: repeat(9, 1fr);
   gap: 5px;
   width: 100%;
+  flex-basis: 100%;
+}
+.practice-status {
+  flex-basis: 100%;
 }
 .p-num-btn {
   display: flex;
@@ -474,7 +478,7 @@ body {
 .p-num-btn:active { transform: scale(0.95); }
 
 .check-btn {
-  padding: 8px 16px;
+  padding: 6px 12px;
   border: none;
   background: var(--accent);
   color: #ffffff;
@@ -490,7 +494,7 @@ body {
 .check-btn:active { transform: scale(0.97); }
 
 .erase-btn {
-  padding: 8px 16px;
+  padding: 6px 12px;
   border: 1px solid var(--border-thin);
   background: var(--bg-button);
   color: var(--text-given);
@@ -508,13 +512,13 @@ body {
   font-weight: 500;
   min-height: 20px;
   color: var(--text-secondary);
+  text-align: center;
 }
 .practice-status.ok { color: #2e7d32; }
 .practice-status.err { color: var(--text-error); }
 
 .new-puzzle-btn {
-  padding: 8px 0;
-  width: 180px;
+  padding: 6px 12px;
   border: 1px solid var(--border-thin);
   background: var(--bg-button);
   color: var(--accent);
@@ -528,8 +532,7 @@ body {
 .new-puzzle-btn:hover { background: var(--accent-light); border-color: var(--accent); }
 
 .notes-toggle-btn {
-  padding: 8px 0;
-  width: 180px;
+  padding: 6px 12px;
   border: 1px solid var(--border-thin);
   background: var(--bg-button);
   color: var(--text-given);
