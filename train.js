@@ -508,7 +508,7 @@
       cell.addEventListener('click', (function (idx, lessonId) {
         return function () {
           var st = practiceState[lessonId];
-          if (!st || st.puzzle[idx] !== '0') return;
+          if (!st) return;
           st.selected = idx;
           renderPracticeBoard(lessonId);
           var statusEl = document.getElementById('status-' + lessonId);
