@@ -398,7 +398,7 @@ body {
   gap: 20px;
 }
 
-/* ── Practice board (full 9x9, interactive) ── */
+/* ── Practice board — matches .board from style.css, smaller size ── */
 .practice-board {
   display: grid;
   grid-template-columns: repeat(9, 1fr);
@@ -406,11 +406,14 @@ body {
   width: 324px;
   height: 324px;
   border: 2px solid var(--border-thick);
-  border-radius: 3px;
+  border-radius: 4px;
   overflow: hidden;
+  box-shadow: var(--shadow-md);
   background: var(--border-thin);
   flex-shrink: 0;
 }
+
+/* ── Practice cell — matches .cell from style.css ── */
 .practice-cell {
   position: relative;
   display: flex;
@@ -419,25 +422,65 @@ body {
   background: var(--bg-cell);
   border-right: 1px solid var(--border-thin);
   border-bottom: 1px solid var(--border-thin);
-  font-family: var(--font-main);
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--text-given);
   cursor: pointer;
+  transition: background-color var(--transition-fast);
   user-select: none;
-  transition: background 100ms ease;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 .practice-cell[data-col="2"], .practice-cell[data-col="5"] { border-right: 2px solid var(--border-thick); }
 .practice-cell[data-row="2"], .practice-cell[data-row="5"] { border-bottom: 2px solid var(--border-thick); }
 .practice-cell[data-col="8"] { border-right: none; }
 .practice-cell[data-row="8"] { border-bottom: none; }
-.practice-cell.given { cursor: default; }
-.practice-cell.user-val { color: var(--text-user); }
-.practice-cell.selected { background: var(--bg-cell-selected); }
+
+/* Cell state — mirrors .cell.* from style.css */
+.practice-cell.given { background: var(--bg-cell-given); cursor: default; }
+.practice-cell.given .cell-value { font-weight: 700; color: var(--text-given); }
+.practice-cell:not(.given) .cell-value { color: var(--text-user); font-weight: 600; }
+.practice-cell.same-number { background: var(--bg-cell-same-number); }
 .practice-cell.peer { background: var(--bg-cell-peer); }
-.practice-cell.wrong { color: var(--text-error); }
+.practice-cell.selected { background: var(--bg-cell-selected); }
+.practice-cell.error:not(.selected) { background: var(--bg-cell-error); }
+.practice-cell.error .cell-value { color: var(--text-error); }
+.practice-cell.error::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -45deg, transparent, transparent 3px,
+    rgba(229, 92, 108, 0.15) 3px, rgba(229, 92, 108, 0.15) 5px
+  );
+  pointer-events: none;
+}
 .practice-cell.correct-flash { background: var(--bg-cell-answer); }
 
+/* Cell value — matches .cell-value from style.css, scaled for smaller board */
+.practice-cell .cell-value {
+  font-family: var(--font-main);
+  font-size: 1.1rem;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+/* Cell notes — matches .cell-notes from style.css */
+.practice-cell .cell-notes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.practice-cell .cell-notes span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.38rem;
+  color: var(--text-notes);
+  line-height: 1;
+}
+
+/* ── Practice controls layout ── */
 .practice-controls {
   display: flex;
   flex-direction: column;
@@ -446,63 +489,48 @@ body {
   flex: 1;
   min-width: 0;
 }
-.practice-actions {
-  display: flex;
-  justify-content: center;
-  gap: 0;
-  width: 100%;
-}
-.p-action-btn {
-  flex: 1;
-  max-width: 80px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding: 8px 4px;
-  border: none;
-  background: transparent;
-  color: var(--text-secondary);
-  font-family: var(--font-main);
-  font-size: 0.72rem;
-  font-weight: 500;
-  cursor: pointer;
-  border-radius: var(--radius-md);
-  transition: all 100ms ease;
-}
-.p-action-btn:hover { background: var(--bg-button-hover); color: var(--text-given); }
-.p-action-btn.active { background: var(--accent); color: #ffffff; }
+
+/* .actions already defined in style.css — no override needed */
+
+/* ── Practice numpad — matches .numpad proportions, 3x3 grid ── */
 .practice-numpad {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
+  gap: 8px;
   width: 100%;
   max-width: 180px;
 }
-.practice-footer {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-}
+
+/* ── Practice numpad buttons — matches .num-btn from style.css ── */
 .p-num-btn {
   aspect-ratio: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   border: none;
   background: var(--bg-button);
   color: var(--text-user);
   font-family: var(--font-main);
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: 700;
   border-radius: var(--radius-md);
   cursor: pointer;
   box-shadow: var(--shadow-sm);
-  transition: all 100ms ease;
+  transition: all var(--transition-fast);
   user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 .p-num-btn:hover { background: var(--bg-button-hover); transform: translateY(-1px); box-shadow: var(--shadow-md); }
-.p-num-btn:active { transform: scale(0.95); }
+.p-num-btn:active { transform: translateY(0) scale(0.95); box-shadow: var(--shadow-sm); }
+
+/* ── Practice footer buttons ── */
+.practice-footer {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
 
 .check-btn {
   padding: 8px 20px;
@@ -514,23 +542,11 @@ body {
   font-weight: 600;
   border-radius: var(--radius-full);
   cursor: pointer;
-  transition: background 120ms ease, transform 120ms ease;
-  box-shadow: 0 2px 8px rgba(50,90,175,0.3);
+  transition: background var(--transition-fast), transform var(--transition-fast);
+  box-shadow: 0 2px 8px rgba(50, 90, 175, 0.3);
 }
 .check-btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
 .check-btn:active { transform: scale(0.97); }
-
-
-
-.practice-status {
-  font-size: 0.85rem;
-  font-weight: 500;
-  min-height: 20px;
-  color: var(--text-secondary);
-  text-align: center;
-}
-.practice-status.ok { color: #2e7d32; }
-.practice-status.err { color: var(--text-error); }
 
 .new-puzzle-btn {
   padding: 8px 20px;
@@ -542,37 +558,20 @@ body {
   font-weight: 600;
   border-radius: var(--radius-full);
   cursor: pointer;
-  transition: all 120ms ease;
+  transition: all var(--transition-fast);
 }
 .new-puzzle-btn:hover { background: var(--accent-light); border-color: var(--accent); }
 
-
-.notes-toggle-btn.active {
-  background: var(--accent);
-  color: #ffffff;
-  border-color: var(--accent);
-  box-shadow: 0 2px 8px rgba(50,90,175,0.3);
+/* ── Practice status ── */
+.practice-status {
+  font-size: 0.85rem;
+  font-weight: 500;
+  min-height: 20px;
+  color: var(--text-secondary);
+  text-align: center;
 }
-
-.practice-cell .practice-notes {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-.practice-cell .practice-notes span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.45rem;
-  font-weight: 600;
-  color: var(--text-notes);
-  line-height: 1;
-}
+.practice-status.ok { color: #2e7d32; }
+.practice-status.err { color: var(--text-error); }
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
@@ -585,10 +584,10 @@ body {
   .mini-cell { font-size: 0.88rem; }
   .practice-layout { flex-direction: column; align-items: center; }
   .practice-board { width: min(324px, calc(100vw - 80px)); height: auto; aspect-ratio: 1; }
-  .practice-cell { font-size: 0.95rem; }
+  .practice-cell .cell-value { font-size: clamp(0.85rem, 3.5vw, 1.1rem); }
   .practice-controls { width: 100%; max-width: min(324px, calc(100vw - 80px)); }
   .practice-numpad { max-width: 160px; }
-  .practice-cell .practice-notes span { font-size: 0.4rem; }
+  .practice-cell .cell-notes span { font-size: 0.38rem; }
 }
 @media (max-width: 480px) {
   .layout { padding: 14px 10px; }
@@ -597,12 +596,12 @@ body {
   .mini-board.size-sm { width: 162px; height: 162px; }
   .mini-cell { font-size: 0.75rem; }
   .practice-board { width: min(280px, calc(100vw - 48px)); }
-  .practice-cell { font-size: 0.82rem; }
+  .practice-cell .cell-value { font-size: clamp(0.75rem, 3vw, 0.95rem); }
   .practice-controls { width: 100%; max-width: min(280px, calc(100vw - 48px)); }
   .practice-numpad { max-width: 130px; gap: 4px; }
   .p-num-btn { font-size: 1rem; }
-  .p-action-btn { font-size: 0.6rem; padding: 6px 2px; }
-  .p-action-btn svg { width: 16px; height: 16px; }
+  .practice-controls .action-btn { font-size: 0.6rem; padding: 6px 2px; }
+  .practice-controls .action-btn svg { width: 16px; height: 16px; }
   .check-btn, .new-puzzle-btn { padding: 6px 14px; font-size: 0.8rem; }
-  .practice-cell .practice-notes span { font-size: 0.35rem; }
+  .practice-cell .cell-notes span { font-size: 0.3rem; }
 }

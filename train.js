@@ -405,11 +405,10 @@
     }
 
     practiceState[id] = {
-      solution: solution,
-      puzzle: puzzle,
-      blanks: blanks,
+      solution: solution, puzzle: puzzle, blanks: blanks,
       userVals: {},
       userNotes: {},
+      undoStack: [],
       notesMode: false,
       selected: -1
     };
@@ -437,6 +436,11 @@
     if (!st || st.selected === -1) return;
     var idx = st.selected;
     if (st.puzzle[idx] !== '0') return;
+    st.undoStack.push({
+      idx: idx,
+      prevVal: st.userVals[idx] !== undefined ? st.userVals[idx] : null,
+      prevNotes: st.userNotes[idx] ? st.userNotes[idx].slice() : null
+    });
     var key = String(num);
     if (st.notesMode) {
       delete st.userVals[idx];
@@ -463,6 +467,8 @@
     if (!container || !state) return;
     container.innerHTML = '';
 
+    var cells = [];
+
     for (var i = 0; i < 81; i++) {
       var r = (i / 9) | 0;
       var c = i % 9;
@@ -478,14 +484,19 @@
 
       if (isGiven) {
         cell.classList.add('given');
-        cell.textContent = state.puzzle[i];
+        var valSpan = document.createElement('span');
+        valSpan.className = 'cell-value';
+        valSpan.textContent = state.puzzle[i];
+        cell.appendChild(valSpan);
       } else if (userVal) {
-        cell.classList.add('user-val');
-        cell.textContent = userVal;
-        if (userVal !== state.solution[i]) cell.classList.add('wrong');
+        var valSpan = document.createElement('span');
+        valSpan.className = 'cell-value';
+        valSpan.textContent = userVal;
+        cell.appendChild(valSpan);
+        if (userVal !== state.solution[i]) cell.classList.add('error');
       } else if (notes && notes.length > 0) {
         var notesGrid = document.createElement('div');
-        notesGrid.className = 'practice-notes';
+        notesGrid.className = 'cell-notes';
         for (var n = 1; n <= 9; n++) {
           var ns = document.createElement('span');
           ns.textContent = notes.indexOf(n) !== -1 ? n : '';
@@ -493,8 +504,6 @@
         }
         cell.appendChild(notesGrid);
       }
-
-      if (state.selected === i && !isGiven) cell.classList.add('selected');
 
       cell.addEventListener('click', (function (idx, lessonId) {
         return function () {
@@ -507,7 +516,34 @@
         };
       })(i, id));
 
-      container.appendChild(cell);
+      cells.push(cell);
+    }
+
+    if (state.selected !== -1) {
+      var sel = state.selected;
+      var selRow = (sel / 9) | 0;
+      var selCol = sel % 9;
+      var selBoxR = Math.floor(selRow / 3) * 3;
+      var selBoxC = Math.floor(selCol / 3) * 3;
+      var selVal = state.puzzle[sel] !== '0' ? state.puzzle[sel] : (state.userVals[sel] || null);
+
+      for (var i = 0; i < 81; i++) {
+        if (i === sel) continue;
+        var iRow = (i / 9) | 0;
+        var iCol = i % 9;
+        var isPeer = iRow === selRow || iCol === selCol ||
+          (Math.floor(iRow / 3) * 3 === selBoxR && Math.floor(iCol / 3) * 3 === selBoxC);
+        if (isPeer) cells[i].classList.add('peer');
+        if (selVal) {
+          var cellVal = state.puzzle[i] !== '0' ? state.puzzle[i] : (state.userVals[i] || null);
+          if (cellVal && cellVal === selVal) cells[i].classList.add('same-number');
+        }
+      }
+      cells[sel].classList.add('selected');
+    }
+
+    for (var i = 0; i < 81; i++) {
+      container.appendChild(cells[i]);
     }
   }
 
@@ -517,7 +553,7 @@
     container.innerHTML = '';
     for (var n = 1; n <= 9; n++) {
       var btn = document.createElement('button');
-      btn.className = 'p-num-btn';
+      btn.className = 'p-num-btn num-btn';
       btn.textContent = n;
       btn.addEventListener('click', (function (num, lessonId) {
         return function () { applyDigit(lessonId, num); };
@@ -527,6 +563,20 @@
   }
 
   document.addEventListener('click', function (e) {
+    var undoBtn = e.target.closest('.undo-btn');
+    if (undoBtn) {
+      var id = undoBtn.dataset.practice;
+      var st = practiceState[id];
+      if (!st || st.undoStack.length === 0) return;
+      var entry = st.undoStack.pop();
+      if (entry.prevVal !== null) st.userVals[entry.idx] = entry.prevVal;
+      else delete st.userVals[entry.idx];
+      if (entry.prevNotes !== null) st.userNotes[entry.idx] = entry.prevNotes;
+      else delete st.userNotes[entry.idx];
+      renderPracticeBoard(id);
+      return;
+    }
+
     var notesBtn = e.target.closest('.notes-toggle-btn');
     if (notesBtn) {
       var id = notesBtn.dataset.practice;
@@ -541,11 +591,39 @@
       var st = practiceState[id];
       if (!st || st.selected === -1) return;
       var idx = st.selected;
+      st.undoStack.push({
+        idx: idx,
+        prevVal: st.userVals[idx] !== undefined ? st.userVals[idx] : null,
+        prevNotes: st.userNotes[idx] ? st.userNotes[idx].slice() : null
+      });
       if (st.userNotes[idx] && st.userNotes[idx].length > 0) {
         delete st.userNotes[idx];
       } else {
         delete st.userVals[idx];
       }
+      renderPracticeBoard(id);
+      return;
+    }
+
+    var hintBtn = e.target.closest('.hint-btn');
+    if (hintBtn) {
+      var id = hintBtn.dataset.practice;
+      var st = practiceState[id];
+      if (!st) return;
+      var target = st.selected;
+      if (target === -1 || st.puzzle[target] !== '0' || st.userVals[target] === st.solution[target]) {
+        var empties = st.blanks.filter(function (i) { return st.userVals[i] !== st.solution[i]; });
+        if (empties.length === 0) return;
+        target = empties[Math.floor(Math.random() * empties.length)];
+        st.selected = target;
+      }
+      st.undoStack.push({
+        idx: target,
+        prevVal: st.userVals[target] !== undefined ? st.userVals[target] : null,
+        prevNotes: st.userNotes[target] ? st.userNotes[target].slice() : null
+      });
+      st.userVals[target] = st.solution[target];
+      delete st.userNotes[target];
       renderPracticeBoard(id);
       return;
     }
@@ -571,7 +649,7 @@
         statusEl.textContent = 'Correct! Well done.';
         statusEl.className = 'practice-status ok';
         var container = document.getElementById('practice-' + id);
-        container.querySelectorAll('.user-val').forEach(function (c) { c.classList.add('correct-flash'); });
+        container.querySelectorAll('.practice-cell:not(.given)').forEach(function (c) { c.classList.add('correct-flash'); });
       } else {
         statusEl.textContent = 'Some cells are wrong. Check the highlighted ones.';
         statusEl.className = 'practice-status err';
@@ -608,6 +686,14 @@
       renderPracticeBoard(activeId);
     } else if (key === 'n' || key === 'N') {
       setNotesMode(activeId, !st.notesMode);
+    } else if (key === 'z' || key === 'Z') {
+      if (st.undoStack.length === 0) return;
+      var entry = st.undoStack.pop();
+      if (entry.prevVal !== null) st.userVals[entry.idx] = entry.prevVal;
+      else delete st.userVals[entry.idx];
+      if (entry.prevNotes !== null) st.userNotes[entry.idx] = entry.prevNotes;
+      else delete st.userNotes[entry.idx];
+      renderPracticeBoard(activeId);
     }
   });
 
