@@ -17,12 +17,14 @@
   var countdownInterval = null;
   var mistakeCount = 0;
   var hintCount = 0;
+  var gamePaused = false;
   var cheatMode = false;
   var konamiBuffer = [];
   var KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowLeft','ArrowRight','ArrowRight','a','b','a','b'];
 
   var boardEl, winOverlay, winTimeEl, seedInput;
   var settingsBtn, settingsPopover;
+  var pauseOverlay;
   var notesBtn, hintBtn, undoBtn, eraseBtn;
   var winMistakesEl, winHintsEl, mistakeOverlay;
   var infoLabelEl, infoBadgeEl, infoMistakesEl, infoTimerEl, infoSecondaryEl;
@@ -53,6 +55,7 @@
     infoSecondaryEl = document.getElementById('info-secondary-row');
     newGameBtn = document.getElementById('btn-new-game');
 
+    pauseOverlay = document.getElementById('pause-overlay');
     customFooterActions = document.getElementById('custom-footer-actions');
     statusBar = document.getElementById('status-bar');
 
@@ -150,8 +153,8 @@
       })(diffButtons[i]));
     }
 
-    infoTimerEl.addEventListener('click', editTimer);
-    infoTimerEl.style.cursor = 'default';
+    infoTimerEl.addEventListener('click', togglePause);
+    pauseOverlay.addEventListener('click', togglePause);
 
     settingsBtn.addEventListener('click', function (e) {
       e.stopPropagation();
@@ -225,7 +228,8 @@
         hintCount: hintCount,
         notesMode: notesMode,
         selectedCell: selectedCell,
-        gameWon: gameWon
+        gameWon: gameWon,
+        paused: gamePaused
       };
       localStorage.setItem('sudoku-game-state', JSON.stringify(state));
     } catch (e) {}
@@ -254,6 +258,7 @@
       notesMode = state.notesMode || false;
       selectedCell = state.selectedCell !== undefined ? state.selectedCell : -1;
       gameWon = state.gameWon || false;
+      gamePaused = state.paused || false;
       undoStack = [];
       timerStarted = false;
 
@@ -280,8 +285,13 @@
       checkConflicts();
       render();
 
+      if (gamePaused) {
+        boardEl.classList.add('paused');
+        pauseOverlay.classList.remove('hidden');
+        timerStarted = true;
+      }
       if (currentMode === 'daily' && !gameWon) startCountdown();
-      if (!gameWon && currentMode !== 'custom') startTimerIfNeeded();
+      if (!gameWon && currentMode !== 'custom' && !gamePaused) startTimerIfNeeded();
 
       return true;
     } catch (e) { return false; }
@@ -491,6 +501,7 @@
   // ---- Play mode ----
 
   function selectCell(index) {
+    if (gamePaused) return;
     selectedCell = index;
     updateHighlights();
   }
@@ -517,7 +528,7 @@
   }
 
   function inputNumber(digit) {
-    if (selectedCell < 0 || gameWon) return;
+    if (selectedCell < 0 || gameWon || gamePaused) return;
     if (userGrid[selectedCell].isGiven) return;
     startTimerIfNeeded();
     if (notesMode) { toggleNote(selectedCell, digit); }
@@ -573,7 +584,7 @@
 
   function erase() {
     if (currentMode === 'custom') { customErase(); return; }
-    if (selectedCell < 0 || gameWon) return;
+    if (selectedCell < 0 || gameWon || gamePaused) return;
     if (userGrid[selectedCell].isGiven) return;
     if (userGrid[selectedCell].value === 0 && userGrid[selectedCell].notes.length === 0) return;
 
@@ -588,7 +599,7 @@
 
   function undo() {
     if (currentMode === 'custom') return;
-    if (undoStack.length === 0 || gameWon) return;
+    if (undoStack.length === 0 || gameWon || gamePaused) return;
     var entry = undoStack.pop();
     for (var i = 0; i < entry.changes.length; i++) userGrid[entry.changes[i].index] = entry.changes[i].prev;
     checkConflicts();
@@ -597,7 +608,7 @@
   }
 
   function hint() {
-    if (currentMode === 'custom' || gameWon) return;
+    if (currentMode === 'custom' || gameWon || gamePaused) return;
     var target = selectedCell;
     if (target < 0 || userGrid[target].isGiven || userGrid[target].value === parseInt(currentSolution[target])) {
       var emptyCells = [];
@@ -692,12 +703,12 @@
 
   function updateTimerDisplay() {
     var m = Math.floor(timerSeconds / 60), s = timerSeconds % 60;
-    var text = (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
-    if (infoTimerEl) infoTimerEl.textContent = text;
+    var time = (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+    if (infoTimerEl) infoTimerEl.textContent = gamePaused ? '\u23F8 ' + time : time;
   }
 
   function editTimer() {
-    if (!cheatMode) return;
+    if (!cheatMode || gamePaused) return;
     var cur = formatTime(timerSeconds);
     var input = prompt('Set timer (MM:SS):', cur);
     if (!input) return;
@@ -911,6 +922,21 @@
 
   // ---- Timer ----
 
+  function togglePause() {
+    if (gameWon || currentMode === 'custom' || !timerStarted) return;
+    gamePaused = !gamePaused;
+    if (gamePaused) {
+      stopTimer();
+      boardEl.classList.add('paused');
+      pauseOverlay.classList.remove('hidden');
+    } else {
+      timerInterval = setInterval(function () { timerSeconds++; updateTimerDisplay(); }, 1000);
+      boardEl.classList.remove('paused');
+      pauseOverlay.classList.add('hidden');
+    }
+    updateTimerDisplay();
+  }
+
   function startTimerIfNeeded() {
     if (timerStarted || gameWon || currentMode === 'custom') return;
     timerStarted = true;
@@ -919,7 +945,7 @@
 
   function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
 
-  function resetTimer() { stopTimer(); timerSeconds = 0; timerStarted = false; updateTimerDisplay(); }
+  function resetTimer() { stopTimer(); timerSeconds = 0; timerStarted = false; gamePaused = false; boardEl.classList.remove('paused'); pauseOverlay.classList.add('hidden'); updateTimerDisplay(); }
 
   function animateDigitPop(index) {
     var vs = cells[index].querySelector('.cell-value');
@@ -1082,6 +1108,10 @@
 
   function handleKeydown(e) {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === ' ' && timerStarted && !gameWon && currentMode !== 'custom') {
+      e.preventDefault(); togglePause(); return;
+    }
+    if (gamePaused) return;
     checkKonami(e.key);
 
     switch (e.key) {
